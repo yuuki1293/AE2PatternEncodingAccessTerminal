@@ -1,3 +1,5 @@
+import org.jetbrains.changelog.Changelog
+
 buildscript {
     repositories {
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
@@ -13,15 +15,17 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'net.darkhax.curseforgegradle' version '1.1.25'
     id 'com.modrinth.minotaur' version '2.+'
     id 'com.github.breadmoirai.github-release' version '2.4.1'
+    id 'org.jetbrains.changelog' version '2.2.1'
 }
 
 apply plugin: 'org.spongepowered.mixin'
 
 group = mod_group_id
-version = mod_version
+version = "$minecraft_version-$mod_version"
 
 base {
     archivesName = mod_id
@@ -126,6 +130,19 @@ publishing {
     }
 }
 
+String parserChangelog() {
+    if (!file('CHANGELOG.md').exists()) {
+        throw new GradleException('publish_with_changelog is true, but CHANGELOG.md does not exist in the workspace!')
+    }
+    String parsedChangelog = changelog.renderItem(
+            changelog.get(mod_version).withHeader(false).withEmptySections(false),
+            Changelog.OutputType.MARKDOWN)
+    if (parsedChangelog.isEmpty()) {
+        throw new GradleException('publish_with_changelog is true, but the changelog for the latest version is empty!')
+    }
+    return parsedChangelog
+}
+
 task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
     apiToken = System.getenv('CURSEFORGE_API_KEY') ?: (project.findProperty('curseforge_api_key') ?: 'XXX')
 
@@ -145,32 +162,31 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
 }
 
 modrinth {
-    var modrinthToken = System.getenv('MODRINTH_TOKEN') ?: (project.findProperty('modrinth_token') ?: 'XXX')
+    var modrinthToken = System.getenv('MODRINTH_TOKEN') ?: ''
     token = modrinthToken
-    projectId = (project.findProperty('modrinth_project_id') ?: 'XXXXXX').toString()
+    projectId = project.findProperty('modrinth_project_id') as String
     versionNumber = project.version as String
     versionName = "${rootProject.name} ${project.version}"
     versionType = project.version_type
     uploadFile = jar
     gameVersions = [project.minecraft_version]
     loaders = ['forge']
-    def changelogFile = file('changelog.txt')
-    changelog = changelogFile.exists() ? changelogFile.text : ''
+    changelog = parserChangelog()
     dependencies {
         required.project 'ae2'
     }
 }
 
 githubRelease {
-    token System.getenv('GITHUB_API_KEY') ?: (project.findProperty('github_api_key') ?: 'XXX')
+    token System.getenv('GITHUB_TOKEN') ?: ''
     owner 'yuuki1293'
-    repo (project.findProperty('github_release_repo') ?: 'AE2-Pattern-Encoding-Access-Terminal').toString()
+    repo project.findProperty('github_release_repo')
     tagName "v${project.version}"
-    targetCommitish (project.findProperty('github_release_branch') ?: 'main').toString()
+    targetCommitish project.findProperty('github_release_branch')
     releaseName "${rootProject.name} ${project.version}"
-    body (file('changelog.txt').exists() ? file('changelog.txt').text : '')
+    body parserChangelog()
     draft true
-    prerelease project.version_type != 'release'
+    prerelease false
     releaseAssets jar
     allowUploadToExisting.set false
     overwrite false
