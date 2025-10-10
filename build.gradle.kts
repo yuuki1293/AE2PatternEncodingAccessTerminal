@@ -1,16 +1,8 @@
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
-import org.gradle.api.GradleException
-import org.gradle.api.tasks.SourceSetContainer
-import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.jvm.toolchain.JavaLanguageVersion
-import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.ChangelogPluginExtension
-import org.gradle.kotlin.dsl.withGroovyBuilder
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
 buildscript {
     repositories {
@@ -204,7 +196,7 @@ val replaceProperties = mapOf(
 
 val jarTask = tasks.named<Jar>("jar")
 
-tasks.named<ProcessResources>("processResources") {
+tasks.named<Copy>("processResources") {
     inputs.properties(replaceProperties)
 
     filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta")) {
