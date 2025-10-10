@@ -89,17 +89,43 @@ mixin {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-
+    maven {
+        name = "Mod Maven"
+        url = "https://modmaven.dev/"
+        content {
+            includeGroup 'appeng'
+            includeGroup 'mezz.jei'
+        }
+    }
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
+        content {
+            includeGroup 'dev.emi'
+        }
+    }
+    maven {
+        name = "Curse Maven"
+        url = "https://www.cursemaven.com"
+        content {
+            includeGroup 'curse.maven'
+        }
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-
-
-
-
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
+    // Mandatory
+    implementation fg.deobf("appeng:appliedenergistics2-forge:${ae2_version}") // AE2
+    compileOnly fg.deobf("org.appliedenergistics:guideme:${guideme_version}:api") // GuideME
+    runtimeOnly fg.deobf("org.appliedenergistics:guideme:${guideme_version}")
+
+    // Utility
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}") // JEI
+    runtimeOnly fg.deobf("dev.emi:emi-forge:${emi_version}") // EMI
+    runtimeOnly fg.deobf("curse.maven:jade-324717:${jade_version}") // Jade
 }
 
 tasks.named('processResources', ProcessResources).configure {
@@ -144,9 +170,9 @@ String parserChangelog() {
 }
 
 task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
-    apiToken = System.getenv('CURSEFORGE_API_KEY') ?: (project.findProperty('curseforge_api_key') ?: 'XXX')
+    apiToken = System.getenv('CURSEFORGE_API_KEY') ?: 'XXX'
 
-    def curseforgeProjectId = (project.findProperty('curseforge_project_id') ?: '0').toString()
+    def curseforgeProjectId = project.findProperty('curseforge_project_id').toString()
     def mainFile = upload(curseforgeProjectId.toInteger(), jar)
     mainFile.releaseType = project.version_type
     def changelogFile = file('changelog.txt')
@@ -162,7 +188,7 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
 }
 
 modrinth {
-    var modrinthToken = System.getenv('MODRINTH_TOKEN') ?: ''
+    var modrinthToken = System.getenv('MODRINTH_TOKEN') ?: 'XXX'
     token = modrinthToken
     projectId = project.findProperty('modrinth_project_id') as String
     versionNumber = project.version as String
