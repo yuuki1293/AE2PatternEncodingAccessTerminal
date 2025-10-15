@@ -3,13 +3,16 @@ package yuuki1293.ae2peat;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 import yuuki1293.ae2peat.init.InitItems;
 import yuuki1293.ae2peat.init.InitMenuTypes;
+import yuuki1293.ae2peat.init.InitScreens;
 
 @Mod(AE2PEAT.MODID)
 public class AE2PEAT {
@@ -28,6 +31,9 @@ public class AE2PEAT {
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
-
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event) {
+            InitScreens.init();
+        }
     }
 }

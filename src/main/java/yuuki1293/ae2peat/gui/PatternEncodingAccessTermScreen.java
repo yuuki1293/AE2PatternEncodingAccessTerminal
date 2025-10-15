@@ -564,7 +564,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
      * @see GuiGraphics#blit(ResourceLocation, int, int, int, int, int, int)
      */
     private void blit(GuiGraphics guiGraphics, int offsetX, int offsetY, Rect2i srcRect) {
-        var texture = AppEng.makeId("textures/guis/patternenaccessterminal.png");
+        var texture = AppEng.makeId("textures/guis/pattern_encoding_access_terminal.png");
         guiGraphics.blit(texture, offsetX, offsetY, srcRect.getX(), srcRect.getY(), srcRect.getWidth(),
             srcRect.getHeight());
     }
