@@ -38,6 +38,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
@@ -219,7 +220,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     }
     
     @Override
-    protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
+    protected void renderTooltip(@NotNull GuiGraphics guiGraphics, int x, int y) {
         // Draw line tooltip
         if (hoveredSlot == null) {
             var hoveredLineIndex = getHoveredLineIndex(x, y);
@@ -263,7 +264,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
 
     @Override
     protected void slotClicked(Slot slot, int slotIdx, int mouseButton, ClickType clickType) {
-        if (slot instanceof PatternSlot) {
+        if (slot instanceof PatternSlot machineSlot) {
             InventoryAction action = null;
 
             switch (clickType) {
@@ -287,7 +288,6 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
             }
 
             if (action != null) {
-                PatternSlot machineSlot = (PatternSlot) slot;
                 final InventoryActionPacket p = new InventoryActionPacket(action, machineSlot.getSlotIndex(),
                     machineSlot.getMachineInv().getServerId());
                 NetworkHandler.instance().sendToServer(p);
@@ -400,6 +400,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         }
     }
 
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public void updateBeforeRender() {
         this.showPatternProviders.set(this.menu.getShownProviders());
