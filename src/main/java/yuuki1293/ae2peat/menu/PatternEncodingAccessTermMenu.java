@@ -51,6 +51,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.StonecutterRecipe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import yuuki1293.ae2peat.mixin.AccessorMEStorageMenu;
 import yuuki1293.ae2peat.parts.PatternEncodingAccessTerminalPart;
 
 import java.util.*;
@@ -61,7 +62,6 @@ public class PatternEncodingAccessTermMenu extends MEStorageMenu implements IMen
         .build("pattern_encoding_access_terminal");
 
     // region access term
-    private final IConfigurableObject host;
     @GuiSync(1)
     public ShowPatternProviders showPatternProviders = ShowPatternProviders.VISIBLE;
 
@@ -141,11 +141,9 @@ public class PatternEncodingAccessTermMenu extends MEStorageMenu implements IMen
 
     public <T extends IConfigurableObject & IPatternTerminalMenuHost> PatternEncodingAccessTermMenu(
         MenuType<?> menuType, int id, Inventory ip, T host, boolean bindInventory) {
-        super(menuType, id, ip, host);
-        this.host = host;
-        if (bindInventory) {
-            this.createPlayerInventorySlots(ip);
-        }
+        super(menuType, id, ip, host, bindInventory);
+
+        ((AccessorMEStorageMenu)this).getClientCM().registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
 
         this.encodingLogic = host.getLogic();
         this.encodedInputsInv = encodingLogic.getEncodedInputInv();
@@ -222,7 +220,7 @@ public class PatternEncodingAccessTermMenu extends MEStorageMenu implements IMen
             return;
         }
 
-        showPatternProviders = this.host.getConfigManager().getSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS);
+        showPatternProviders = getHost().getConfigManager().getSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS);
 
         super.broadcastChanges();
 

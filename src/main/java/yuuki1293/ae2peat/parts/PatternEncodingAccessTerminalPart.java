@@ -4,21 +4,21 @@ import appeng.api.config.Settings;
 import appeng.api.config.ShowPatternProviders;
 import appeng.api.parts.IPartItem;
 import appeng.api.parts.IPartModel;
-import appeng.api.util.IConfigManager;
 import appeng.api.util.IConfigurableObject;
 import appeng.helpers.IPatternTerminalLogicHost;
 import appeng.helpers.IPatternTerminalMenuHost;
 import appeng.items.parts.PartModels;
 import appeng.menu.MenuOpener;
 import appeng.menu.locator.MenuLocators;
+import appeng.menu.me.common.MEStorageMenu;
 import appeng.parts.PartModel;
 import appeng.parts.encoding.PatternEncodingLogic;
 import appeng.parts.reporting.AbstractTerminalPart;
-import appeng.util.ConfigManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
@@ -41,21 +41,11 @@ public class PatternEncodingAccessTerminalPart extends AbstractTerminalPart impl
     public static final IPartModel MODELS_ON = new PartModel(MODEL_BASE, MODEL_ON, MODEL_STATUS_ON);
     public static final IPartModel MODELS_HAS_CHANNEL = new PartModel(MODEL_BASE, MODEL_ON, MODEL_STATUS_HAS_CHANNEL);
 
-    private final ConfigManager configManager = new ConfigManager(() -> this.getHost().markForSave());
-
     private final PatternEncodingLogic logic = new PatternEncodingLogic(this);
 
     public PatternEncodingAccessTerminalPart(IPartItem<?> partItem){
         super(partItem);
-        this.configManager.registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
-    }
-
-    @Override
-    public boolean onPartActivate(Player player, InteractionHand hand, Vec3 pos){
-        if(!super.onPartActivate(player, hand, pos) && !isClientSide()){
-            MenuOpener.open(PatternEncodingAccessTermMenu.TYPE, player, MenuLocators.forPart(this));
-        }
-        return true;
+        getConfigManager().registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
     }
 
     @Override
@@ -63,21 +53,19 @@ public class PatternEncodingAccessTerminalPart extends AbstractTerminalPart impl
         return this.selectModel(MODELS_OFF, MODELS_ON, MODELS_HAS_CHANNEL);
     }
 
-    @Override
-    public IConfigManager getConfigManager() {
-        return configManager;
-    }
-
     public void writeToNBT(CompoundTag tag){
         super.writeToNBT(tag);
-        configManager.writeToNBT(tag);
         logic.writeToNBT(tag);
     }
 
     public void readFromNBT(CompoundTag tag){
         super.readFromNBT(tag);
-        configManager.readFromNBT(tag);
         logic.readFromNBT(tag);
+    }
+
+    @Override
+    public MenuType<?> getMenuType(Player player) {
+        return PatternEncodingAccessTermMenu.TYPE;
     }
 
     @Override
