@@ -151,7 +151,7 @@ dependencies {
     // Mandatory
     modImplementation(libs.ae2)
     modRuntimeOnly(libs.guideme)
-    modCompileOnly(libs.jeiapi)
+    modCompileOnly(libs.jei)
 
     // Utility
     modRuntimeOnly(libs.jei)
