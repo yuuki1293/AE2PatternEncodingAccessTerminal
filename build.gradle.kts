@@ -113,10 +113,14 @@ legacyForge {
 mixin {
     add(sourceSets["main"], "${modId}.refmap.json")
 
-//    config("${modId}.mixins.json")
+    config("${modId}.mixins.json")
 }
 
 repositories {
+    maven {
+        name = "Sponge / Mixin"
+        url = uri("https://repo.spongepowered.org/repository/maven-public/")
+    }
     maven {
         name = "Mod Maven"
         url = uri("https://modmaven.dev/")
