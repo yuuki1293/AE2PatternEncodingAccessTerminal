@@ -39,28 +39,6 @@
       }
     }
   },
-  "terminalStyle": {
-    "header": {
-      "texture": "guis/pattern.png",
-      "srcRect": [0, 0, 195, 17]
-    },
-    "firstRow": {
-      "texture": "guis/pattern.png",
-      "srcRect": [0, 17, 195, 18]
-    },
-    "row": {
-      "texture": "guis/pattern.png",
-      "srcRect": [0, 35, 195, 18]
-    },
-    "lastRow": {
-      "texture": "guis/pattern.png",
-      "srcRect": [0, 53, 195, 18]
-    },
-    "bottom": {
-      "texture": "guis/pattern.png",
-      "srcRect": [0, 71, 195, 178]
-    }
-  },
   "widgets": {
     "scrollbar": {
       "left": 175,
