@@ -1,59 +1,31 @@
-import net.darkhax.curseforgegradle.TaskPublishCurseForge
-import org.jetbrains.changelog.Changelog
-import org.jetbrains.changelog.ChangelogPluginExtension
+import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension
+import com.hypherionmc.modpublisher.properties.CurseEnvironment
+import com.hypherionmc.modpublisher.properties.ModLoader
+import com.hypherionmc.modpublisher.properties.ReleaseType
+import org.apache.tools.ant.filters.ReplaceTokens
 import java.text.SimpleDateFormat
 import java.util.*
-
-buildscript {
-    repositories {
-        maven {
-            url = uri("https://repo.spongepowered.org/repository/maven-public/")
-        }
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.spongepowered:mixingradle:0.7-SNAPSHOT")
-    }
-}
+import org.jetbrains.changelog.Changelog
+import org.jetbrains.changelog.ChangelogPluginExtension
 
 plugins {
-    eclipse
-    idea
-    `maven-publish`
-    id("net.minecraftforge.gradle") version "[6.0.16,6.2)"
-    id("org.parchmentmc.librarian.forgegradle") version "1.+"
-    id("net.darkhax.curseforgegradle") version "1.1.25"
-    id("com.modrinth.minotaur") version "2.+"
-    id("com.github.breadmoirai.github-release") version "2.4.1"
-    id("org.jetbrains.changelog") version "2.2.1"
+    id("java")
+    id("java-library")
+    id("idea")
+
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.moddev)
+    alias(libs.plugins.modPublisher)
+    alias(libs.plugins.changelog)
 }
 
-apply(plugin = "org.spongepowered.mixin")
+val modId = Constants.Mod.id
+val mcVersion: String = libs.versions.minecraft.get()
+val forgeVersion: String = libs.versions.forge.get()
+val jdkVersion = 17
 
-val minecraftVersion = project.property("minecraft_version") as String
-val minecraftVersionRange = project.property("minecraft_version_range") as String
-val forgeVersion = project.property("forge_version") as String
-val forgeVersionRange = project.property("forge_version_range") as String
-val loaderVersionRange = project.property("loader_version_range") as String
-val mappingChannelProp = project.property("mapping_channel") as String
-val mappingVersionProp = project.property("mapping_version") as String
-val ae2Version = project.property("ae2_version") as String
-val jeiVersion = project.property("jei_version") as String
-val emiVersion = project.property("emi_version") as String
-val jadeVersion = project.property("jade_version") as String
-val guidemeVersion = project.property("guideme_version") as String
-val modId = project.property("mod_id") as String
-val modName = project.property("mod_name") as String
-val modLicense = project.property("mod_license") as String
-val modVersion = project.property("mod_version") as String
-val modGroupId = project.property("mod_group_id") as String
-val modAuthors = project.property("mod_authors") as String
-val modDescription = project.property("mod_description") as String
-val versionType = project.property("version_type") as String
-val curseforgeProjectId = project.property("curseforge_project_id").toString()
-val modrinthProjectId = project.property("modrinth_project_id") as String
-val githubReleaseRepo = project.property("github_release_repo") as String
-val githubReleaseBranch = project.property("github_release_branch") as String
+val exportMixin = true
 
 val changelogExtension = extensions.getByType<ChangelogPluginExtension>()
 val sourceSets = the<SourceSetContainer>()
@@ -64,7 +36,7 @@ fun parserChangelog(): String {
         throw GradleException("publish_with_changelog is true, but CHANGELOG.md does not exist in the workspace!")
     }
     val parsedChangelog = changelogExtension.renderItem(
-        changelogExtension.get(modVersion).withHeader(false).withEmptySections(false),
+        changelogExtension.get(Constants.Mod.version).withHeader(false).withEmptySections(false),
         Changelog.OutputType.MARKDOWN
     )
     if (parsedChangelog.isEmpty()) {
@@ -73,73 +45,75 @@ fun parserChangelog(): String {
     return parsedChangelog
 }
 
-group = modGroupId
-version = "$minecraftVersion-$modVersion"
-
 base {
-    archivesName.set(modId)
+    archivesName = "${project.name}-$mcVersion"
+    version = Constants.Mod.version
+    group = Constants.Mod.group
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
+legacyForge {
+    version = "$mcVersion-$forgeVersion"
 
-minecraft {
-    mappings(mappingChannelProp, mappingVersionProp)
+    validateAccessTransformers = true
 
-    copyIdeResources.set(true)
+    file("src/main/resources/META-INF/accesstransformer.cfg").takeIf(File::exists)?.let {
+        println("Adding access transformer: $it")
+        setAccessTransformers(it)
+    }
 
-    accessTransformers("src/main/resources/META-INF/accesstransformer.cfg")
+    parchment {
+        mappingsVersion = libs.versions.parchmentmc.get()
+        minecraftVersion = mcVersion
+    }
 
     runs {
-        configureEach {
-            workingDirectory(project.file("run"))
-
-            property("forge.logging.markers", "REGISTRIES")
-            property("forge.logging.console.level", "debug")
-
-            mods {
-                create(modId) {
-                    source(mainSourceSet.get())
-                }
-            }
+        create("client") {
+            client()
+            gameDirectory.set(file("run"))
+            systemProperty("forge.enabledGameTestNamespaces", modId)
+            jvmArgument("-Dmixin.debug.export=$exportMixin")
         }
 
-        register("client") {
-            property("forge.enabledGameTestNamespaces", modId)
+        create("server") {
+            server()
+            gameDirectory.set(file("run-server"))
+            programArgument("--nogui")
+            systemProperty("forge.enabledGameTestNamespaces", modId)
+            jvmArgument("-Dmixin.debug.export=$exportMixin")
         }
 
-        register("server") {
-            property("forge.enabledGameTestNamespaces", modId)
-            args("--nogui")
-        }
-
-        register("gameTestServer") {
-            property("forge.enabledGameTestNamespaces", modId)
-        }
-
-        register("data") {
-            workingDirectory(project.file("run-data"))
-
-            args(
-                "--mod", modId,
+        create("data") {
+            data()
+            gameDirectory.set(file("run-data"))
+            programArguments.addAll(
+                "--mod",
+                modId,
                 "--all",
-                "--output", file("src/generated/resources/"),
-                "--existing", file("src/main/resources/")
+                "--output",
+                file("src/generated/resources/").absolutePath,
+                "--existing",
+                file("src/main/resources/").absolutePath
             )
         }
+
+        configureEach {
+            systemProperty("forge.logging.markers", "REGISTRIES")
+
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        create(modId) {
+            sourceSet(sourceSets["main"])
+        }
     }
 }
 
-afterEvaluate {
-    extensions.getByName("mixin").withGroovyBuilder {
-        "config"("${modId}.mixins.json")
-        "add"(sourceSets.getByName("main"), "${modId}.refmap.json")
-    }
-}
+mixin {
+    add(sourceSets["main"], "${modId}.refmap.json")
 
-sourceSets.named("main") {
-    resources.srcDir("src/generated/resources")
+//    config("${modId}.mixins.json")
 }
 
 repositories {
@@ -168,132 +142,170 @@ repositories {
 }
 
 dependencies {
-    minecraft("net.minecraftforge:forge:$minecraftVersion-$forgeVersion")
-    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
+
 
     // Mandatory
-    implementation(fg.deobf("appeng:appliedenergistics2-forge:$ae2Version"))
-    compileOnly(fg.deobf("org.appliedenergistics:guideme:$guidemeVersion:api"))
-    runtimeOnly(fg.deobf("org.appliedenergistics:guideme:$guidemeVersion"))
+    modImplementation(libs.ae2)
+    modRuntimeOnly(libs.guideme)
 
     // Utility
-    runtimeOnly(fg.deobf("mezz.jei:jei-$minecraftVersion-forge:$jeiVersion"))
-    runtimeOnly(fg.deobf("dev.emi:emi-forge:$emiVersion"))
-    runtimeOnly(fg.deobf("curse.maven:jade-324717:$jadeVersion"))
+    modRuntimeOnly(libs.jei)
+    modRuntimeOnly(libs.emi)
+    modRuntimeOnly(libs.jade)
+
+    annotationProcessor(variantOf(libs.mixin, "processor"))
 }
 
-val replaceProperties = mapOf(
-    "minecraft_version" to minecraftVersion,
-    "minecraft_version_range" to minecraftVersionRange,
-    "forge_version" to forgeVersion,
-    "forge_version_range" to forgeVersionRange,
-    "loader_version_range" to loaderVersionRange,
-    "mod_id" to modId,
-    "mod_name" to modName,
-    "mod_license" to modLicense,
-    "mod_version" to modVersion,
-    "mod_authors" to modAuthors,
-    "mod_description" to modDescription
+val modDependencies = listOf(
+    ModDep("forge", extractVersionSegments(forgeVersion)),
+    ModDep("minecraft", mcVersion),
+    ModDep("ae2", extractVersionSegments(libs.versions.ae2), ordering = Order.AFTER),
+    ModDep("guideme", extractVersionSegments(libs.versions.guideme), ordering = Order.AFTER)
 )
 
-val jarTask = tasks.named<Jar>("jar")
+val generateModMetadata by tasks.registering(ProcessResources::class) {
+    val replaceProperties = mapOf(
+        "version" to version,
+        "group" to project.group,
+        "minecraft_version" to mcVersion,
+        "mod_loader" to "javafml",
+        "mod_loader_version_range" to "[47,)",
+        "mod_name" to Constants.Mod.name,
+        "mod_author" to Constants.Mod.author,
+        "mod_id" to modId,
+        "license" to Constants.Mod.license,
+        "description" to Constants.Mod.description,
+        "display_url" to Constants.Mod.repositoryUrl,
+        "issue_tracker_url" to Constants.Mod.issueTrackerUrl,
 
-tasks.named<Copy>("processResources") {
+        "dependencies" to buildDeps(*modDependencies.toTypedArray())
+    )
+
     inputs.properties(replaceProperties)
-
-    filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta")) {
-        expand(replaceProperties + mapOf("project" to project))
-    }
+    filter<ReplaceTokens>("beginToken" to "\${", "endToken" to "}", "tokens" to replaceProperties)
+    from("src/main/templates")
+    into("build/generated/sources/modMetadata")
+    rename("template(\\..+)?.mixins.json", "${modId}$1.mixins.json")
 }
 
-publishing {
-    publications {
-        register<MavenPublication>("mavenJava") {
-            artifact(jarTask.get())
+tasks {
+    withType<JavaCompile> {
+        options.encoding = "UTF-8"
+        options.release = jdkVersion
+    }
+
+    java {
+        withSourcesJar()
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(jdkVersion)
+            vendor = JvmVendorSpec.JETBRAINS
+        }
+        JavaVersion.toVersion(jdkVersion).let {
+            sourceCompatibility = it
+            targetCompatibility = it
         }
     }
-    repositories {
-        maven {
-            url = uri("file://${project.projectDir}/mcmodsrepo")
+
+    processResources {
+        from(rootProject.file("LICENSE")) {
+            rename { "LICENSE_${Constants.Mod.id}" }
         }
+        dependsOn(generateModMetadata)
     }
-}
 
-tasks.register<TaskPublishCurseForge>("publishCurseForge") {
-    apiToken = System.getenv("CURSEFORGE_API_KEY") ?: "XXX"
-
-    val projectId = curseforgeProjectId.toInt()
-    val mainFile = upload(projectId, jarTask.get())
-    mainFile.releaseType = versionType
-    val changelogFile = file("changelog.txt")
-    if (changelogFile.exists()) {
-        mainFile.changelog = changelogFile
-        mainFile.changelogType = "text"
-    }
-    mainFile.displayName = "${rootProject.name} ${project.version}"
-    mainFile.addGameVersion(minecraftVersion)
-    mainFile.addJavaVersion("Java 17")
-    mainFile.addModLoader("forge")
-    mainFile.addRequirement("applied-energistics-2")
-}
-
-modrinth {
-    val modrinthToken = System.getenv("MODRINTH_TOKEN") ?: "XXX"
-    token.set(modrinthToken)
-    projectId.set(modrinthProjectId)
-    versionNumber.set(project.version.toString())
-    versionName.set("${rootProject.name} ${project.version}")
-    versionType.set(versionType)
-    uploadFile.set(jarTask.get())
-    gameVersions.set(listOf(minecraftVersion))
-    loaders.set(listOf("forge"))
-    changelog.set(parserChangelog())
-    dependencies {
-        required.project("ae2")
-    }
-}
-
-githubRelease {
-    token(System.getenv("GITHUB_TOKEN") ?: "")
-    owner("yuuki1293")
-    repo(githubReleaseRepo)
-    tagName("v${project.version}")
-    targetCommitish(githubReleaseBranch)
-    releaseName("${rootProject.name} ${project.version}")
-    body(parserChangelog())
-    draft.set(true)
-    prerelease.set(false)
-    releaseAssets(jarTask.get())
-    allowUploadToExisting.set(false)
-    overwrite.set(false)
-    dryRun.set(false)
-    apiEndpoint("https://api.github.com")
-}
-
-tasks.register("uploadAll") {
-    group = "publishing"
-    description = "Uploads the mod to CurseForge, Modrinth, and GitHub using configured credentials."
-    dependsOn("publishCurseForge", "modrinth", "githubRelease")
-}
-
-jarTask.configure {
-    manifest {
-        attributes(
-            mapOf(
-                "Specification-Title" to modId,
-                "Specification-Vendor" to modAuthors,
-                "Specification-Version" to "1",
+    jar {
+        manifest {
+            attributes(
+                "Specification-Title" to Constants.Mod.name,
+                "Specification-Vendor" to Constants.Mod.author,
+                "Specification-Version" to version,
                 "Implementation-Title" to project.name,
-                "Implementation-Version" to archiveVersion.get(),
-                "Implementation-Vendor" to modAuthors,
-                "Implementation-Timestamp" to SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(Date())
+                "Implementation-Version" to version,
+                "Implementation-Vendor" to Constants.Mod.author,
+                "Implementation-Timestamp" to SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(Date()),
+                "Timestamp" to System.currentTimeMillis(),
+                "Built-On-Java" to "${System.getProperty("java.vm.version")} (${System.getProperty("java.vm.vendor")})",
+                "Built-On-Minecraft" to mcVersion,
+                "MixinConfigs" to "${modId}.mixins.json"
             )
-        )
+        }
     }
 
-    finalizedBy("reobfJar")
+    named<Jar>("sourcesJar") {
+        from(rootProject.file("LICENSE")) {
+            rename { "LICENSE_${Constants.Mod.id}" }
+        }
+    }
+
+    named<Wrapper>("wrapper").configure {
+        distributionType = Wrapper.DistributionType.BIN
+    }
+
+    named { it.startsWith("publish") }.forEach {
+        it.notCompatibleWithConfigurationCache("ModPublisher plugin is not compatible with configuration cache")
+    }
 }
 
-tasks.withType(JavaCompile::class.java).configureEach {
-    options.encoding = "UTF-8"
+sourceSets {
+    main {
+        resources {
+            srcDirs(
+                "src/generated/resources",
+                generateModMetadata.get().outputs.files
+            )
+            exclude("**/.cache")
+        }
+    }
+}
+
+legacyForge.ideSyncTask(generateModMetadata)
+
+idea {
+    module {
+        isDownloadJavadoc = true
+        isDownloadSources = true
+
+        resourceDirs.add(file("src/main/templates"))
+    }
+}
+
+fun ModPublisherGradleExtension.Dependencies.fromModDependencies(modDependencies: List<ModDep>) {
+    modDependencies.filter {
+        it.id != "minecraft" && it.id != "forge"
+    }.forEach {
+        if (it.mandatory) {
+            required(it.id)
+        } else {
+            optional(it.id)
+        }
+    }
+}
+
+publisher {
+    apiKeys {
+        curseforge(System.getenv("CURSE_TOKEN"))
+        modrinth(System.getenv("MODRINTH_TOKEN"))
+    }
+
+    setReleaseType(ReleaseType.RELEASE)
+    setLoaders(ModLoader.FORGE, ModLoader.NEOFORGE)
+    setCurseEnvironment(CurseEnvironment.BOTH)
+
+    debug.set(System.getenv("PUBLISHER_DEBUG") == "true")
+    curseID.set(Constants.Publisher.curseforgeProjectId)
+    modrinthID.set(Constants.Publisher.modrinthProjectId)
+    changelog.set(parserChangelog())
+    projectVersion.set("${project.version}")
+    displayName.set("[$mcVersion] v${project.version}")
+    setGameVersions(mcVersion)
+    setJavaVersions(jdkVersion)
+    artifact.set(tasks.named("reobfJar"))
+
+    curseDepends {
+        required("applied-energistics-2")
+    }
+
+    modrinthDepends {
+        required("applied-energistics-2")
+    }
 }

@@ -1,30 +1,37 @@
 package yuuki1293.ae2peat.gui;
 
+import appeng.api.behaviors.ContainerItemStrategies;
+import appeng.api.behaviors.EmptyingAction;
+import appeng.api.config.ActionItems;
 import appeng.api.config.Settings;
 import appeng.api.config.ShowPatternProviders;
 import appeng.api.config.TerminalStyle;
 import appeng.api.crafting.PatternDetailsHelper;
 import appeng.api.implementations.blockentities.PatternContainerGroup;
 import appeng.api.stacks.AEItemKey;
-import appeng.client.gui.AEBaseScreen;
+import appeng.api.stacks.GenericStack;
+import appeng.client.gui.me.common.MEStorageScreen;
+import appeng.client.gui.me.common.StackSizeRenderer;
 import appeng.client.gui.me.patternaccess.PatternContainerRecord;
 import appeng.client.gui.me.patternaccess.PatternSlot;
 import appeng.client.gui.style.PaletteColor;
 import appeng.client.gui.style.ScreenStyle;
-import appeng.client.gui.widgets.AETextField;
-import appeng.client.gui.widgets.Scrollbar;
-import appeng.client.gui.widgets.ServerSettingToggleButton;
-import appeng.client.gui.widgets.SettingToggleButton;
+import appeng.client.gui.widgets.*;
 import appeng.client.guidebook.document.LytRect;
 import appeng.client.guidebook.render.SimpleRenderContext;
 import appeng.core.AEConfig;
 import appeng.core.AppEng;
+import appeng.core.localization.ButtonToolTips;
 import appeng.core.localization.GuiText;
+import appeng.core.localization.Tooltips;
 import appeng.core.sync.network.NetworkHandler;
 import appeng.core.sync.packets.InventoryActionPacket;
 import appeng.helpers.InventoryAction;
+import appeng.menu.SlotSemantics;
+import appeng.parts.encoding.EncodingMode;
 import com.google.common.collect.HashMultimap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
@@ -45,7 +52,7 @@ import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
 import java.util.*;
 
-public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTermMenu> extends AEBaseScreen<C> {
+public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTermMenu> extends MEStorageScreen<C> {
     private static final Logger LOGGER = LoggerFactory.getLogger(PatternEncodingAccessTermScreen.class);
 
     private static final int GUI_WIDTH = 195;
@@ -113,6 +120,9 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
 
     private final ServerSettingToggleButton<ShowPatternProviders> showPatternProviders;
 
+    private final Map<EncodingMode, EncodingModePanel> modePanels = new EnumMap<>(EncodingMode.class);
+    private final Map<EncodingMode, TabButton> modeTabButtons = new EnumMap<>(EncodingMode.class);
+
     public PatternEncodingAccessTermScreen(C menu, Inventory playerInventory,
                                    Component title, ScreenStyle style) {
         super(menu, playerInventory, title, style);
@@ -132,6 +142,29 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         this.searchField = widgets.addTextField("search");
         this.searchField.setResponder(str -> this.refreshList());
         this.searchField.setPlaceholder(GuiText.SearchPlaceholder.text());
+
+        for (var mode : EncodingMode.values()) {
+            var panel = switch (mode) {
+                case CRAFTING -> new CraftingEncodingPanel(this, widgets);
+                case PROCESSING -> new ProcessingEncodingPanel(this, widgets);
+                case SMITHING_TABLE -> new SmithingTableEncodingPanel(this, widgets);
+                case STONECUTTING -> new StonecuttingEncodingPanel(this, widgets);
+            };
+            var tabButton = new TabButton(
+                panel.getTabIconItem(),
+                panel.getTabTooltip(),
+                btn -> getMenu().setMode(mode));
+            tabButton.setStyle(TabButton.Style.HORIZONTAL);
+
+            var modeIndex = modeTabButtons.size();
+            widgets.add("modePanel" + modeIndex, panel);
+            widgets.add("modeTabButton" + modeIndex, tabButton);
+            modeTabButtons.put(mode, tabButton);
+            modePanels.put(mode, panel);
+        }
+
+        var encodeBtn = new ActionButton(ActionItems.ENCODE, act -> menu.encode());
+        widgets.add("encodePattern", encodeBtn);
     }
 
     @Override
@@ -156,7 +189,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
 
         this.menu.slots.removeIf(slot -> slot instanceof PatternSlot);
 
-        int textColor = style.getColor(PaletteColor.DEFAULT_TEXT_COLOR).toARGB();
+        int textColor = getStyle().getColor(PaletteColor.DEFAULT_TEXT_COLOR).toARGB();
         var level = Minecraft.getInstance().level;
 
         final int scrollLevel = scrollbar.getCurrentScroll();
@@ -221,6 +254,15 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     
     @Override
     protected void renderTooltip(@NotNull GuiGraphics guiGraphics, int x, int y) {
+        if (this.menu.getCarried().isEmpty() && menu.canModifyAmountForSlot(this.hoveredSlot)) {
+            var itemTooltip = new ArrayList<>(getTooltipFromContainerItem(this.hoveredSlot.getItem()));
+            var unwrapped = GenericStack.fromItemStack(this.hoveredSlot.getItem());
+            if (unwrapped != null) {
+                itemTooltip.add(Tooltips.getAmountTooltip(ButtonToolTips.Amount, unwrapped));
+            }
+            itemTooltip.add(Tooltips.getSetAmountTooltip());
+            drawTooltip(guiGraphics, x, y, itemTooltip);
+        } else
         // Draw line tooltip
         if (hoveredSlot == null) {
             var hoveredLineIndex = getHoveredLineIndex(x, y);
@@ -257,6 +299,24 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         if (btn == 1 && this.searchField.isMouseOver(xCoord, yCoord)) {
             this.searchField.setValue("");
             // Don't return immediately to also grab focus.
+        }
+
+        // handler for middle mouse button crafting in survival mode
+        if (this.minecraft.options.keyPickItem.matchesMouse(btn)) {
+            var slot = this.findSlot(xCoord, yCoord);
+            if (menu.canModifyAmountForSlot(slot)) {
+                var currentStack = GenericStack.fromItemStack(slot.getItem());
+                if (currentStack != null) {
+                    var screen = new SetProcessingPatternAmountScreen<>(
+                        this,
+                        currentStack,
+                        newStack -> NetworkHandler.instance().sendToServer(new InventoryActionPacket(
+                            InventoryAction.SET_FILTER, slot.index,
+                            GenericStack.wrapInItemStack(newStack))));
+                    switchToScreen(screen);
+                    return true;
+                }
+            }
         }
 
         return super.mouseClicked(xCoord, yCoord, btn);
@@ -400,12 +460,78 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         }
     }
 
-    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public void updateBeforeRender() {
+        super.updateBeforeRender();
+
         this.showPatternProviders.set(this.menu.getShownProviders());
+
+        for (var mode : EncodingMode.values()) {
+            var selected = menu.getMode() == mode;
+            modeTabButtons.get(mode).setSelected(selected);
+            modePanels.get(mode).setVisible(selected);
+        }
     }
 
+    @Override
+    protected EmptyingAction getEmptyingAction(Slot slot, ItemStack carried) {
+        // Since the crafting matrix and output slot are not backed by a config inventory, the default behavior
+        // does not work out of the box.
+        if (menu.isProcessingPatternSlot(slot)) {
+            // See if we should offer the left-/right-click differentiation for setting a different filter
+            var emptyingAction = ContainerItemStrategies.getEmptyingAction(carried);
+            if (emptyingAction != null) {
+                return emptyingAction;
+            }
+        }
+
+        return super.getEmptyingAction(slot, carried);
+    }
+
+    @Override
+    public void renderSlot(GuiGraphics guiGraphics, Slot s) {
+        super.renderSlot(guiGraphics, s);
+
+        if (shouldShowCraftableIndicatorForSlot(s)) {
+            var poseStack = guiGraphics.pose();
+            poseStack.pushPose();
+            poseStack.translate(0, 0, 100); // Items are rendered with offset of 100, offset text too.
+            StackSizeRenderer.renderSizeLabel(guiGraphics, this.font, s.x - 11, s.y - 11, "+", false);
+            poseStack.popPose();
+        }
+    }
+
+    @Override
+    protected List<Component> getTooltipFromContainerItem(ItemStack stack) {
+        var lines = super.getTooltipFromContainerItem(stack);
+
+        // Append an indication to the tooltip that the item is craftable
+        if (hoveredSlot != null && shouldShowCraftableIndicatorForSlot(hoveredSlot)) {
+            lines = new ArrayList<>(lines); // Ensures we're not modifying a cached copy
+            lines.add(ButtonToolTips.Craftable.text().withStyle(ChatFormatting.DARK_GRAY));
+        }
+
+        return lines;
+    }
+
+    private boolean shouldShowCraftableIndicatorForSlot(Slot s) {
+        // Mark inputs for patterns for which the grid already has a pattern
+        var semantic = menu.getSlotSemantic(s);
+        if (semantic == SlotSemantics.CRAFTING_GRID
+            || semantic == SlotSemantics.PROCESSING_INPUTS
+            || semantic == SlotSemantics.SMITHING_TABLE_ADDITION
+            || semantic == SlotSemantics.SMITHING_TABLE_BASE
+            || semantic == SlotSemantics.SMITHING_TABLE_TEMPLATE
+            || semantic == SlotSemantics.STONECUTTING_INPUT) {
+            var slotContent = GenericStack.fromItemStack(s.getItem());
+            if (slotContent == null) {
+                return false;
+            }
+
+            return repo.isCraftable(slotContent.what());
+        }
+        return false;
+    }
 
     /**
      * Rebuilds the list of pattern providers.
@@ -568,6 +694,14 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         var texture = AppEng.makeId("textures/guis/pattern_encoding_access_terminal.png");
         guiGraphics.blit(texture, offsetX, offsetY, srcRect.getX(), srcRect.getY(), srcRect.getWidth(),
             srcRect.getHeight());
+    }
+
+    @Override
+    public void onClose() {
+        if (AEConfig.instance().isClearGridOnClose()) {
+            this.getMenu().clear();
+        }
+        super.onClose();
     }
 
     sealed interface Row {

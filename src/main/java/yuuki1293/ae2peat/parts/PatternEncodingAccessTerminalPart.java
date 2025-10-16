@@ -6,21 +6,30 @@ import appeng.api.parts.IPartItem;
 import appeng.api.parts.IPartModel;
 import appeng.api.util.IConfigManager;
 import appeng.api.util.IConfigurableObject;
+import appeng.helpers.IPatternTerminalLogicHost;
+import appeng.helpers.IPatternTerminalMenuHost;
 import appeng.items.parts.PartModels;
 import appeng.menu.MenuOpener;
 import appeng.menu.locator.MenuLocators;
 import appeng.parts.PartModel;
-import appeng.parts.reporting.AbstractDisplayPart;
+import appeng.parts.encoding.PatternEncodingLogic;
+import appeng.parts.reporting.AbstractTerminalPart;
 import appeng.util.ConfigManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
-public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart implements IConfigurableObject {
+import java.util.List;
+
+public class PatternEncodingAccessTerminalPart extends AbstractTerminalPart implements IConfigurableObject, IPatternTerminalLogicHost, IPatternTerminalMenuHost {
     @PartModels
     public static final ResourceLocation MODEL_OFF = ResourceLocation.fromNamespaceAndPath(AE2PEAT.MODID,
         "part/pattern_encoding_access_terminal_off");
@@ -34,8 +43,10 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart imple
 
     private final ConfigManager configManager = new ConfigManager(() -> this.getHost().markForSave());
 
+    private final PatternEncodingLogic logic = new PatternEncodingLogic(this);
+
     public PatternEncodingAccessTerminalPart(IPartItem<?> partItem){
-        super(partItem, true);
+        super(partItem);
         this.configManager.registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
     }
 
@@ -60,10 +71,48 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart imple
     public void writeToNBT(CompoundTag tag){
         super.writeToNBT(tag);
         configManager.writeToNBT(tag);
+        logic.writeToNBT(tag);
     }
 
     public void readFromNBT(CompoundTag tag){
         super.readFromNBT(tag);
         configManager.readFromNBT(tag);
+        logic.readFromNBT(tag);
+    }
+
+    @Override
+    public void addAdditionalDrops(List<ItemStack> drops, boolean wrenched) {
+        super.addAdditionalDrops(drops, wrenched);
+        for (var is : this.logic.getBlankPatternInv()) {
+            drops.add(is);
+        }
+        for (var is : this.logic.getEncodedPatternInv()) {
+            drops.add(is);
+        }
+    }
+
+    @Override
+    public void clearContent() {
+        super.clearContent();
+        this.logic.getBlankPatternInv().clear();
+        this.logic.getEncodedPatternInv().clear();
+    }
+
+    @Override
+    public PatternEncodingLogic getLogic() {
+        return logic;
+    }
+
+    @Override
+    public void markForSave() {
+        getHost().markForSave();
+    }
+
+    @Override
+    public <T> LazyOptional<T> getCapability(Capability<T> cap) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
+            return LazyOptional.of(() -> logic.getBlankPatternInv().toItemHandler()).cast();
+        }
+        return super.getCapability(cap);
     }
 }
