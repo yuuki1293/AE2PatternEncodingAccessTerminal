@@ -143,7 +143,7 @@ public class PatternEncodingAccessTermMenu extends MEStorageMenu implements IMen
         MenuType<?> menuType, int id, Inventory ip, T host, boolean bindInventory) {
         super(menuType, id, ip, host, bindInventory);
 
-        ((AccessorMEStorageMenu)this).getClientCM().registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
+        ((AccessorMEStorageMenu) this).getClientCM().registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
 
         this.encodingLogic = host.getLogic();
         this.encodedInputsInv = encodingLogic.getEncodedInputInv();
@@ -320,84 +320,84 @@ public class PatternEncodingAccessTermMenu extends MEStorageMenu implements IMen
     @Override
     public void doAction(ServerPlayer player, InventoryAction action, int slot, long id) {
         final PatternEncodingAccessTermMenu.ContainerTracker inv = this.byId.get(id);
-        if (inv == null) {
-            // Can occur if the client sent an interaction packet right before an inventory got removed
-            return;
-        }
-        if (slot < 0 || slot >= inv.server.size()) {
-            // Client refers to an invalid slot. This should NOT happen
-            AELog.warn("Client refers to invalid slot %d of inventory %s", slot, inv.container);
-            return;
-        }
+        if (inv != null) {
+            if (slot < 0 || slot >= inv.server.size()) {
+                // Client refers to an invalid slot. This should NOT happen
+                AELog.warn("Client refers to invalid slot %d of inventory %s", slot, inv.container);
+                return;
+            }
 
-        final ItemStack is = inv.server.getStackInSlot(slot);
+            final ItemStack is = inv.server.getStackInSlot(slot);
 
-        var patternSlot = new FilteredInternalInventory(inv.server.getSlotInv(slot), new PatternEncodingAccessTermMenu.PatternSlotFilter());
+            var patternSlot = new FilteredInternalInventory(inv.server.getSlotInv(slot), new PatternEncodingAccessTermMenu.PatternSlotFilter());
 
-        var carried = getCarried();
-        switch (action) {
-            case PICKUP_OR_SET_DOWN -> {
-                if (!carried.isEmpty()) {
-                    ItemStack inSlot = patternSlot.getStackInSlot(0);
-                    if (inSlot.isEmpty()) {
-                        setCarried(patternSlot.addItems(carried));
-                    } else {
-                        inSlot = inSlot.copy();
-                        final ItemStack inHand = carried.copy();
-
-                        patternSlot.setItemDirect(0, ItemStack.EMPTY);
-                        setCarried(ItemStack.EMPTY);
-
-                        setCarried(patternSlot.addItems(inHand.copy()));
-
-                        if (getCarried().isEmpty()) {
-                            setCarried(inSlot);
+            var carried = getCarried();
+            switch (action) {
+                case PICKUP_OR_SET_DOWN -> {
+                    if (!carried.isEmpty()) {
+                        ItemStack inSlot = patternSlot.getStackInSlot(0);
+                        if (inSlot.isEmpty()) {
+                            setCarried(patternSlot.addItems(carried));
                         } else {
-                            setCarried(inHand);
-                            patternSlot.setItemDirect(0, inSlot);
+                            inSlot = inSlot.copy();
+                            final ItemStack inHand = carried.copy();
+
+                            patternSlot.setItemDirect(0, ItemStack.EMPTY);
+                            setCarried(ItemStack.EMPTY);
+
+                            setCarried(patternSlot.addItems(inHand.copy()));
+
+                            if (getCarried().isEmpty()) {
+                                setCarried(inSlot);
+                            } else {
+                                setCarried(inHand);
+                                patternSlot.setItemDirect(0, inSlot);
+                            }
                         }
+                    } else {
+                        setCarried(patternSlot.getStackInSlot(0));
+                        patternSlot.setItemDirect(0, ItemStack.EMPTY);
                     }
-                } else {
-                    setCarried(patternSlot.getStackInSlot(0));
-                    patternSlot.setItemDirect(0, ItemStack.EMPTY);
                 }
-            }
-            case SPLIT_OR_PLACE_SINGLE -> {
-                if (!carried.isEmpty()) {
-                    ItemStack extra = carried.split(1);
-                    if (!extra.isEmpty()) {
-                        extra = patternSlot.addItems(extra);
+                case SPLIT_OR_PLACE_SINGLE -> {
+                    if (!carried.isEmpty()) {
+                        ItemStack extra = carried.split(1);
+                        if (!extra.isEmpty()) {
+                            extra = patternSlot.addItems(extra);
+                        }
+                        if (!extra.isEmpty()) {
+                            carried.grow(extra.getCount());
+                        }
+                    } else if (!is.isEmpty()) {
+                        setCarried(patternSlot.extractItem(0, (is.getCount() + 1) / 2, false));
                     }
-                    if (!extra.isEmpty()) {
-                        carried.grow(extra.getCount());
-                    }
-                } else if (!is.isEmpty()) {
-                    setCarried(patternSlot.extractItem(0, (is.getCount() + 1) / 2, false));
                 }
-            }
-            case SHIFT_CLICK -> {
-                var stack = patternSlot.getStackInSlot(0).copy();
-                if (!player.getInventory().add(stack)) {
-                    patternSlot.setItemDirect(0, stack);
-                } else {
-                    patternSlot.setItemDirect(0, ItemStack.EMPTY);
-                }
-            }
-            case MOVE_REGION -> {
-                for (int x = 0; x < inv.server.size(); x++) {
-                    var stack = inv.server.getStackInSlot(x);
+                case SHIFT_CLICK -> {
+                    var stack = patternSlot.getStackInSlot(0).copy();
                     if (!player.getInventory().add(stack)) {
                         patternSlot.setItemDirect(0, stack);
                     } else {
                         patternSlot.setItemDirect(0, ItemStack.EMPTY);
                     }
                 }
-            }
-            case CREATIVE_DUPLICATE -> {
-                if (player.getAbilities().instabuild && carried.isEmpty()) {
-                    setCarried(is.isEmpty() ? ItemStack.EMPTY : is.copy());
+                case MOVE_REGION -> {
+                    for (int x = 0; x < inv.server.size(); x++) {
+                        var stack = inv.server.getStackInSlot(x);
+                        if (!player.getInventory().add(stack)) {
+                            patternSlot.setItemDirect(0, stack);
+                        } else {
+                            patternSlot.setItemDirect(0, ItemStack.EMPTY);
+                        }
+                    }
+                }
+                case CREATIVE_DUPLICATE -> {
+                    if (player.getAbilities().instabuild && carried.isEmpty()) {
+                        setCarried(is.isEmpty() ? ItemStack.EMPTY : is.copy());
+                    }
                 }
             }
+        } else {
+            super.doAction(player, action, slot, id);
         }
     }
 
