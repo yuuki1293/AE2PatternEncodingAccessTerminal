@@ -4,18 +4,25 @@ import appeng.api.config.Settings;
 import appeng.api.config.ShowPatternProviders;
 import appeng.api.parts.IPartItem;
 import appeng.api.parts.IPartModel;
+import appeng.api.storage.MEStorage;
+import appeng.api.util.IConfigManager;
 import appeng.api.util.IConfigurableObject;
 import appeng.helpers.IPatternTerminalLogicHost;
 import appeng.helpers.IPatternTerminalMenuHost;
 import appeng.items.parts.PartModels;
+import appeng.menu.ISubMenu;
+import appeng.menu.MenuOpener;
+import appeng.menu.locator.MenuLocators;
 import appeng.parts.PartModel;
 import appeng.parts.encoding.PatternEncodingLogic;
-import appeng.parts.reporting.AbstractTerminalPart;
+import appeng.parts.reporting.AbstractDisplayPart;
+import appeng.util.ConfigManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -24,7 +31,9 @@ import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
 import java.util.List;
 
-public class PatternEncodingAccessTerminalPart extends AbstractTerminalPart implements IConfigurableObject, IPatternTerminalLogicHost, IPatternTerminalMenuHost {
+public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart implements IConfigurableObject, IPatternTerminalLogicHost, IPatternTerminalMenuHost {
+    private final IConfigManager cm = new ConfigManager(this::saveChanges);
+
     @PartModels
     public static final ResourceLocation MODEL_OFF = ResourceLocation.fromNamespaceAndPath(AE2PEAT.MODID,
         "part/pattern_encoding_access_terminal_off");
@@ -39,13 +48,22 @@ public class PatternEncodingAccessTerminalPart extends AbstractTerminalPart impl
     private final PatternEncodingLogic logic = new PatternEncodingLogic(this);
 
     public PatternEncodingAccessTerminalPart(IPartItem<?> partItem){
-        super(partItem);
-        getConfigManager().registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
+        super(partItem, true);
+        this.cm.registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
     }
 
     @Override
     public IPartModel getStaticModels(){
         return this.selectModel(MODELS_OFF, MODELS_ON, MODELS_HAS_CHANNEL);
+    }
+
+    @Override
+    public IConfigManager getConfigManager() {
+        return this.cm;
+    }
+
+    public void saveChanges() {
+        this.getHost().markForSave();
     }
 
     public void writeToNBT(CompoundTag tag){
@@ -59,11 +77,6 @@ public class PatternEncodingAccessTerminalPart extends AbstractTerminalPart impl
     }
 
     @Override
-    public MenuType<?> getMenuType(Player player) {
-        return PatternEncodingAccessTermMenu.TYPE;
-    }
-
-    @Override
     public void addAdditionalDrops(List<ItemStack> drops, boolean wrenched) {
         super.addAdditionalDrops(drops, wrenched);
         for (var is : this.logic.getBlankPatternInv()) {
@@ -72,6 +85,14 @@ public class PatternEncodingAccessTerminalPart extends AbstractTerminalPart impl
         for (var is : this.logic.getEncodedPatternInv()) {
             drops.add(is);
         }
+    }
+
+    @Override
+    public boolean onPartActivate(Player player, InteractionHand hand, Vec3 pos) {
+        if (!super.onPartActivate(player, hand, pos) && !isClientSide()) {
+            MenuOpener.open(PatternEncodingAccessTermMenu.TYPE, player, MenuLocators.forPart(this));
+        }
+        return true;
     }
 
     @Override
@@ -97,5 +118,24 @@ public class PatternEncodingAccessTerminalPart extends AbstractTerminalPart impl
             return LazyOptional.of(() -> logic.getBlankPatternInv().toItemHandler()).cast();
         }
         return super.getCapability(cap);
+    }
+
+    @Override
+    public void returnToMainMenu(Player player, ISubMenu subMenu) {
+        MenuOpener.open(PatternEncodingAccessTermMenu.TYPE, player, subMenu.getLocator(), true);
+    }
+
+    @Override
+    public ItemStack getMainMenuIcon() {
+        return new ItemStack(getPartItem());
+    }
+
+    @Override
+    public MEStorage getInventory() {
+        var grid = getMainNode().getGrid();
+        if (grid != null) {
+            return grid.getStorageService().getInventory();
+        }
+        return null;
     }
 }

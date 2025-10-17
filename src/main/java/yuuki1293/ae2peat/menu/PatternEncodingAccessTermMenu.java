@@ -202,11 +202,6 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
         this.host = host;
         this.clientCM = new ConfigManager(this);
-
-        this.clientCM.registerSetting(Settings.SORT_BY, SortOrder.NAME);
-        this.clientCM.registerSetting(Settings.VIEW_MODE, ViewItems.ALL);
-        this.clientCM.registerSetting(Settings.TYPE_FILTER, TypeFilter.ALL);
-        this.clientCM.registerSetting(Settings.SORT_DIRECTION, SortDir.ASCENDING);
         this.clientCM.registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
 
         IEnergySource powerSource = null;
