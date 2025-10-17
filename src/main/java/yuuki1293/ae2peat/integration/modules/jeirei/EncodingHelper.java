@@ -7,7 +7,6 @@ import appeng.core.sync.network.NetworkHandler;
 import appeng.core.sync.packets.InventoryActionPacket;
 import appeng.helpers.InventoryAction;
 import appeng.menu.me.common.GridInventoryEntry;
-import appeng.menu.me.common.MEStorageMenu;
 import appeng.menu.slot.FakeSlot;
 import appeng.parts.encoding.EncodingMode;
 import appeng.util.CraftingRecipeUtil;
@@ -209,7 +208,7 @@ public final class EncodingHelper {
      * <p/>
      * Higher means higher priority.
      */
-    public static Map<AEKey, Integer> getIngredientPriorities(MEStorageMenu menu,
+    public static Map<AEKey, Integer> getIngredientPriorities(PatternEncodingAccessTermMenu menu,
                                                               Comparator<GridInventoryEntry> comparator) {
         var orderedEntries = menu.getClientRepo().getAllEntries()
             .stream()

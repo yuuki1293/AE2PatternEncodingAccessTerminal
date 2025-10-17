@@ -1,40 +1,58 @@
 package yuuki1293.ae2peat.menu;
 
-import appeng.api.config.Settings;
-import appeng.api.config.ShowPatternProviders;
+import appeng.api.config.*;
 import appeng.api.crafting.PatternDetailsHelper;
+import appeng.api.implementations.blockentities.IMEChest;
 import appeng.api.implementations.blockentities.PatternContainerGroup;
+import appeng.api.implementations.menuobjects.IPortableTerminal;
+import appeng.api.implementations.menuobjects.ItemMenuHost;
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
+import appeng.api.networking.energy.IEnergyService;
+import appeng.api.networking.energy.IEnergySource;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.stacks.AEItemKey;
+import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
+import appeng.api.stacks.KeyCounter;
+import appeng.api.storage.ITerminalHost;
+import appeng.api.storage.MEStorage;
+import appeng.api.storage.cells.IBasicCellItem;
+import appeng.api.util.IConfigManager;
 import appeng.api.util.IConfigurableObject;
 import appeng.client.gui.Icon;
 import appeng.core.AELog;
 import appeng.core.definitions.AEItems;
-import appeng.core.sync.packets.ClearPatternAccessTerminalPacket;
-import appeng.core.sync.packets.PatternAccessTerminalPacket;
+import appeng.core.sync.network.NetworkHandler;
+import appeng.core.sync.packets.*;
 import appeng.crafting.pattern.AECraftingPattern;
 import appeng.crafting.pattern.AEProcessingPattern;
 import appeng.helpers.IMenuCraftingPacket;
 import appeng.helpers.IPatternTerminalMenuHost;
 import appeng.helpers.InventoryAction;
 import appeng.helpers.patternprovider.PatternContainer;
+import appeng.me.helpers.ChannelPowerSrc;
+import appeng.menu.AEBaseMenu;
 import appeng.menu.SlotSemantics;
 import appeng.menu.guisync.GuiSync;
 import appeng.menu.implementations.MenuTypeBuilder;
-import appeng.menu.me.common.MEStorageMenu;
+import appeng.menu.me.common.IClientRepo;
+import appeng.menu.me.common.IMEInteractionHandler;
+import appeng.menu.me.common.IncrementalUpdateHelper;
 import appeng.menu.slot.FakeSlot;
 import appeng.menu.slot.PatternTermSlot;
 import appeng.menu.slot.RestrictedInputSlot;
 import appeng.parts.encoding.EncodingMode;
 import appeng.parts.encoding.PatternEncodingLogic;
 import appeng.util.ConfigInventory;
+import appeng.util.ConfigManager;
+import appeng.util.IConfigManagerListener;
 import appeng.util.inv.AppEngInternalInventory;
 import appeng.util.inv.FilteredInternalInventory;
 import appeng.util.inv.filter.IAEItemFilter;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.ints.*;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -51,16 +69,55 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.StonecutterRecipe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
-import yuuki1293.ae2peat.mixin.AccessorMEStorageMenu;
 import yuuki1293.ae2peat.parts.PatternEncodingAccessTerminalPart;
 
 import java.util.*;
 
-public class PatternEncodingAccessTermMenu extends MEStorageMenu implements IMenuCraftingPacket {
+public class PatternEncodingAccessTermMenu extends AEBaseMenu
+    implements IMenuCraftingPacket, IConfigManagerListener, IConfigurableObject, IMEInteractionHandler {
+
     public static final MenuType<PatternEncodingAccessTermMenu> TYPE = MenuTypeBuilder
         .create(PatternEncodingAccessTermMenu::new, PatternEncodingAccessTerminalPart.class)
         .build("pattern_encoding_access_terminal");
 
+    // region me storage menu
+    private final IConfigManager clientCM;
+    private final ITerminalHost host;
+    @GuiSync(98)
+    public boolean hasPower = false;
+
+    private IConfigManagerListener gui;
+    private IConfigManager serverCM;
+
+    // This is null on the client-side and can be null on the server too
+    @Nullable
+    protected final MEStorage storage;
+
+    @Nullable
+    protected final IEnergySource powerSource;
+
+    private final IncrementalUpdateHelper updateHelper = new IncrementalUpdateHelper();
+
+    /**
+     * A grid connection is optional for a screen showing the content of a {@link MEStorage}, because inventories like
+     * portable cells are not grid connected.
+     */
+    @Nullable
+    private IGridNode networkNode;
+
+    /**
+     * The repository of entries currently known on the client-side. This is maintained by the screen associated with
+     * this menu and will only be non-null on the client-side.
+     */
+    @Nullable
+    private IClientRepo clientRepo;
+
+    /**
+     * The last set of craftables sent to the client.
+     */
+    private Set<AEKey> previousCraftables = Collections.emptySet();
+    private KeyCounter previousAvailableStacks = new KeyCounter();
+    // endregion
     // region access term
     @GuiSync(1)
     public ShowPatternProviders showPatternProviders = ShowPatternProviders.VISIBLE;
@@ -141,9 +198,47 @@ public class PatternEncodingAccessTermMenu extends MEStorageMenu implements IMen
 
     public <T extends IConfigurableObject & IPatternTerminalMenuHost> PatternEncodingAccessTermMenu(
         MenuType<?> menuType, int id, Inventory ip, T host, boolean bindInventory) {
-        super(menuType, id, ip, host, bindInventory);
+        super(menuType, id, ip, host);
 
-        ((AccessorMEStorageMenu) this).getClientCM().registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
+        this.host = host;
+        this.clientCM = new ConfigManager(this);
+
+        this.clientCM.registerSetting(Settings.SORT_BY, SortOrder.NAME);
+        this.clientCM.registerSetting(Settings.VIEW_MODE, ViewItems.ALL);
+        this.clientCM.registerSetting(Settings.TYPE_FILTER, TypeFilter.ALL);
+        this.clientCM.registerSetting(Settings.SORT_DIRECTION, SortDir.ASCENDING);
+        this.clientCM.registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
+
+        IEnergySource powerSource = null;
+        if (isServerSide()) {
+            this.serverCM = host.getConfigManager();
+
+            this.storage = host.getInventory();
+            if (this.storage != null) {
+
+                if (host instanceof IPortableTerminal || host instanceof IMEChest) {
+                    powerSource = (IEnergySource) host;
+                } else if (host instanceof IActionHost actionHost) {
+                    var node = actionHost.getActionableNode();
+                    if (node != null) {
+                        this.networkNode = node;
+                        var g = node.getGrid();
+                        powerSource = new ChannelPowerSrc(this.networkNode, g.getEnergyService());
+                    }
+                }
+            } else {
+                this.setValidMenu(false);
+            }
+        } else {
+            this.storage = null;
+        }
+        this.powerSource = powerSource;
+
+        setupUpgrades(host.getUpgrades());
+
+        if (bindInventory) {
+            this.createPlayerInventorySlots(ip);
+        }
 
         this.encodingLogic = host.getLogic();
         this.encodedInputsInv = encodingLogic.getEncodedInputInv();
@@ -213,6 +308,22 @@ public class PatternEncodingAccessTermMenu extends MEStorageMenu implements IMen
         updateStonecuttingRecipes();
     }
 
+    @Nullable
+    public IGridNode getNetworkNode() {
+        return this.networkNode;
+    }
+
+    public boolean isKeyVisible(AEKey key) {
+        // If the host is a basic item cell with a limited key space, account for this
+        if (host instanceof ItemMenuHost itemMenuHost) {
+            if (itemMenuHost.getItemStack().getItem() instanceof IBasicCellItem basicCellItem) {
+                return basicCellItem.getKeyType().contains(key);
+            }
+        }
+
+        return true;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void broadcastChanges() {
@@ -220,9 +331,59 @@ public class PatternEncodingAccessTermMenu extends MEStorageMenu implements IMen
             return;
         }
 
-        showPatternProviders = getHost().getConfigManager().getSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS);
+        // Close the screen if the backing network inventory has changed
+        if (this.storage != this.host.getInventory()) {
+            this.setValidMenu(false);
+            return;
+        }
 
-        super.broadcastChanges();
+        for (var set : this.serverCM.getSettings()) {
+            var sideLocal = this.serverCM.getSetting(set);
+            var sideRemote = this.clientCM.getSetting(set);
+
+            if (sideLocal != sideRemote) {
+                set.copy(serverCM, clientCM);
+                sendPacketToClient(new ConfigValuePacket(set, serverCM));
+            }
+        }
+
+        var craftables = getCraftablesFromGrid();
+        var availableStacks = storage == null ? new KeyCounter() : storage.getAvailableStacks();
+
+        // This is currently not supported/backed by any network service
+        var requestables = new KeyCounter();
+
+        try {
+            // Craftables
+            // Newly craftable
+            Sets.difference(previousCraftables, craftables).forEach(updateHelper::addChange);
+            // No longer craftable
+            Sets.difference(craftables, previousCraftables).forEach(updateHelper::addChange);
+
+            // Available changes
+            previousAvailableStacks.removeAll(availableStacks);
+            previousAvailableStacks.removeZeros();
+            previousAvailableStacks.keySet().forEach(updateHelper::addChange);
+
+            if (updateHelper.hasChanges()) {
+                var builder = MEInventoryUpdatePacket
+                    .builder(containerId, updateHelper.isFullUpdate());
+                builder.setFilter(this::isKeyVisible);
+                builder.addChanges(updateHelper, availableStacks, craftables, requestables);
+                builder.buildAndSend(this::sendPacketToClient);
+                updateHelper.commitChanges();
+            }
+
+        } catch (Exception e) {
+            AELog.warn(e, "Failed to send incremental inventory update to client");
+        }
+
+        previousCraftables = ImmutableSet.copyOf(craftables);
+        previousAvailableStacks = availableStacks;
+
+        this.updatePowerStatus();
+
+        showPatternProviders = getHost().getConfigManager().getSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS);
 
         if (showPatternProviders != ShowPatternProviders.NOT_FULL) {
             this.pinnedHosts.clear();
@@ -257,6 +418,76 @@ public class PatternEncodingAccessTermMenu extends MEStorageMenu implements IMen
         this.substitute = encodingLogic.isSubstitution();
         this.substituteFluids = encodingLogic.isFluidSubstitution();
         this.stonecuttingRecipeId = encodingLogic.getStonecuttingRecipeId();
+
+        super.broadcastChanges();
+    }
+
+    protected boolean showsCraftables() {
+        return true;
+    }
+
+    private Set<AEKey> getCraftablesFromGrid() {
+        IGridNode hostNode = networkNode;
+        // Wireless terminals do not directly expose the target grid (even though they have one)
+        if (hostNode == null && host instanceof IActionHost actionHost) {
+            hostNode = actionHost.getActionableNode();
+        }
+        if (!showsCraftables()) {
+            return Collections.emptySet();
+        }
+
+        if (hostNode != null && hostNode.isActive()) {
+            return hostNode.getGrid().getCraftingService().getCraftables(this::isKeyVisible);
+        }
+        return Collections.emptySet();
+    }
+
+    protected void updatePowerStatus() {
+        if (this.networkNode != null) {
+            this.hasPower = this.networkNode.isActive();
+        } else if (this.powerSource instanceof IEnergyService energyService) {
+            this.hasPower = energyService.isNetworkPowered();
+        } else if (this.powerSource != null) {
+            this.hasPower = this.powerSource.extractAEPower(1, Actionable.SIMULATE, PowerMultiplier.CONFIG) > 0.8;
+        } else {
+            this.hasPower = false;
+        }
+    }
+
+    @Override
+    public void onSettingChanged(IConfigManager manager, Setting<?> setting) {
+        if (this.getGui() != null) {
+            this.getGui().onSettingChanged(manager, setting);
+        }
+    }
+
+    @Override
+    public IConfigManager getConfigManager() {
+        if (isServerSide()) {
+            return this.serverCM;
+        }
+        return this.clientCM;
+    }
+
+    private IConfigManagerListener getGui() {
+        return this.gui;
+    }
+
+    public void setGui(IConfigManagerListener gui) {
+        this.gui = gui;
+    }
+
+    @Nullable
+    public IClientRepo getClientRepo() {
+        return clientRepo;
+    }
+
+    public void setClientRepo(@Nullable IClientRepo clientRepo) {
+        this.clientRepo = clientRepo;
+    }
+
+    public ITerminalHost getHost() {
+        return host;
     }
 
     @Nullable
@@ -269,6 +500,13 @@ public class PatternEncodingAccessTermMenu extends MEStorageMenu implements IMen
             }
         }
         return null;
+    }
+
+    @Override
+    public void handleInteraction(long serial, InventoryAction action) {
+        if (isClientSide()) {
+            NetworkHandler.instance().sendToServer(new MEInteractionPacket(containerId, serial, action));
+        }
     }
 
     private static class VisitorState {
@@ -872,6 +1110,11 @@ public class PatternEncodingAccessTermMenu extends MEStorageMenu implements IMen
     @Override
     public boolean useRealItems() {
         return false;
+    }
+
+    @Override
+    public List<ItemStack> getViewCells() {
+        return List.of();
     }
 
     public EncodingMode getMode() {
