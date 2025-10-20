@@ -1,6 +1,7 @@
 package yuuki1293.ae2peat;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -24,9 +25,12 @@ public class AE2PEAT {
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
         PEATParts.init();
-
         InitItems.init(ForgeRegistries.ITEMS);
         InitMenuTypes.init(ForgeRegistries.MENU_TYPES);
+    }
+
+    public static ResourceLocation makeId(String id){
+        return ResourceLocation.fromNamespaceAndPath(MODID, id);
     }
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
