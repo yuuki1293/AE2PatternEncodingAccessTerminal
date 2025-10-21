@@ -14,8 +14,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
+import yuuki1293.ae2peat.definisions.PEATCreativeTab;
 import yuuki1293.ae2peat.definisions.PEATItems;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.gui.PatternEncodingAccessTermScreen;
@@ -34,6 +34,7 @@ public class AE2PEAT {
 
         PEATItems.DR.register(eventBus);
         PEATMenus.DR.register(eventBus);
+        PEATCreativeTab.DR.register(eventBus);
     }
 
     public static ResourceLocation makeId(String id){
