@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ae2:pattern_access_terminal"
+    },
+    {
+      "item": "ae2:pattern_encoding_terminal"
+    }
+  ],
+  "result": {
+    "item": "ae2peat:pattern_encoding_access_terminal"
+  }
+}
