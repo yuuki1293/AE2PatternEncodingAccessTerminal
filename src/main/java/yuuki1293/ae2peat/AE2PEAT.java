@@ -1,9 +1,13 @@
 package yuuki1293.ae2peat;
 
+import appeng.api.util.AEColor;
+import appeng.client.render.StaticItemColor;
 import appeng.init.client.InitScreens;
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -45,6 +49,15 @@ public class AE2PEAT {
                 PatternEncodingAccessTermScreen::new,
                 "/screens/terminals/pattern_encoding_access_terminal.json"
             );
+        }
+
+        @SubscribeEvent
+        public static void initItemColours(RegisterColorHandlersEvent.Item event) {
+            event.register(makeOpaque(new StaticItemColor(AEColor.TRANSPARENT)), PEATItems.PATTERN_ENCODING_ACCESS_TERMINAL.asItem());
+        }
+
+        private static ItemColor makeOpaque(ItemColor itemColor) {
+            return (stack, tintIndex) -> itemColor.getColor(stack, tintIndex) | 0xFF000000;
         }
     }
 }
