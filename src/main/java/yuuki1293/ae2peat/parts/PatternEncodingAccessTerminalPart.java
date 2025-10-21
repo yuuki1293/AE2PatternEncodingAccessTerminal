@@ -27,7 +27,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import yuuki1293.ae2peat.AE2PEAT;
-import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
+import yuuki1293.ae2peat.definisions.PEATMenus;
 
 import java.util.List;
 
@@ -90,7 +90,7 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart imple
     @Override
     public boolean onPartActivate(Player player, InteractionHand hand, Vec3 pos) {
         if (!super.onPartActivate(player, hand, pos) && !isClientSide()) {
-            MenuOpener.open(PatternEncodingAccessTermMenu.TYPE, player, MenuLocators.forPart(this));
+            MenuOpener.open(PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(), player, MenuLocators.forPart(this));
         }
         return true;
     }
@@ -122,7 +122,7 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart imple
 
     @Override
     public void returnToMainMenu(Player player, ISubMenu subMenu) {
-        MenuOpener.open(PatternEncodingAccessTermMenu.TYPE, player, subMenu.getLocator(), true);
+        MenuOpener.open(PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(), player, subMenu.getLocator(), true);
     }
 
     @Override

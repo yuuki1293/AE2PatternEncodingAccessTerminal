@@ -5,6 +5,7 @@ import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
 import net.minecraft.resources.ResourceLocation;
 import yuuki1293.ae2peat.AE2PEAT;
+import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.integration.modules.jei.transfer.EncodePatternTransferHandler;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
@@ -22,7 +23,7 @@ public class JEIPlugin implements IModPlugin {
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
         // Universal handler for processing to try and handle all IRecipe
         registration.addUniversalRecipeTransferHandler(new EncodePatternTransferHandler<>(
-            PatternEncodingAccessTermMenu.TYPE,
+            PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
             PatternEncodingAccessTermMenu.class,
             registration.getTransferHelper()));
     }

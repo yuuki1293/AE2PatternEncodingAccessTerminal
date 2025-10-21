@@ -36,7 +36,6 @@ import appeng.me.helpers.ChannelPowerSrc;
 import appeng.menu.AEBaseMenu;
 import appeng.menu.SlotSemantics;
 import appeng.menu.guisync.GuiSync;
-import appeng.menu.implementations.MenuTypeBuilder;
 import appeng.menu.me.common.IClientRepo;
 import appeng.menu.me.common.IMEInteractionHandler;
 import appeng.menu.me.common.IncrementalUpdateHelper;
@@ -69,16 +68,13 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.StonecutterRecipe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.parts.PatternEncodingAccessTerminalPart;
 
 import java.util.*;
 
 public class PatternEncodingAccessTermMenu extends AEBaseMenu
     implements IMenuCraftingPacket, IConfigManagerListener, IConfigurableObject, IMEInteractionHandler {
-
-    public static final MenuType<PatternEncodingAccessTermMenu> TYPE = MenuTypeBuilder
-        .create(PatternEncodingAccessTermMenu::new, PatternEncodingAccessTerminalPart.class)
-        .build("pattern_encoding_access_terminal");
 
     // region me storage menu
     private final IConfigManager clientCM;
@@ -193,7 +189,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
     // endregion
 
     public PatternEncodingAccessTermMenu(int id, Inventory ip, PatternEncodingAccessTerminalPart anchor) {
-        this(TYPE, id, ip, anchor, true);
+        this(PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(), id, ip, anchor, true);
     }
 
     public <T extends IConfigurableObject & IPatternTerminalMenuHost> PatternEncodingAccessTermMenu(
