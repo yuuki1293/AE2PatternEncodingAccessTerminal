@@ -22,7 +22,7 @@
   "text": {
     "dialog_title": {
       "text": {
-        "translate": "gui.ae2.PatternEncodingAccessTerminalShort"
+        "translate": "gui.ae2peat.PatternEncodingAccessTerminalShort"
       },
       "position": {
         "left": 8,

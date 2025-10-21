@@ -28,10 +28,4 @@ public class PEATLanguageProvider extends LanguageProvider {
     private void generateLocalizations() {
         add("key." + AE2PEAT.MOD_ID + ".category", "AE2 Pattern Encoding Access Terminal");
     }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "Language";
-    }
 }

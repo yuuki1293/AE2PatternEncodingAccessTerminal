@@ -15,7 +15,7 @@ public class PEATDataGen {
         var lookup = event.getLookupProvider();
         var languageProvider = new PEATLanguageProvider(out);
 
-//        gen.addProvider(event.includeClient(), new PEATModelProvider(out, fileHelper));
+        gen.addProvider(event.includeClient(), new PEATModelProvider(out, fileHelper));
 //        gen.addProvider(event.includeServer(), new PEATRecipeProvider(out, lookup));
 //
 //        var blockTags = new PEATTagProvider.PEATBlockTagProvider(out, lookup, fileHelper);

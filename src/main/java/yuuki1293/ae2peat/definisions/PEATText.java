@@ -4,7 +4,8 @@ import appeng.core.localization.LocalizationEnum;
 import yuuki1293.ae2peat.AE2PEAT;
 
 public enum PEATText implements LocalizationEnum {
-    ModName("AE2 Pattern Encoding Access Terminal", Type.GUI);
+    ModName("AE2 Pattern Encoding Access Terminal", Type.GUI),
+    PatternEncodingAccessTerminalShort("P. E. A. Terminal", Type.GUI);
 
     private final String englishText;
     private final Type type;
