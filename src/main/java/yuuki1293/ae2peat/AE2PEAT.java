@@ -21,9 +21,9 @@ import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.gui.PatternEncodingAccessTermScreen;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
-@Mod(AE2PEAT.MODID)
+@Mod(AE2PEAT.MOD_ID)
 public class AE2PEAT {
-    public static final String MODID = "ae2peat";
+    public static final String MOD_ID = "ae2peat";
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public AE2PEAT(FMLJavaModLoadingContext context) {
@@ -38,10 +38,10 @@ public class AE2PEAT {
     }
 
     public static ResourceLocation makeId(String id){
-        return ResourceLocation.fromNamespaceAndPath(MODID, id);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, id);
     }
 
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {

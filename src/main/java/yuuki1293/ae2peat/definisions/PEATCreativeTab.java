@@ -11,7 +11,7 @@ import yuuki1293.ae2peat.AE2PEAT;
 import java.util.ArrayList;
 
 public class PEATCreativeTab {
-    public static final DeferredRegister<CreativeModeTab> DR = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, AE2PEAT.MODID);
+    public static final DeferredRegister<CreativeModeTab> DR = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, AE2PEAT.MOD_ID);
 
     static {
         DR.register("tab", () -> CreativeModeTab.builder()

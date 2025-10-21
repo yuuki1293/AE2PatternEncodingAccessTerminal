@@ -21,7 +21,7 @@ public enum PEATText implements LocalizationEnum {
 
     @Override
     public String getTranslationKey() {
-        return String.format("%s.%s.%s", type.root, AE2PEAT.MODID, name());
+        return String.format("%s.%s.%s", type.root, AE2PEAT.MOD_ID, name());
     }
 
     private enum Type {

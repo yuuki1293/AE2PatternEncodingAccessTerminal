@@ -35,10 +35,10 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart imple
     private final IConfigManager cm = new ConfigManager(this::saveChanges);
 
     @PartModels
-    public static final ResourceLocation MODEL_OFF = ResourceLocation.fromNamespaceAndPath(AE2PEAT.MODID,
+    public static final ResourceLocation MODEL_OFF = ResourceLocation.fromNamespaceAndPath(AE2PEAT.MOD_ID,
         "part/pattern_encoding_access_terminal_off");
     @PartModels
-    public static final ResourceLocation MODEL_ON = ResourceLocation.fromNamespaceAndPath(AE2PEAT.MODID,
+    public static final ResourceLocation MODEL_ON = ResourceLocation.fromNamespaceAndPath(AE2PEAT.MOD_ID,
         "part/pattern_encoding_access_terminal_on");
 
     public static final IPartModel MODELS_OFF = new PartModel(MODEL_BASE, MODEL_OFF, MODEL_STATUS_OFF);

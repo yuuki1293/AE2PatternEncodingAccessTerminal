@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class PEATItems {
-    public static final DeferredRegister<Item> DR = DeferredRegister.create(ForgeRegistries.ITEMS, AE2PEAT.MODID);
+    public static final DeferredRegister<Item> DR = DeferredRegister.create(ForgeRegistries.ITEMS, AE2PEAT.MOD_ID);
 
     private static final List<PEATItemDefinition<?>> ITEMS = new ArrayList<>();
 
