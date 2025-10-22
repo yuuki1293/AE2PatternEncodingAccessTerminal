@@ -181,6 +181,7 @@ val generateModMetadata by tasks.registering(ProcessResources::class) {
         "description" to Constants.Mod.description,
         "display_url" to Constants.Mod.repositoryUrl,
         "issue_tracker_url" to Constants.Mod.issueTrackerUrl,
+        "logo_file" to "logo.png",
 
         "dependencies" to buildDeps(*modDependencies.toTypedArray())
     )
