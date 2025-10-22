@@ -186,10 +186,11 @@ val generateModMetadata by tasks.registering(ProcessResources::class) {
     )
 
     inputs.properties(replaceProperties)
-    filter<ReplaceTokens>("beginToken" to "\${", "endToken" to "}", "tokens" to replaceProperties)
-    from("src/main/templates")
+    from("src/main/templates") {
+        filter<ReplaceTokens>("beginToken" to "\${", "endToken" to "}", "tokens" to replaceProperties)
+        rename("template(\\..+)?.mixins.json", "${modId}$1.mixins.json")
+    }
     into("build/generated/sources/modMetadata")
-    rename("template(\\..+)?.mixins.json", "${modId}$1.mixins.json")
 
     // GuideME guide
     from("guidebook") {
