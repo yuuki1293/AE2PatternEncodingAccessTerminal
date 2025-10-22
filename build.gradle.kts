@@ -190,6 +190,11 @@ val generateModMetadata by tasks.registering(ProcessResources::class) {
     from("src/main/templates")
     into("build/generated/sources/modMetadata")
     rename("template(\\..+)?.mixins.json", "${modId}$1.mixins.json")
+
+    // GuideME guide
+    from("guidebook") {
+        into("assets/ae2peat/guides/ae2peat/guide")
+    }
 }
 
 tasks {
