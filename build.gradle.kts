@@ -146,12 +146,11 @@ repositories {
 }
 
 dependencies {
-
-
     // Mandatory
     modImplementation(libs.ae2)
     modRuntimeOnly(libs.guideme)
     modCompileOnly(libs.jei)
+    modCompileOnly(libs.emi)
 
     // Utility
     modRuntimeOnly(libs.jei)

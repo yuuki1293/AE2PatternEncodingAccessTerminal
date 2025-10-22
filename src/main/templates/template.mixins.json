@@ -6,7 +6,8 @@
   "refmap": "ae2peat.refmap.json",
   "mixins": [
     "MixinClearPatternAccessTerminalPacket",
-    "MixinPatternAccessTerminalPacket"
+    "MixinPatternAccessTerminalPacket",
+    "MixinMEInventoryUpdatePacket"
   ],
   "client": [
   ],

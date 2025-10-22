@@ -68,11 +68,13 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart imple
 
     public void writeToNBT(CompoundTag tag){
         super.writeToNBT(tag);
+        this.cm.writeToNBT(tag);
         logic.writeToNBT(tag);
     }
 
     public void readFromNBT(CompoundTag tag){
         super.readFromNBT(tag);
+        this.cm.readFromNBT(tag);
         logic.readFromNBT(tag);
     }
 
