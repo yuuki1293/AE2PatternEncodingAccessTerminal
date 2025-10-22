@@ -357,7 +357,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             previousAvailableStacks.keySet().forEach(updateHelper::addChange);
 
             if (updateHelper.hasChanges()) {
-                var builder = MEInventoryUpdatePacket // TODO: イベントがキャッチされない
+                var builder = MEInventoryUpdatePacket
                     .builder(containerId, updateHelper.isFullUpdate());
                 builder.setFilter(this::isKeyVisible);
                 builder.addChanges(updateHelper, availableStacks, craftables, requestables);

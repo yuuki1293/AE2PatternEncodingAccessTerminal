@@ -182,7 +182,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         super.init();
 
         // Autofocus search field
-        this.setInitialFocus(this.searchField);
+//        this.setInitialFocus(this.searchField);
 
         // numLines may have changed, recalculate scroll bar.
         this.resetScrollbar();
