@@ -14,7 +14,7 @@ ae2 = "15.4.9"
 jei = "15.20.0.112"
 emi = "1.1.22+1.20.1"
 jade = "6855440"
-guideme = "20.1.11"
+guideme = "20.1.14"
 
 [libraries]
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }

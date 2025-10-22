@@ -163,8 +163,7 @@ dependencies {
 val modDependencies = listOf(
     ModDep("forge", extractVersionSegments(forgeVersion)),
     ModDep("minecraft", mcVersion),
-    ModDep("ae2", extractVersionSegments(libs.versions.ae2), ordering = Order.AFTER),
-    ModDep("guideme", extractVersionSegments(libs.versions.guideme), ordering = Order.AFTER)
+    ModDep("ae2", extractVersionSegments(libs.versions.ae2), ordering = Order.AFTER)
 )
 
 val generateModMetadata by tasks.registering(ProcessResources::class) {
