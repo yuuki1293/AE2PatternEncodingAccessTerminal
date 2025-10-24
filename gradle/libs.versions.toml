@@ -15,6 +15,7 @@ jei = "15.20.0.112"
 emi = "1.1.22+1.20.1"
 jade = "6855440"
 guideme = "20.1.14"
+ae2lib = "1.0.0"
 
 [libraries]
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
@@ -26,6 +27,7 @@ jei = { module = "mezz.jei:jei-1.20.1-forge", version.ref = "jei" }
 emi = { module = "dev.emi:emi-forge", version.ref = "emi"}
 jade = { module = "curse.maven:jade-324717", version.ref = "jade"}
 guideme = { module = "org.appliedenergistics:guideme", version.ref = "guideme"}
+ae2lib = { module = "io.github.pedroksl:ae2addonlib", version.ref = "ae2lib"}
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "plugin_kotlin" }

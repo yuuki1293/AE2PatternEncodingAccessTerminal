@@ -151,6 +151,7 @@ dependencies {
     modRuntimeOnly(libs.guideme)
     modCompileOnly(libs.jei)
     modCompileOnly(libs.emi)
+    modImplementation(libs.ae2lib)
 
     // Utility
     modRuntimeOnly(libs.jei)
