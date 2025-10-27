@@ -2,7 +2,6 @@ package yuuki1293.ae2peat.datagen;
 
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
-import org.jetbrains.annotations.NotNull;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.definisions.PEATItems;
 import yuuki1293.ae2peat.definisions.PEATText;
@@ -14,7 +13,7 @@ public class PEATLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        for (var item : PEATItems.getItems()) {
+        for (var item : PEATItems.INSTANCE.getItems()) {
             add(item.asItem(), item.getEnglishName());
         }
 

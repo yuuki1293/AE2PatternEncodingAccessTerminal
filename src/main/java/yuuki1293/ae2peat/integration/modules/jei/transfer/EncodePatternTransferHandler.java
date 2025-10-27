@@ -7,11 +7,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import appeng.integration.abstraction.JEIFacade;
 import appeng.integration.modules.jei.JEIPlugin;
-import appeng.integration.modules.jei.JeiRuntimeAdapter;
 import appeng.integration.modules.jei.transfer.AbstractTransferHandler;
 import mezz.jei.api.recipe.transfer.IUniversalRecipeTransferHandler;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.gui.GuiGraphics;
@@ -24,9 +23,7 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
-import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import mezz.jei.api.runtime.IIngredientVisibility;
 
@@ -64,7 +61,7 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
 
     @Nullable
     @Override
-    public IRecipeTransferError transferRecipe(T menu, Object recipeBase, IRecipeSlotsView slotsView, Player player,
+    public IRecipeTransferError transferRecipe(@NotNull T menu, @NotNull Object recipeBase, @NotNull IRecipeSlotsView slotsView, @NotNull Player player,
                                                boolean maxTransfer, boolean doTransfer) {
 
         // Recipe displays can be based on anything. Not just Recipe<?>
@@ -102,10 +99,11 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
     private boolean isIngredientVisible(ItemStack itemStack) {
         // Cache the ingredient visibility instance for checks for the best ingredient.
         if (ingredientVisibility == null) {
-            ingredientVisibility = ((JeiRuntimeAdapter) JEIFacade.instance()).getRuntime().getJeiHelpers().getIngredientVisibility();
+            ingredientVisibility = JEIPlugin.instance().getJeiHelpers().getIngredientVisibility();
         }
         return ingredientVisibility.isIngredientVisible(VanillaTypes.ITEM_STACK, itemStack);
     }
+
 
     /**
      * In case the recipe does not report inputs, we will use the inputs shown on the JEI GUI instead.
@@ -149,18 +147,18 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
     }
 
     @Override
-    public Optional<MenuType<T>> getMenuType() {
+    public @NotNull Optional<MenuType<T>> getMenuType() {
         return Optional.of(menuType);
     }
 
     @Override
-    public Class<? extends T> getContainerClass() {
+    public @NotNull Class<? extends T> getContainerClass() {
         return menuClass;
     }
 
     private record ErrorRenderer(List<IRecipeSlotView> craftableSlots) implements IRecipeTransferError {
         @Override
-        public Type getType() {
+        public @NotNull Type getType() {
             return Type.COSMETIC;
         }
 
@@ -170,7 +168,7 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
         }
 
         @Override
-        public void showError(GuiGraphics guiGraphics, int mouseX, int mouseY, IRecipeSlotsView recipeSlotsView,
+        public void showError(GuiGraphics guiGraphics, int mouseX, int mouseY, @NotNull IRecipeSlotsView recipeSlotsView,
                               int recipeX, int recipeY) {
             var poseStack = guiGraphics.pose();
             poseStack.pushPose();

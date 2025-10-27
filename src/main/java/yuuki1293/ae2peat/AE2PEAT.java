@@ -32,9 +32,9 @@ public class AE2PEAT {
         MinecraftForge.EVENT_BUS.register(this);
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
-        PEATItems.DR.register(eventBus);
-        PEATMenus.DR.register(eventBus);
-        PEATCreativeTab.DR.register(eventBus);
+        PEATItems.INSTANCE.register(eventBus);
+        PEATMenus.INSTANCE.register(eventBus);
+        PEATCreativeTab.INSTANCE.register(eventBus);
     }
 
     public static ResourceLocation makeId(String id){

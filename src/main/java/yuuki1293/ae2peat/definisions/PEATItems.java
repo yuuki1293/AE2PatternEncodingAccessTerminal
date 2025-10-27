@@ -2,44 +2,38 @@ package yuuki1293.ae2peat.definisions;
 
 import appeng.api.parts.IPart;
 import appeng.api.parts.IPartItem;
-import appeng.api.parts.PartModels;
+import appeng.core.AEConfig;
 import appeng.items.parts.PartItem;
-import appeng.items.parts.PartModelsHelper;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.pedroksl.ae2addonlib.registry.ItemRegistry;
+import net.pedroksl.ae2addonlib.registry.helpers.LibItemDefinition;
 import yuuki1293.ae2peat.AE2PEAT;
+import yuuki1293.ae2peat.items.tools.powered.WirelessPatternEncodingAccessTerminalItem;
 import yuuki1293.ae2peat.parts.PatternEncodingAccessTerminalPart;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 
-public class PEATItems {
-    public static final DeferredRegister<Item> DR = DeferredRegister.create(ForgeRegistries.ITEMS, AE2PEAT.MOD_ID);
+public class PEATItems extends ItemRegistry {
+    public static PEATItems INSTANCE = new PEATItems();
 
-    private static final List<PEATItemDefinition<?>> ITEMS = new ArrayList<>();
-
-    public static List<PEATItemDefinition<?>> getItems() {
-        return Collections.unmodifiableList(ITEMS);
+    PEATItems() {
+        super(AE2PEAT.MOD_ID);
     }
 
-    public static final PEATItemDefinition<PartItem<PatternEncodingAccessTerminalPart>> PATTERN_ENCODING_ACCESS_TERMINAL = part(
-        "ME Pattern Encoding Access Terminal", PEATPartIds.PATTERN_ENCODING_ACCESS_TERMINAL, PatternEncodingAccessTerminalPart.class, PatternEncodingAccessTerminalPart::new
+    public static final LibItemDefinition<PartItem<PatternEncodingAccessTerminalPart>> PATTERN_ENCODING_ACCESS_TERMINAL = part(
+        "ME Pattern Encoding Access Terminal", PEATIds.PATTERN_ENCODING_ACCESS_TERMINAL, PatternEncodingAccessTerminalPart.class, PatternEncodingAccessTerminalPart::new
+    );
+    public static final LibItemDefinition<WirelessPatternEncodingAccessTerminalItem> WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL = item(
+        "ME Wireless Pattern Encoding Access Terminal", PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL, (p) -> new WirelessPatternEncodingAccessTerminalItem(AEConfig.instance().getWirelessTerminalBattery(), p)
     );
 
-    private static <T extends Item> PEATItemDefinition<T> item(
+    protected static <T extends Item> LibItemDefinition<T> item(
         String englishName, String id, Function<Item.Properties, T> factory) {
-        PEATItemDefinition<T> definition =
-            new PEATItemDefinition<>(englishName, DR.register(id, () -> factory.apply(new Item.Properties())));
-        ITEMS.add(definition);
-        return definition;
+        return item(AE2PEAT.MOD_ID, englishName, id, factory);
     }
 
-    private static <T extends IPart> PEATItemDefinition<PartItem<T>> part(
+    protected static <T extends IPart> LibItemDefinition<PartItem<T>> part(
         String englishName, String id, Class<T> partClass, Function<IPartItem<T>, T> factory) {
-        PartModels.registerModels(PartModelsHelper.createModels(partClass));
-        return item(englishName, id, p -> new PartItem<>(p, partClass, factory));
+        return part(AE2PEAT.MOD_ID, englishName, id, partClass, factory);
     }
 }

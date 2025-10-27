@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import appeng.integration.modules.emi.EmiStackHelper;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.world.item.crafting.Recipe;

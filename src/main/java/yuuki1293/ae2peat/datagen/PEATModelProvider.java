@@ -4,8 +4,8 @@ import appeng.core.AppEng;
 import appeng.datagen.providers.models.AE2BlockStateProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.pedroksl.ae2addonlib.registry.helpers.LibItemDefinition;
 import yuuki1293.ae2peat.AE2PEAT;
-import yuuki1293.ae2peat.definisions.PEATItemDefinition;
 import yuuki1293.ae2peat.definisions.PEATItems;
 
 public class PEATModelProvider extends AE2BlockStateProvider {
@@ -18,7 +18,7 @@ public class PEATModelProvider extends AE2BlockStateProvider {
         terminalPart(PEATItems.PATTERN_ENCODING_ACCESS_TERMINAL);
     }
 
-    private void terminalPart(PEATItemDefinition<?> part) {
+    private void terminalPart(LibItemDefinition<?> part) {
         var id = part.id().getPath();
         var idOff = id + "_off";
         var idOn = id + "_on";

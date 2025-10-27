@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import appeng.integration.modules.emi.EmiStackHelper;
 import appeng.integration.modules.jeirei.TransferHelper;
 import org.jetbrains.annotations.Nullable;
 
