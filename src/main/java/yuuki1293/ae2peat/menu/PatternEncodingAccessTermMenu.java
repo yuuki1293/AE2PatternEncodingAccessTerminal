@@ -225,8 +225,6 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         }
         this.powerSource = powerSource;
 
-        setupUpgrades(host.getUpgrades());
-
         if (bindInventory) {
             this.createPlayerInventorySlots(ip);
         }
