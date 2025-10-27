@@ -11,7 +11,6 @@ import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
@@ -26,11 +25,11 @@ public class AE2PEAT {
     public static final String MOD_ID = "ae2peat";
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public AE2PEAT(FMLJavaModLoadingContext context) {
+    public AE2PEAT() {
+        var context = FMLJavaModLoadingContext.get();
         var eventBus = context.getModEventBus();
 
         MinecraftForge.EVENT_BUS.register(this);
-        context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
         PEATItems.INSTANCE.register(eventBus);
         PEATMenus.INSTANCE.register(eventBus);
@@ -38,7 +37,7 @@ public class AE2PEAT {
     }
 
     public static ResourceLocation makeId(String id){
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, id);
+        return new ResourceLocation(MOD_ID, id);
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
