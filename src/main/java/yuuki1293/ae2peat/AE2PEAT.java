@@ -1,12 +1,9 @@
 package yuuki1293.ae2peat;
 
-import appeng.api.features.GridLinkables;
 import appeng.api.util.AEColor;
 import appeng.client.render.StaticItemColor;
 import appeng.core.AELog;
-import appeng.core.AppEng;
 import appeng.init.client.InitScreens;
-import de.mari_023.ae2wtlib.wut.WUTHandler;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,16 +16,13 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
-import net.pedroksl.ae2addonlib.api.IGridLinkedItem;
 import yuuki1293.ae2peat.definisions.PEATCreativeTab;
-import yuuki1293.ae2peat.definisions.PEATIds;
 import yuuki1293.ae2peat.definisions.PEATItems;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.gui.PatternEncodingAccessTermScreen;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
-import yuuki1293.ae2peat.wireless.WPEATMenu;
-import yuuki1293.ae2peat.wireless.WPEATScreen;
-import yuuki1293.ae2peat.wireless.WPEATMenuHost;
+import yuuki1293.ae2peat.xmod.Addons;
+import yuuki1293.ae2peat.xmod.ae2wtlib.AE2WtLibPlugin;
 
 @Mod(AE2PEAT.MOD_ID)
 public class AE2PEAT {
@@ -61,22 +55,22 @@ public class AE2PEAT {
     }
 
     public void postRegistrationInitialization() {
-        GridLinkables.register(PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL, IGridLinkedItem.LINKABLE_HANDLER);
+        if (Addons.AE2WTLIB.isLoaded()) {
+            AE2WtLibPlugin.initGridLinkables();
+        }
     }
 
     public void onAe2Initialized(RegisterEvent event) {
         if(event.getRegistryKey().equals(ForgeRegistries.MENU_TYPES.getRegistryKey())){
-            ForgeRegistries.MENU_TYPES.register(AppEng.makeId(PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL), WPEATMenu.TYPE);
+            if (Addons.AE2WTLIB.isLoaded()) {
+                AE2WtLibPlugin.initMenu();
+            }
         }
 
         if (event.getRegistryKey().equals(ForgeRegistries.ITEMS.getRegistryKey())) {
-            WUTHandler.addTerminal("pattern_encoding_access",
-                PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.get()::tryOpen,
-                WPEATMenuHost::new,
-                WPEATMenu.TYPE,
-                PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.get(),
-                PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL,
-                PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.id().toLanguageKey());
+            if (Addons.AE2WTLIB.isLoaded()) {
+                AE2WtLibPlugin.initMenuType();
+            }
         }
     }
 
@@ -90,11 +84,9 @@ public class AE2PEAT {
                 PatternEncodingAccessTermScreen::new,
                 "/screens/terminals/pattern_encoding_access_terminal.json"
             );
-            InitScreens.<WPEATMenu, WPEATScreen>register(
-                WPEATMenu.TYPE,
-                WPEATScreen::new,
-                "/screens/wtlib/wireless_pattern_encoding_access_terminal.json"
-            );
+            if (Addons.AE2WTLIB.isLoaded()) {
+                AE2WtLibPlugin.initScreen();
+            }
         }
 
         @SubscribeEvent

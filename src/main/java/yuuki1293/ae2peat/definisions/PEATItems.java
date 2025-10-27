@@ -29,7 +29,7 @@ public class PEATItems extends ItemRegistry {
     );
     public static final LibItemDefinition<ItemWPEAT> WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL = conditionalItem(
         Addons.AE2WTLIB,
-        "ME Wireless Pattern Encoding Access Terminal",
+        "Wireless Pattern Encoding Access Terminal",
         PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL,
         "yuuki1293.ae2peat.wireless.ItemWPEAT"
     );
