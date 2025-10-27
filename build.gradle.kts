@@ -153,11 +153,13 @@ dependencies {
     modCompileOnly(libs.jei)
     modCompileOnly(libs.emi)
     modImplementation(libs.ae2lib)
+    modCompileOnly(libs.ae2wt)
 
     // Utility
     modRuntimeOnly(libs.jei)
     modRuntimeOnly(libs.emi)
     modRuntimeOnly(libs.jade)
+    modRuntimeOnly(libs.ae2wt)
 
     annotationProcessor(variantOf(libs.mixin, "processor"))
 }
@@ -165,7 +167,8 @@ dependencies {
 val modDependencies = listOf(
     ModDep("forge", extractVersionSegments(forgeVersion)),
     ModDep("minecraft", mcVersion),
-    ModDep("ae2", extractVersionSegments(libs.versions.ae2), ordering = Order.AFTER)
+    ModDep("ae2", extractVersionSegments(libs.versions.ae2), ordering = Order.AFTER),
+    ModDep("ae2wtlib", extractVersionSegments(libs.versions.ae2wt), false)
 )
 
 val generateModMetadata by tasks.registering(ProcessResources::class) {
