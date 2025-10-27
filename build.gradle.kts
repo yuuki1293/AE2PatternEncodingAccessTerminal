@@ -144,6 +144,15 @@ repositories {
             includeGroup("curse.maven")
         }
     }
+    maven {
+        url = uri("https://maven.theillusivec4.top/")
+    }
+    maven {
+        url = uri("https://maven.architectury.dev/")
+    }
+    maven {
+        url = uri("https://maven.shedaniel.me/")
+    }
 }
 
 dependencies {
@@ -155,11 +164,16 @@ dependencies {
     modImplementation(libs.ae2lib)
     modCompileOnly(libs.ae2wtlib)
 
+    // Optional
+    modRuntimeOnly(libs.ae2wtlib)
+    modRuntimeOnly(libs.curios)         // depends on ae2wtlib
+    modRuntimeOnly(libs.architectury)   // depends on ae2wtlib
+    modRuntimeOnly(libs.cloth.config)   // depends on ae2wtlib
+
     // Utility
     modRuntimeOnly(libs.jei)
     modRuntimeOnly(libs.emi)
     modRuntimeOnly(libs.jade)
-    modRuntimeOnly(libs.ae2wtlib)
 
     annotationProcessor(variantOf(libs.mixin, "processor"))
 }
@@ -167,8 +181,7 @@ dependencies {
 val modDependencies = listOf(
     ModDep("forge", extractVersionSegments(forgeVersion)),
     ModDep("minecraft", mcVersion),
-    ModDep("ae2", extractVersionSegments(libs.versions.ae2), ordering = Order.AFTER),
-    ModDep("ae2wtlib", extractVersionSegments(libs.versions.ae2wtlib), false)
+    ModDep("ae2", extractVersionSegments(libs.versions.ae2), ordering = Order.AFTER)
 )
 
 val generateModMetadata by tasks.registering(ProcessResources::class) {

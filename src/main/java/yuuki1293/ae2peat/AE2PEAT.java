@@ -1,9 +1,12 @@
 package yuuki1293.ae2peat;
 
+import appeng.api.features.GridLinkables;
 import appeng.api.util.AEColor;
 import appeng.client.render.StaticItemColor;
+import appeng.core.AELog;
+import appeng.core.AppEng;
 import appeng.init.client.InitScreens;
-import com.mojang.logging.LogUtils;
+import de.mari_023.ae2wtlib.wut.WUTHandler;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -12,18 +15,24 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.slf4j.Logger;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
+import net.pedroksl.ae2addonlib.api.IGridLinkedItem;
 import yuuki1293.ae2peat.definisions.PEATCreativeTab;
+import yuuki1293.ae2peat.definisions.PEATIds;
 import yuuki1293.ae2peat.definisions.PEATItems;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.gui.PatternEncodingAccessTermScreen;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
+import yuuki1293.ae2peat.wireless.WPEATMenu;
+import yuuki1293.ae2peat.wireless.WPEATScreen;
+import yuuki1293.ae2peat.wireless.WPEATMenuHost;
 
 @Mod(AE2PEAT.MOD_ID)
 public class AE2PEAT {
     public static final String MOD_ID = "ae2peat";
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     public AE2PEAT() {
         var context = FMLJavaModLoadingContext.get();
@@ -34,20 +43,57 @@ public class AE2PEAT {
         PEATItems.INSTANCE.register(eventBus);
         PEATMenus.INSTANCE.register(eventBus);
         PEATCreativeTab.INSTANCE.register(eventBus);
+
+        eventBus.addListener(this::commonSetup);
+        eventBus.addListener(this::onAe2Initialized);
     }
 
-    public static ResourceLocation makeId(String id){
+    public static ResourceLocation makeId(String id) {
         return new ResourceLocation(MOD_ID, id);
+    }
+
+    private void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(this::postRegistrationInitialization).whenComplete((res, err) -> {
+            if (err != null) {
+                AELog.warn(err);
+            }
+        });
+    }
+
+    public void postRegistrationInitialization() {
+        GridLinkables.register(PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL, IGridLinkedItem.LINKABLE_HANDLER);
+    }
+
+    public void onAe2Initialized(RegisterEvent event) {
+        if(event.getRegistryKey().equals(ForgeRegistries.MENU_TYPES.getRegistryKey())){
+            ForgeRegistries.MENU_TYPES.register(AppEng.makeId(PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL), WPEATMenu.TYPE);
+        }
+
+        if (event.getRegistryKey().equals(ForgeRegistries.ITEMS.getRegistryKey())) {
+            WUTHandler.addTerminal("pattern_encoding_access",
+                PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.get()::tryOpen,
+                WPEATMenuHost::new,
+                WPEATMenu.TYPE,
+                PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.get(),
+                PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL,
+                PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.id().toLanguageKey());
+        }
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
+        @SuppressWarnings("RedundantTypeArguments")
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             InitScreens.<PatternEncodingAccessTermMenu, PatternEncodingAccessTermScreen<PatternEncodingAccessTermMenu>>register(
                 PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
                 PatternEncodingAccessTermScreen::new,
                 "/screens/terminals/pattern_encoding_access_terminal.json"
+            );
+            InitScreens.<WPEATMenu, WPEATScreen>register(
+                WPEATMenu.TYPE,
+                WPEATScreen::new,
+                "/screens/wtlib/wireless_pattern_encoding_access_terminal.json"
             );
         }
 

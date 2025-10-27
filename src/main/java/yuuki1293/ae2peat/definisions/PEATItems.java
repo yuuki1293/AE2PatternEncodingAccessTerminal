@@ -2,13 +2,12 @@ package yuuki1293.ae2peat.definisions;
 
 import appeng.api.parts.IPart;
 import appeng.api.parts.IPartItem;
-import appeng.core.AEConfig;
 import appeng.items.parts.PartItem;
 import net.minecraft.world.item.Item;
 import net.pedroksl.ae2addonlib.registry.ItemRegistry;
 import net.pedroksl.ae2addonlib.registry.helpers.LibItemDefinition;
 import yuuki1293.ae2peat.AE2PEAT;
-import yuuki1293.ae2peat.items.tools.powered.WirelessPatternEncodingAccessTerminalItem;
+import yuuki1293.ae2peat.wireless.ItemWPEAT;
 import yuuki1293.ae2peat.parts.PatternEncodingAccessTerminalPart;
 
 import java.util.function.Function;
@@ -23,8 +22,8 @@ public class PEATItems extends ItemRegistry {
     public static final LibItemDefinition<PartItem<PatternEncodingAccessTerminalPart>> PATTERN_ENCODING_ACCESS_TERMINAL = part(
         "ME Pattern Encoding Access Terminal", PEATIds.PATTERN_ENCODING_ACCESS_TERMINAL, PatternEncodingAccessTerminalPart.class, PatternEncodingAccessTerminalPart::new
     );
-    public static final LibItemDefinition<WirelessPatternEncodingAccessTerminalItem> WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL = item(
-        "ME Wireless Pattern Encoding Access Terminal", PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL, (p) -> new WirelessPatternEncodingAccessTerminalItem(AEConfig.instance().getWirelessTerminalBattery(), p)
+    public static final LibItemDefinition<ItemWPEAT> WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL = item(
+        "ME Wireless Pattern Encoding Access Terminal", PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL, (p) -> new ItemWPEAT()
     );
 
     protected static <T extends Item> LibItemDefinition<T> item(

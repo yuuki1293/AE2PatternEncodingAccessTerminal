@@ -35,10 +35,10 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart imple
     private final IConfigManager cm = new ConfigManager(this::saveChanges);
 
     @PartModels
-    public static final ResourceLocation MODEL_OFF = ResourceLocation.fromNamespaceAndPath(AE2PEAT.MOD_ID,
+    public static final ResourceLocation MODEL_OFF = AE2PEAT.makeId(
         "part/pattern_encoding_access_terminal_off");
     @PartModels
-    public static final ResourceLocation MODEL_ON = ResourceLocation.fromNamespaceAndPath(AE2PEAT.MOD_ID,
+    public static final ResourceLocation MODEL_ON = AE2PEAT.makeId(
         "part/pattern_encoding_access_terminal_on");
 
     public static final IPartModel MODELS_OFF = new PartModel(MODEL_BASE, MODEL_OFF, MODEL_STATUS_OFF);
@@ -47,13 +47,13 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart imple
 
     private final PatternEncodingLogic logic = new PatternEncodingLogic(this);
 
-    public PatternEncodingAccessTerminalPart(IPartItem<?> partItem){
+    public PatternEncodingAccessTerminalPart(IPartItem<?> partItem) {
         super(partItem, true);
         this.cm.registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
     }
 
     @Override
-    public IPartModel getStaticModels(){
+    public IPartModel getStaticModels() {
         return this.selectModel(MODELS_OFF, MODELS_ON, MODELS_HAS_CHANNEL);
     }
 
@@ -66,13 +66,13 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart imple
         this.getHost().markForSave();
     }
 
-    public void writeToNBT(CompoundTag tag){
+    public void writeToNBT(CompoundTag tag) {
         super.writeToNBT(tag);
         this.cm.writeToNBT(tag);
         logic.writeToNBT(tag);
     }
 
-    public void readFromNBT(CompoundTag tag){
+    public void readFromNBT(CompoundTag tag) {
         super.readFromNBT(tag);
         this.cm.readFromNBT(tag);
         logic.readFromNBT(tag);

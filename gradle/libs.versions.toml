@@ -16,7 +16,10 @@ emi = "1.1.22+1.20.1"
 jade = "6855440"
 guideme = "20.1.14"
 ae2lib = "1.0.1-1.20.1"
-ae2wtlib = "15.3.1"
+ae2wtlib = "7154316"
+curios = "5.14.1+1.20.1"
+architectury = "9.2.14"
+cloth-config = "11.1.136"
 
 [libraries]
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
@@ -25,11 +28,14 @@ mixinExtrasForge = { module = "io.github.llamalad7:mixinextras-forge", version.r
 
 ae2 = { module = "appeng:appliedenergistics2-forge", version.ref = "ae2" }
 jei = { module = "mezz.jei:jei-1.20.1-forge", version.ref = "jei" }
-emi = { module = "dev.emi:emi-forge", version.ref = "emi"}
-jade = { module = "curse.maven:jade-324717", version.ref = "jade"}
-guideme = { module = "org.appliedenergistics:guideme", version.ref = "guideme"}
-ae2lib = { module = "io.github.pedroksl:ae2addonlib", version.ref = "ae2lib"}
-ae2wtlib = { module = "de.mari_023:ae2wtlib_api", version.ref = "ae2wtlib"}
+emi = { module = "dev.emi:emi-forge", version.ref = "emi" }
+jade = { module = "curse.maven:jade-324717", version.ref = "jade" }
+guideme = { module = "org.appliedenergistics:guideme", version.ref = "guideme" }
+ae2lib = { module = "io.github.pedroksl:ae2addonlib", version.ref = "ae2lib" }
+ae2wtlib = { module = "curse.maven:applied-energistics-2-wireless-terminals-459929", version.ref = "ae2wtlib" }
+curios = { module = "top.theillusivec4.curios:curios-forge", version.ref = "curios" }
+architectury = { module = "dev.architectury:architectury-forge", version.ref = "architectury" }
+cloth-config = { module = "me.shedaniel.cloth:cloth-config-forge", version.ref = "cloth-config" }
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "plugin_kotlin" }

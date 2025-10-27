@@ -12,7 +12,7 @@ import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 @SuppressWarnings("unused")
 @JeiPlugin
 public class JEIPlugin implements IModPlugin {
-    private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(AE2PEAT.MOD_ID, "core");
+    private static final ResourceLocation ID = AE2PEAT.makeId("core");
 
     @Override
     public ResourceLocation getPluginUid() {
