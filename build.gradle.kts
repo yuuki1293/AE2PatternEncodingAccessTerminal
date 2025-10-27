@@ -181,7 +181,8 @@ dependencies {
 val modDependencies = listOf(
     ModDep("forge", extractVersionSegments(forgeVersion)),
     ModDep("minecraft", mcVersion),
-    ModDep("ae2", extractVersionSegments(libs.versions.ae2), ordering = Order.AFTER)
+    ModDep("ae2", extractVersionSegments(libs.versions.ae2), ordering = Order.AFTER),
+    ModDep("ae2addonlib", extractVersionSegments(libs.versions.ae2lib))
 )
 
 val generateModMetadata by tasks.registering(ProcessResources::class) {
@@ -311,7 +312,7 @@ fun ModPublisherGradleExtension.Dependencies.fromModDependencies(modDependencies
 
 publisher {
     apiKeys {
-        curseforge(System.getenv("CURSE_TOKEN"))
+        curseforge(System.getenv("CURSEFORGE_TOKEN"))
         modrinth(System.getenv("MODRINTH_TOKEN"))
     }
 
@@ -319,7 +320,6 @@ publisher {
     setLoaders(ModLoader.FORGE, ModLoader.NEOFORGE)
     setCurseEnvironment(CurseEnvironment.BOTH)
 
-    debug.set(System.getenv("PUBLISHER_DEBUG") == "true")
     curseID.set(Constants.Publisher.curseforgeProjectId)
     modrinthID.set(Constants.Publisher.modrinthProjectId)
     changelog.set(parserChangelog())
