@@ -331,9 +331,12 @@ publisher {
 
     curseDepends {
         required("applied-energistics-2")
+        required("ae2addonlib")
+        optional("applied-energistics-2-wireless-terminals")
     }
 
     modrinthDepends {
         required("applied-energistics-2")
+        optional("applied-energistics-2-wireless-terminals")
     }
 }
