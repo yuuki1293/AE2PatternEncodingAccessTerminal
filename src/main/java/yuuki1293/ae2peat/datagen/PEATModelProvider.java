@@ -1,14 +1,14 @@
 package yuuki1293.ae2peat.datagen;
 
 import appeng.core.AppEng;
-import appeng.datagen.providers.models.AE2BlockStateProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.pedroksl.ae2addonlib.datagen.AE2AddonModelProvider;
 import net.pedroksl.ae2addonlib.registry.helpers.LibItemDefinition;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.definisions.PEATItems;
 
-public class PEATModelProvider extends AE2BlockStateProvider {
+public class PEATModelProvider extends AE2AddonModelProvider {
     public PEATModelProvider(PackOutput packOutput, ExistingFileHelper exFileHelper) {
         super(packOutput, AE2PEAT.MOD_ID, exFileHelper);
     }
@@ -16,6 +16,7 @@ public class PEATModelProvider extends AE2BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         terminalPart(PEATItems.PATTERN_ENCODING_ACCESS_TERMINAL);
+        basicItem(PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL);
     }
 
     private void terminalPart(LibItemDefinition<?> part) {
