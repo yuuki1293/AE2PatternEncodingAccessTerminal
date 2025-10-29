@@ -4,9 +4,11 @@ Applied Energistics 2のパターンアクセスターミナルとパターン�
 
 ## 主な機能
 - 新しいME Pattern Encoding Access Terminalパーツを追加し、AE2標準のパターンアクセス表示とエンコード機能を同一UIに統合
+- 無線版を追加 (AE2wtlibが必要)
 
 ## 画像
-
+![GUI](images/terminal_gui.png)
+![Colors](images/colorful_terminals.png)
 
 ## 開発者向け
 1. JDK 17をインストールし、`JAVA_HOME`を設定します。

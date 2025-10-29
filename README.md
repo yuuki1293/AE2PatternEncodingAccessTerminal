@@ -6,8 +6,11 @@ AE2 Pattern Encoding Access Terminal is an addon that unifies Applied Energistic
 
 ## Features
 - Adds the ME Pattern Encoding Access Terminal part, combining AE2’s standard pattern access view and encoding tools into one UI.
+- Adds Wireless One. (Requires AE2wtlib)
 
 ## Images
+![GUI](images/terminal_gui.png)
+![Colors](images/colorful_terminals.png)
 
 ## For Developers
 1. Install JDK 17 and set `JAVA_HOME`.
