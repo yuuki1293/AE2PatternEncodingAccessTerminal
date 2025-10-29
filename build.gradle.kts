@@ -346,8 +346,8 @@ publisher {
     }
 
     github {
-        repo("yuuki1293/ProgrammedCircuitCard")
-        tag("v${mcVersion}-${project.version}")
+        repo("yuuki1293/AE2PatternEncodingAccessTerminal")
+        tag("forge/v${mcVersion}-${project.version}")
         displayName("[$mcVersion] v${project.version}")
         createTag(true)
         createRelease(true)
