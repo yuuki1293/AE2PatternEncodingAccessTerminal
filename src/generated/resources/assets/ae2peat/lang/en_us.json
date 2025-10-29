@@ -2,6 +2,6 @@
   "gui.ae2peat.ModName": "AE2 Pattern Encoding Access Terminal",
   "gui.ae2peat.PatternEncodingAccessTerminalShort": "P. E. A. Terminal",
   "item.ae2peat.pattern_encoding_access_terminal": "ME Pattern Encoding Access Terminal",
-  "item.ae2peat.wireless_pattern_encoding_access_terminal": "ME Wireless Pattern Encoding Access Terminal",
+  "item.ae2peat.wireless_pattern_encoding_access_terminal": "Wireless Pattern Encoding Access Terminal",
   "key.ae2peat.category": "AE2 Pattern Encoding Access Terminal"
 }
