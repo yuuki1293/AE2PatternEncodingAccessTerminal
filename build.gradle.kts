@@ -315,6 +315,7 @@ publisher {
     apiKeys {
         curseforge(System.getenv("CURSEFORGE_TOKEN"))
         modrinth(System.getenv("MODRINTH_TOKEN"))
+        github(System.getenv("GITHUB_TOKEN"))
     }
 
     setReleaseType(ReleaseType.RELEASE)
@@ -329,15 +330,25 @@ publisher {
     setGameVersions(mcVersion)
     setJavaVersions(jdkVersion)
     artifact.set(tasks.named("reobfJar"))
+    addAdditionalFile(tasks.named("sourcesJar"))
 
     curseDepends {
         required("applied-energistics-2")
-        required("ae2addonlib")
         optional("applied-energistics-2-wireless-terminals")
     }
 
     modrinthDepends {
-        required("applied-energistics-2")
+        required("ae2")
         optional("applied-energistics-2-wireless-terminals")
+    }
+
+    github {
+        repo("yuuki1293/ProgrammedCircuitCard")
+        tag("v${mcVersion}-${project.version}")
+        displayName("[$mcVersion] v${project.version}")
+        createTag(true)
+        createRelease(true)
+        updateRelease(true)
+        target("forge/${mcVersion}")
     }
 }
