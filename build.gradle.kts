@@ -185,7 +185,6 @@ val modDependencies = listOf(
     ModDep("forge", extractVersionSegments(forgeVersion)),
     ModDep("minecraft", mcVersion),
     ModDep("ae2", extractVersionSegments(libs.versions.ae2), ordering = Order.AFTER),
-    ModDep("ae2addonlib", libs.versions.ae2lib.get(), ordering = Order.AFTER),
     ModDep("ae2wtlib", libs.versions.ae2wtlib.range.get(), ordering = Order.AFTER)
 )
 

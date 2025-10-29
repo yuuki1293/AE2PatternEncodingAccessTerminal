@@ -1,8 +1,11 @@
 package yuuki1293.ae2peat.xmod.ae2wtlib;
 
 import appeng.api.features.GridLinkables;
+import appeng.api.upgrades.Upgrades;
 import appeng.core.AppEng;
+import appeng.core.definitions.AEItems;
 import appeng.init.client.InitScreens;
+import de.mari_023.ae2wtlib.AE2wtlib;
 import de.mari_023.ae2wtlib.wut.WUTHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.pedroksl.ae2addonlib.api.IGridLinkedItem;
@@ -24,6 +27,21 @@ public class AE2WtLibPlugin {
                 PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.get(),
                 PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL,
                 PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.asItem().getDescriptionId());
+    }
+
+    public static void initUpgrades() {
+        if (PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL != null) {
+            Upgrades.add(
+                    AE2wtlib.QUANTUM_BRIDGE_CARD,
+                    PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL,
+                    1,
+                    PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.asItem().getDescriptionId());
+            Upgrades.add(
+                    AEItems.ENERGY_CARD,
+                    PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL,
+                    2,
+                    PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.asItem().getDescriptionId());
+        }
     }
 
     public static void initGridLinkables() {

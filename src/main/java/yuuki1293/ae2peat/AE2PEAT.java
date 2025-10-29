@@ -2,9 +2,9 @@ package yuuki1293.ae2peat;
 
 import appeng.api.util.AEColor;
 import appeng.client.render.StaticItemColor;
+import appeng.core.AELog;
 import appeng.init.client.InitScreens;
 import net.minecraft.client.color.item.ItemColor;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
@@ -39,17 +39,8 @@ public class AE2PEAT {
         PEATCreativeTab.INSTANCE.register(eventBus);
 
         eventBus.addListener(this::commonSetup);
-        eventBus.addListener((RegisterEvent event) -> {
-            if (event.getRegistryKey() == Registries.ITEM) {
-                if (Addons.AE2WTLIB.isLoaded()) {
-                    AE2WtLibPlugin.initMenuType();
-                }
-            } else if (event.getRegistryKey() == ForgeRegistries.MENU_TYPES) {
-                if (Addons.AE2WTLIB.isLoaded()) {
-                    AE2WtLibPlugin.initMenu();
-                }
-            }
-        });
+        eventBus.addListener(this::onAe2Initialized);
+        eventBus.addListener(AE2PEAT::initUpgrades);
     }
 
     public static ResourceLocation makeId(String id) {
@@ -57,9 +48,39 @@ public class AE2PEAT {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(this::postRegistrationInitialization).whenComplete((res, err) -> {
+            if (err != null) {
+                AELog.warn(err);
+            }
+        });
+    }
+
+    public void postRegistrationInitialization() {
         if (Addons.AE2WTLIB.isLoaded()) {
             AE2WtLibPlugin.initGridLinkables();
         }
+    }
+
+    public void onAe2Initialized(RegisterEvent event) {
+        if (event.getRegistryKey().equals(ForgeRegistries.MENU_TYPES.getRegistryKey())) {
+            if (Addons.AE2WTLIB.isLoaded()) {
+                AE2WtLibPlugin.initMenu();
+            }
+        }
+
+        if (event.getRegistryKey().equals(ForgeRegistries.ITEMS.getRegistryKey())) {
+            if (Addons.AE2WTLIB.isLoaded()) {
+                AE2WtLibPlugin.initMenuType();
+            }
+        }
+    }
+
+    private static void initUpgrades(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            if (Addons.AE2WTLIB.isLoaded()) {
+                AE2WtLibPlugin.initUpgrades();
+            }
+        });
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
