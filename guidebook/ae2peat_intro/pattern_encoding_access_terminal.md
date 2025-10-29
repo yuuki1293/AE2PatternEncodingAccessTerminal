@@ -19,4 +19,6 @@ Install it on an ME cable and connect it to your network to manage crafting, pro
 
 <RecipeFor id="ae2peat:pattern_encoding_access_terminal" />
 
-## Original
+## Images
+
+![GUI](../assets/terminal_gui.png)
