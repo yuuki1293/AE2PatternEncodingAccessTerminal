@@ -12,7 +12,7 @@ object Constants {
     }
 
     object Publisher {
-        const val curseforgeProjectId = ""
-        const val modrinthProjectId = ""
+        const val curseforgeProjectId = "1374596"
+        const val modrinthProjectId = "qVB0pZyA"
     }
 }
