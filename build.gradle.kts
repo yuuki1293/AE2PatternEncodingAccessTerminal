@@ -67,14 +67,14 @@ legacyForge {
     }
 
     runs {
-        create("client") {
+        register("client") {
             client()
             gameDirectory.set(file("run"))
             systemProperty("forge.enabledGameTestNamespaces", modId)
             jvmArgument("-Dmixin.debug.export=$exportMixin")
         }
 
-        create("server") {
+        register("server") {
             server()
             gameDirectory.set(file("run-server"))
             programArgument("--nogui")
@@ -82,7 +82,7 @@ legacyForge {
             jvmArgument("-Dmixin.debug.export=$exportMixin")
         }
 
-        create("data") {
+        register("data") {
             data()
             gameDirectory.set(file("run-data"))
             programArguments.addAll(
@@ -162,6 +162,7 @@ dependencies {
     modCompileOnly(libs.jei)
     modCompileOnly(libs.emi)
     modImplementation(libs.ae2lib)
+    jarJar(libs.ae2lib)
     modCompileOnly(libs.ae2wtlib)
 
     // Optional
@@ -182,7 +183,7 @@ val modDependencies = listOf(
     ModDep("forge", extractVersionSegments(forgeVersion)),
     ModDep("minecraft", mcVersion),
     ModDep("ae2", extractVersionSegments(libs.versions.ae2), ordering = Order.AFTER),
-    ModDep("ae2addonlib", extractVersionSegments(libs.versions.ae2lib))
+    ModDep("ae2addonlib", libs.versions.ae2lib.get(), ordering = Order.AFTER)
 )
 
 val generateModMetadata by tasks.registering(ProcessResources::class) {
