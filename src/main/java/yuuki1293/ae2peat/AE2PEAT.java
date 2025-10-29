@@ -2,7 +2,6 @@ package yuuki1293.ae2peat;
 
 import appeng.api.util.AEColor;
 import appeng.client.render.StaticItemColor;
-import appeng.core.AELog;
 import appeng.init.client.InitScreens;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.core.registries.Registries;
