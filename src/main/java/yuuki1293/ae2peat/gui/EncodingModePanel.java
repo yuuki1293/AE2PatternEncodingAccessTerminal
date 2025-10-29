@@ -33,8 +33,7 @@ public abstract class EncodingModePanel implements ICompositeWidget {
     }
 
     @Override
-    public void setSize(int width, int height) {
-    }
+    public void setSize(int width, int height) {}
 
     @Override
     public Rect2i getBounds() {

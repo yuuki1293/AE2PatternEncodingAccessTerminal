@@ -12,8 +12,9 @@ import yuuki1293.ae2peat.gui.PatternEncodingAccessTermScreen;
 @Mixin(value = ClearPatternAccessTerminalPacket.class, remap = false)
 public abstract class MixinClearPatternAccessTerminalPacket {
     @Inject(method = "clientPacketData", at = @At("RETURN"))
-    private void clientPacketData(Player player, CallbackInfo ci){
-        if (Minecraft.getInstance().screen instanceof PatternEncodingAccessTermScreen<?> patternEncodingAccessTerminal) {
+    private void clientPacketData(Player player, CallbackInfo ci) {
+        if (Minecraft.getInstance().screen
+                instanceof PatternEncodingAccessTermScreen<?> patternEncodingAccessTerminal) {
             patternEncodingAccessTerminal.clear();
         }
     }

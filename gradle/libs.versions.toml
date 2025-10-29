@@ -3,6 +3,7 @@ plugin_kotlin = "2.0.0"
 plugin_moddev = "2.0.+"
 plugin_modPublisher = "2.1.+"
 plugin_changelog = "2.2.1"
+plugin_spotless = "6.25.0"
 
 minecraft = "1.20.1"
 forge = "47.1.47"
@@ -43,3 +44,4 @@ kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", versio
 moddev = { id = "net.neoforged.moddev.legacyforge", version.ref = "plugin_moddev" }
 modPublisher = { id = "com.hypherionmc.modutils.modpublisher", version.ref = "plugin_modPublisher" }
 changelog = { id = "org.jetbrains.changelog", version.ref = "plugin_changelog"}
+spotless = { id = "com.diffplug.spotless", version.ref = "plugin_spotless" }

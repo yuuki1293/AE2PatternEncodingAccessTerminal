@@ -29,9 +29,8 @@ public class ProcessingEncodingPanel extends EncodingModePanel {
         clearBtn.setHalfSize(true);
         widgets.add("processingClearPattern", clearBtn);
 
-        this.cycleOutputBtn = new ActionButton(
-            ActionItems.CYCLE_PROCESSING_OUTPUT,
-            act -> menu.cycleProcessingOutput());
+        this.cycleOutputBtn =
+                new ActionButton(ActionItems.CYCLE_PROCESSING_OUTPUT, act -> menu.cycleProcessingOutput());
         this.cycleOutputBtn.setHalfSize(true);
         widgets.add("processingCycleOutput", this.cycleOutputBtn);
 
@@ -39,7 +38,6 @@ public class ProcessingEncodingPanel extends EncodingModePanel {
         // The scrollbar ranges from 0 to the number of rows not visible
         this.scrollbar.setRange(0, menu.getProcessingInputSlots().length / 3 - 3, 3);
         this.scrollbar.setCaptureMouseWheel(false);
-
     }
 
     @Override
@@ -107,4 +105,3 @@ public class ProcessingEncodingPanel extends EncodingModePanel {
         updateTooltipVisibility();
     }
 }
-

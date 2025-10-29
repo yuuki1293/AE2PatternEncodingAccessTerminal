@@ -15,8 +15,7 @@ import yuuki1293.ae2peat.definisions.PEATIds;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
 public class WPEATMenu extends PatternEncodingAccessTermMenu {
-    public static final MenuType<WPEATMenu> TYPE =
-        MenuTypeBuilder.create(WPEATMenu::new, WPEATMenuHost.class)
+    public static final MenuType<WPEATMenu> TYPE = MenuTypeBuilder.create(WPEATMenu::new, WPEATMenuHost.class)
             .build(PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL);
 
     private final WPEATMenuHost wpeatMenuHost;
@@ -33,8 +32,12 @@ public class WPEATMenu extends PatternEncodingAccessTermMenu {
             slot.setNotDraggable();
             addSlot(slot, SlotSemantics.UPGRADE);
         }
-        addSlot(new RestrictedInputSlot(RestrictedInputSlot.PlacableItemType.QE_SINGULARITY,
-            wpeatMenuHost.getSubInventory(WCTMenuHost.INV_SINGULARITY), 0), AE2wtlibSlotSemantics.SINGULARITY);
+        addSlot(
+                new RestrictedInputSlot(
+                        RestrictedInputSlot.PlacableItemType.QE_SINGULARITY,
+                        wpeatMenuHost.getSubInventory(WCTMenuHost.INV_SINGULARITY),
+                        0),
+                AE2wtlibSlotSemantics.SINGULARITY);
     }
 
     @Override

@@ -17,6 +17,7 @@ import appeng.parts.PartModel;
 import appeng.parts.encoding.PatternEncodingLogic;
 import appeng.parts.reporting.AbstractDisplayPart;
 import appeng.util.ConfigManager;
+import java.util.List;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -29,17 +30,15 @@ import net.minecraftforge.common.util.LazyOptional;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 
-import java.util.List;
-
-public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart implements IConfigurableObject, IPatternTerminalLogicHost, IPatternTerminalMenuHost {
+public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
+        implements IConfigurableObject, IPatternTerminalLogicHost, IPatternTerminalMenuHost {
     private final IConfigManager cm = new ConfigManager(this::saveChanges);
 
     @PartModels
-    public static final ResourceLocation MODEL_OFF = AE2PEAT.makeId(
-        "part/pattern_encoding_access_terminal_off");
+    public static final ResourceLocation MODEL_OFF = AE2PEAT.makeId("part/pattern_encoding_access_terminal_off");
+
     @PartModels
-    public static final ResourceLocation MODEL_ON = AE2PEAT.makeId(
-        "part/pattern_encoding_access_terminal_on");
+    public static final ResourceLocation MODEL_ON = AE2PEAT.makeId("part/pattern_encoding_access_terminal_on");
 
     public static final IPartModel MODELS_OFF = new PartModel(MODEL_BASE, MODEL_OFF, MODEL_STATUS_OFF);
     public static final IPartModel MODELS_ON = new PartModel(MODEL_BASE, MODEL_ON, MODEL_STATUS_ON);
@@ -117,7 +116,8 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart imple
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> cap) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            return LazyOptional.of(() -> logic.getBlankPatternInv().toItemHandler()).cast();
+            return LazyOptional.of(() -> logic.getBlankPatternInv().toItemHandler())
+                    .cast();
         }
         return super.getCapability(cap);
     }

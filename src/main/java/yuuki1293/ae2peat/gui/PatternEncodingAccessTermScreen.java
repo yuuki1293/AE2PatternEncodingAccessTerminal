@@ -29,6 +29,7 @@ import appeng.menu.SlotSemantics;
 import appeng.parts.encoding.EncodingMode;
 import com.google.common.collect.HashMultimap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import java.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -48,10 +49,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
-import java.util.*;
-
-public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTermMenu>
-    extends AEBaseScreen<C> implements ISortSource {
+public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTermMenu> extends AEBaseScreen<C>
+        implements ISortSource {
     private static final Logger LOGGER = LoggerFactory.getLogger(PatternEncodingAccessTermScreen.class);
 
     private static final int GUI_WIDTH = 195;
@@ -61,7 +60,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     private static final int GUI_PADDING_Y = 6;
 
     private static final int GUI_HEADER_HEIGHT = 17;
-    private static final int GUI_FOOTER_HEIGHT = 178; //97;
+    private static final int GUI_FOOTER_HEIGHT = 178; // 97;
     private static final int COLUMNS = 9;
 
     /**
@@ -102,8 +101,8 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     // This is the lower part of the UI, anything below the scrollable area (incl. its bottom border)
     private static final Rect2i FOOTER_BBOX = new Rect2i(0, 71, GUI_WIDTH, GUI_FOOTER_HEIGHT);
 
-    private static final Comparator<PatternContainerGroup> GROUP_COMPARATOR = Comparator
-        .comparing(group -> group.name().getString().toLowerCase(Locale.ROOT));
+    private static final Comparator<PatternContainerGroup> GROUP_COMPARATOR =
+            Comparator.comparing(group -> group.name().getString().toLowerCase(Locale.ROOT));
 
     private final HashMap<Long, PatternContainerRecord> byId = new HashMap<>();
     // Used to show multiple pattern providers with the same name under a single header
@@ -124,8 +123,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
 
     protected final Repo repo;
 
-    public PatternEncodingAccessTermScreen(C menu, Inventory playerInventory,
-                                   Component title, ScreenStyle style) {
+    public PatternEncodingAccessTermScreen(C menu, Inventory playerInventory, Component title, ScreenStyle style) {
         super(menu, playerInventory, title, style);
         this.scrollbar = widgets.addScrollBar("scrollbar");
         this.imageWidth = GUI_WIDTH;
@@ -133,10 +131,10 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         // Add a terminal-style button
         TerminalStyle terminalStyle = AEConfig.instance().getTerminalStyle();
         this.addToLeftToolbar(
-            new SettingToggleButton<>(Settings.TERMINAL_STYLE, terminalStyle, this::toggleTerminalStyle));
+                new SettingToggleButton<>(Settings.TERMINAL_STYLE, terminalStyle, this::toggleTerminalStyle));
 
-        showPatternProviders = new ServerSettingToggleButton<>(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS,
-            ShowPatternProviders.VISIBLE);
+        showPatternProviders =
+                new ServerSettingToggleButton<>(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
 
         this.addToLeftToolbar(showPatternProviders);
 
@@ -145,16 +143,15 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         this.searchField.setPlaceholder(GuiText.SearchPlaceholder.text());
 
         for (var mode : EncodingMode.values()) {
-            var panel = switch (mode) {
-                case CRAFTING -> new CraftingEncodingPanel(this, widgets);
-                case PROCESSING -> new ProcessingEncodingPanel(this, widgets);
-                case SMITHING_TABLE -> new SmithingTableEncodingPanel(this, widgets);
-                case STONECUTTING -> new StonecuttingEncodingPanel(this, widgets);
-            };
-            var tabButton = new TabButton(
-                panel.getTabIconItem(),
-                panel.getTabTooltip(),
-                btn -> getMenu().setMode(mode));
+            var panel =
+                    switch (mode) {
+                        case CRAFTING -> new CraftingEncodingPanel(this, widgets);
+                        case PROCESSING -> new ProcessingEncodingPanel(this, widgets);
+                        case SMITHING_TABLE -> new SmithingTableEncodingPanel(this, widgets);
+                        case STONECUTTING -> new StonecuttingEncodingPanel(this, widgets);
+                    };
+            var tabButton = new TabButton(panel.getTabIconItem(), panel.getTabTooltip(), btn -> getMenu()
+                    .setMode(mode));
             tabButton.setStyle(TabButton.Style.HORIZONTAL);
 
             var modeIndex = modeTabButtons.size();
@@ -173,8 +170,9 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
 
     @Override
     public void init() {
-        this.visibleRows = config.getTerminalStyle().getRows(
-            (this.height - GUI_HEADER_HEIGHT - GUI_FOOTER_HEIGHT - GUI_TOP_AND_BOTTOM_PADDING) / ROW_HEIGHT);
+        this.visibleRows = config.getTerminalStyle()
+                .getRows((this.height - GUI_HEADER_HEIGHT - GUI_FOOTER_HEIGHT - GUI_TOP_AND_BOTTOM_PADDING)
+                        / ROW_HEIGHT);
 
         // Render inventory in correct place.
         this.imageHeight = GUI_HEADER_HEIGHT + GUI_FOOTER_HEIGHT + this.visibleRows * ROW_HEIGHT;
@@ -182,15 +180,14 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         super.init();
 
         // Autofocus search field
-//        this.setInitialFocus(this.searchField);
+        //        this.setInitialFocus(this.searchField);
 
         // numLines may have changed, recalculate scroll bar.
         this.resetScrollbar();
     }
 
     @Override
-    public void drawFG(GuiGraphics guiGraphics, int offsetX, int offsetY, int mouseX,
-                       int mouseY) {
+    public void drawFG(GuiGraphics guiGraphics, int offsetX, int offsetY, int mouseX, int mouseY) {
 
         this.menu.slots.removeIf(slot -> slot instanceof PatternSlot);
 
@@ -207,21 +204,13 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
                     var container = slotsRow.container;
                     for (int col = 0; col < slotsRow.slots; col++) {
                         var slot = new PatternSlot(
-                            container,
-                            slotsRow.offset + col,
-                            col * SLOT_SIZE + GUI_PADDING_X,
-                            (i + 1) * SLOT_SIZE);
+                                container, slotsRow.offset + col, col * SLOT_SIZE + GUI_PADDING_X, (i + 1) * SLOT_SIZE);
                         this.menu.slots.add(slot);
 
                         // Indicate invalid patterns
                         var pattern = container.getInventory().getStackInSlot(slotsRow.offset + col);
                         if (!pattern.isEmpty() && PatternDetailsHelper.decodePattern(pattern, level, false) == null) {
-                            guiGraphics.fill(
-                                slot.x,
-                                slot.y,
-                                slot.x + 16,
-                                slot.y + 16,
-                                0x7fff0000);
+                            guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0x7fff0000);
                         }
                     }
                 } else if (row instanceof PatternEncodingAccessTermScreen.GroupHeaderRow headerRow) {
@@ -229,34 +218,38 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
                     if (group.icon() != null) {
                         var renderContext = new SimpleRenderContext(LytRect.empty(), guiGraphics);
                         renderContext.renderItem(
-                            group.icon().getReadOnlyStack(),
-                            GUI_PADDING_X + PATTERN_PROVIDER_NAME_MARGIN_X,
-                            GUI_PADDING_Y + GUI_HEADER_HEIGHT + i * ROW_HEIGHT,
-                            8,
-                            8);
+                                group.icon().getReadOnlyStack(),
+                                GUI_PADDING_X + PATTERN_PROVIDER_NAME_MARGIN_X,
+                                GUI_PADDING_Y + GUI_HEADER_HEIGHT + i * ROW_HEIGHT,
+                                8,
+                                8);
                     }
 
                     final int rows = this.byGroup.get(group).size();
 
                     FormattedText displayName;
                     if (rows > 1) {
-                        displayName = Component.empty()
-                            .append(group.name())
-                            .append(Component.literal(" (" + rows + ')'));
+                        displayName =
+                                Component.empty().append(group.name()).append(Component.literal(" (" + rows + ')'));
                     } else {
                         displayName = group.name();
                     }
 
-                    var text = Language.getInstance().getVisualOrder(
-                        this.font.substrByWidth(displayName, TEXT_MAX_WIDTH - 10));
+                    var text = Language.getInstance()
+                            .getVisualOrder(this.font.substrByWidth(displayName, TEXT_MAX_WIDTH - 10));
 
-                    guiGraphics.drawString(font, text, GUI_PADDING_X + PATTERN_PROVIDER_NAME_MARGIN_X + 10,
-                        GUI_PADDING_Y + GUI_HEADER_HEIGHT + i * ROW_HEIGHT, textColor, false);
+                    guiGraphics.drawString(
+                            font,
+                            text,
+                            GUI_PADDING_X + PATTERN_PROVIDER_NAME_MARGIN_X + 10,
+                            GUI_PADDING_Y + GUI_HEADER_HEIGHT + i * ROW_HEIGHT,
+                            textColor,
+                            false);
                 }
             }
         }
     }
-    
+
     @Override
     protected void renderTooltip(@NotNull GuiGraphics guiGraphics, int x, int y) {
         if (this.menu.getCarried().isEmpty() && menu.canModifyAmountForSlot(this.hoveredSlot)) {
@@ -273,7 +266,8 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
             var hoveredLineIndex = getHoveredLineIndex(x, y);
             if (hoveredLineIndex != -1) {
                 var row = rows.get(hoveredLineIndex);
-                if (row instanceof PatternEncodingAccessTermScreen.GroupHeaderRow headerRow && !headerRow.group.tooltip().isEmpty()) {
+                if (row instanceof PatternEncodingAccessTermScreen.GroupHeaderRow headerRow
+                        && !headerRow.group.tooltip().isEmpty()) {
                     guiGraphics.renderTooltip(font, headerRow.group.tooltip(), Optional.empty(), x, y);
                     return;
                 }
@@ -313,11 +307,11 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
                 var currentStack = GenericStack.fromItemStack(slot.getItem());
                 if (currentStack != null) {
                     var screen = new SetProcessingPatternAmountScreen<>(
-                        this,
-                        currentStack,
-                        newStack -> NetworkHandler.instance().sendToServer(new InventoryActionPacket(
-                            InventoryAction.SET_FILTER, slot.index,
-                            GenericStack.wrapInItemStack(newStack))));
+                            this, currentStack, newStack -> NetworkHandler.instance()
+                                    .sendToServer(new InventoryActionPacket(
+                                            InventoryAction.SET_FILTER,
+                                            slot.index,
+                                            GenericStack.wrapInItemStack(newStack))));
                     switchToScreen(screen);
                     return true;
                 }
@@ -334,8 +328,9 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
 
             switch (clickType) {
                 case PICKUP: // pickup / set-down.
-                    action = mouseButton == 1 ? InventoryAction.SPLIT_OR_PLACE_SINGLE
-                        : InventoryAction.PICKUP_OR_SET_DOWN;
+                    action = mouseButton == 1
+                            ? InventoryAction.SPLIT_OR_PLACE_SINGLE
+                            : InventoryAction.PICKUP_OR_SET_DOWN;
                     break;
                 case QUICK_MOVE:
                     action = mouseButton == 1 ? InventoryAction.PICKUP_SINGLE : InventoryAction.SHIFT_CLICK;
@@ -353,8 +348,10 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
             }
 
             if (action != null) {
-                final InventoryActionPacket p = new InventoryActionPacket(action, machineSlot.getSlotIndex(),
-                    machineSlot.getMachineInv().getServerId());
+                final InventoryActionPacket p = new InventoryActionPacket(
+                        action,
+                        machineSlot.getSlotIndex(),
+                        machineSlot.getMachineInv().getServerId());
                 NetworkHandler.instance().sendToServer(p);
             }
 
@@ -365,8 +362,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     }
 
     @Override
-    public void drawBG(GuiGraphics guiGraphics, int offsetX, int offsetY, int mouseX,
-                       int mouseY, float partialTicks) {
+    public void drawBG(GuiGraphics guiGraphics, int offsetX, int offsetY, int mouseX, int mouseY, float partialTicks) {
         // Draw the top of the dialog
         blitAccess(guiGraphics, offsetX, offsetY, HEADER_BBOX);
 
@@ -433,11 +429,12 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         this.refreshList();
     }
 
-    public void postFullUpdate(long inventoryId,
-                               long sortBy,
-                               PatternContainerGroup group,
-                               int inventorySize,
-                               Int2ObjectMap<ItemStack> slots) {
+    public void postFullUpdate(
+            long inventoryId,
+            long sortBy,
+            PatternContainerGroup group,
+            int inventorySize,
+            Int2ObjectMap<ItemStack> slots) {
         var record = new PatternContainerRecord(inventoryId, inventorySize, sortBy, group);
         this.byId.put(inventoryId, record);
 
@@ -451,8 +448,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         this.refreshList();
     }
 
-    public void postIncrementalUpdate(long inventoryId,
-                                      Int2ObjectMap<ItemStack> slots) {
+    public void postIncrementalUpdate(long inventoryId, Int2ObjectMap<ItemStack> slots) {
         var record = byId.get(inventoryId);
         if (record == null) {
             LOGGER.warn("Ignoring incremental update for unknown inventory id {}", inventoryId);
@@ -523,11 +519,11 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         // Mark inputs for patterns for which the grid already has a pattern
         var semantic = menu.getSlotSemantic(s);
         if (semantic == SlotSemantics.CRAFTING_GRID
-            || semantic == SlotSemantics.PROCESSING_INPUTS
-            || semantic == SlotSemantics.SMITHING_TABLE_ADDITION
-            || semantic == SlotSemantics.SMITHING_TABLE_BASE
-            || semantic == SlotSemantics.SMITHING_TABLE_TEMPLATE
-            || semantic == SlotSemantics.STONECUTTING_INPUT) {
+                || semantic == SlotSemantics.PROCESSING_INPUTS
+                || semantic == SlotSemantics.SMITHING_TABLE_ADDITION
+                || semantic == SlotSemantics.SMITHING_TABLE_BASE
+                || semantic == SlotSemantics.SMITHING_TABLE_TEMPLATE
+                || semantic == SlotSemantics.STONECUTTING_INPUT) {
             var slotContent = GenericStack.fromItemStack(s.getItem());
             if (slotContent == null) {
                 return false;
@@ -697,8 +693,8 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
      */
     private void blitAccess(GuiGraphics guiGraphics, int offsetX, int offsetY, Rect2i srcRect) {
         var texture = AppEng.makeId("textures/guis/patternaccessterminal.png");
-        guiGraphics.blit(texture, offsetX, offsetY, srcRect.getX(), srcRect.getY(), srcRect.getWidth(),
-            srcRect.getHeight());
+        guiGraphics.blit(
+                texture, offsetX, offsetY, srcRect.getX(), srcRect.getY(), srcRect.getWidth(), srcRect.getHeight());
     }
 
     /**
@@ -708,8 +704,8 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
      */
     private void blitEncoding(GuiGraphics guiGraphics, int offsetX, int offsetY, Rect2i srcRect) {
         var texture = AppEng.makeId("textures/guis/pattern.png");
-        guiGraphics.blit(texture, offsetX, offsetY, srcRect.getX(), srcRect.getY(), srcRect.getWidth(),
-            srcRect.getHeight());
+        guiGraphics.blit(
+                texture, offsetX, offsetY, srcRect.getX(), srcRect.getY(), srcRect.getWidth(), srcRect.getHeight());
     }
 
     @Override
@@ -740,18 +736,16 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         return TypeFilter.ALL;
     }
 
-    sealed interface Row {
-    }
+    sealed interface Row {}
 
     /**
      * A row containing a header for a group.
      */
-    record GroupHeaderRow(PatternContainerGroup group) implements PatternEncodingAccessTermScreen.Row {
-    }
+    record GroupHeaderRow(PatternContainerGroup group) implements PatternEncodingAccessTermScreen.Row {}
 
     /**
      * A row containing slots for a subset of a pattern container inventory.
      */
-    record SlotsRow(PatternContainerRecord container, int offset, int slots) implements PatternEncodingAccessTermScreen.Row {
-    }
+    record SlotsRow(PatternContainerRecord container, int offset, int slots)
+            implements PatternEncodingAccessTermScreen.Row {}
 }

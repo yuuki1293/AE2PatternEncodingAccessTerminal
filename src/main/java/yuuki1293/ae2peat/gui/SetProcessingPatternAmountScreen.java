@@ -9,12 +9,11 @@ import appeng.client.gui.widgets.TabButton;
 import appeng.core.localization.GuiText;
 import appeng.menu.SlotSemantics;
 import com.google.common.primitives.Longs;
+import java.util.function.Consumer;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
-import java.util.function.Consumer;
-
 public class SetProcessingPatternAmountScreen<C extends PatternEncodingAccessTermMenu>
-    extends AESubScreen<C, PatternEncodingAccessTermScreen<C>> {
+        extends AESubScreen<C, PatternEncodingAccessTermScreen<C>> {
 
     private final NumberEntryWidget amount;
 
@@ -22,9 +21,8 @@ public class SetProcessingPatternAmountScreen<C extends PatternEncodingAccessTer
 
     private final Consumer<GenericStack> setter;
 
-    public SetProcessingPatternAmountScreen(PatternEncodingAccessTermScreen<C> parentScreen,
-                                            GenericStack currentStack,
-                                            Consumer<GenericStack> setter) {
+    public SetProcessingPatternAmountScreen(
+            PatternEncodingAccessTermScreen<C> parentScreen, GenericStack currentStack, Consumer<GenericStack> setter) {
         super(parentScreen, "/screens/set_processing_pattern_amount.json");
 
         this.currentStack = currentStack;
@@ -71,5 +69,4 @@ public class SetProcessingPatternAmountScreen<C extends PatternEncodingAccessTer
     private long getMaxAmount() {
         return 999999 * (long) currentStack.what().getAmountPerUnit();
     }
-
 }

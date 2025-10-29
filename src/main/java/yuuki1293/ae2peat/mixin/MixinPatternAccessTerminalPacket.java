@@ -17,20 +17,26 @@ import yuuki1293.ae2peat.gui.PatternEncodingAccessTermScreen;
 public abstract class MixinPatternAccessTerminalPacket {
     @Shadow
     private boolean fullUpdate;
+
     @Shadow
     private long inventoryId;
+
     @Shadow
     private int inventorySize;
+
     @Shadow
     private long sortBy;
+
     @Shadow
     private PatternContainerGroup group;
+
     @Shadow
     private Int2ObjectMap<ItemStack> slots;
 
     @Inject(method = "clientPacketData", at = @At("RETURN"))
-    private void clientPacketData(Player player, CallbackInfo ci){
-        if (Minecraft.getInstance().screen instanceof PatternEncodingAccessTermScreen<?> patternEncodingAccessTerminal) {
+    private void clientPacketData(Player player, CallbackInfo ci) {
+        if (Minecraft.getInstance().screen
+                instanceof PatternEncodingAccessTermScreen<?> patternEncodingAccessTerminal) {
             if (fullUpdate) {
                 patternEncodingAccessTerminal.postFullUpdate(this.inventoryId, sortBy, group, inventorySize, slots);
             } else {

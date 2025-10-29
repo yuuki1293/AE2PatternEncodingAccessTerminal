@@ -7,7 +7,7 @@ import yuuki1293.ae2peat.definisions.PEATItems;
 import yuuki1293.ae2peat.definisions.PEATText;
 
 public class PEATLanguageProvider extends LanguageProvider {
-    public PEATLanguageProvider(PackOutput output){
+    public PEATLanguageProvider(PackOutput output) {
         super(output, AE2PEAT.MOD_ID, "en_us");
     }
 

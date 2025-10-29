@@ -5,20 +5,22 @@ import appeng.helpers.IPatternTerminalMenuHost;
 import appeng.menu.ISubMenu;
 import appeng.parts.encoding.PatternEncodingLogic;
 import de.mari_023.ae2wtlib.terminal.WTMenuHost;
+import java.util.function.BiConsumer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import yuuki1293.ae2peat.definisions.PEATItems;
 
-import java.util.function.BiConsumer;
-
-public class WPEATMenuHost extends WTMenuHost
-    implements IPatternTerminalMenuHost, IPatternTerminalLogicHost {
+public class WPEATMenuHost extends WTMenuHost implements IPatternTerminalMenuHost, IPatternTerminalLogicHost {
 
     private final PatternEncodingLogic logic = new PatternEncodingLogic(this);
 
-    public WPEATMenuHost(Player player, @Nullable Integer inventorySlot, ItemStack is, BiConsumer<Player, ISubMenu> returnToMainMenu) {
+    public WPEATMenuHost(
+            Player player,
+            @Nullable Integer inventorySlot,
+            ItemStack is,
+            BiConsumer<Player, ISubMenu> returnToMainMenu) {
         super(player, inventorySlot, is, returnToMainMenu);
         readFromNbt();
     }

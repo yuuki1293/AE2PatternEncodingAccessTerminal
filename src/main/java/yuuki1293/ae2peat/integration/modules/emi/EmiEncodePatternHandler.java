@@ -1,23 +1,19 @@
 package yuuki1293.ae2peat.integration.modules.emi;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import appeng.integration.modules.emi.EmiStackHelper;
-import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.world.item.crafting.Recipe;
-
-import dev.emi.emi.api.recipe.EmiRecipe;
-import dev.emi.emi.api.recipe.handler.EmiCraftContext;
-
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
 import appeng.core.localization.ItemModText;
+import appeng.integration.modules.emi.EmiStackHelper;
 import appeng.menu.me.common.GridInventoryEntry;
+import dev.emi.emi.api.recipe.EmiRecipe;
+import dev.emi.emi.api.recipe.handler.EmiCraftContext;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import net.minecraft.world.item.crafting.Recipe;
+import org.jetbrains.annotations.Nullable;
 import yuuki1293.ae2peat.integration.modules.jeirei.EncodingHelper;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
@@ -59,21 +55,20 @@ public class EmiEncodePatternHandler<T extends PatternEncodingAccessTermMenu> ex
 
         if (doTransfer) {
             if (craftingRecipe) {
-                EncodingHelper.encodeCraftingRecipe(menu,
-                    recipe,
-                    getGuiIngredientsForCrafting(emiRecipe),
-                    stack -> true);
+                EncodingHelper.encodeCraftingRecipe(
+                        menu, recipe, getGuiIngredientsForCrafting(emiRecipe), stack -> true);
             } else {
-                EncodingHelper.encodeProcessingRecipe(menu,
-                    EmiStackHelper.ofInputs(emiRecipe),
-                    EmiStackHelper.ofOutputs(emiRecipe));
+                EncodingHelper.encodeProcessingRecipe(
+                        menu, EmiStackHelper.ofInputs(emiRecipe), EmiStackHelper.ofOutputs(emiRecipe));
             }
         } else {
             var repo = menu.getClientRepo();
-            Set<AEKey> craftableKeys = repo != null ? repo.getAllEntries().stream()
-                .filter(GridInventoryEntry::isCraftable)
-                .map(GridInventoryEntry::getWhat)
-                .collect(Collectors.toSet()) : Set.of();
+            Set<AEKey> craftableKeys = repo != null
+                    ? repo.getAllEntries().stream()
+                            .filter(GridInventoryEntry::isCraftable)
+                            .map(GridInventoryEntry::getWhat)
+                            .collect(Collectors.toSet())
+                    : Set.of();
 
             return new Result.EncodeWithCraftables(craftableKeys);
         }

@@ -3,25 +3,12 @@ package yuuki1293.ae2peat.integration.modules.emi;
 import static appeng.integration.modules.jeirei.TransferHelper.BLUE_SLOT_HIGHLIGHT_COLOR;
 import static appeng.integration.modules.jeirei.TransferHelper.RED_SLOT_HIGHLIGHT_COLOR;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import appeng.api.stacks.AEKey;
+import appeng.api.stacks.GenericStack;
 import appeng.integration.modules.emi.EmiStackHelper;
 import appeng.integration.modules.jeirei.TransferHelper;
-import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.level.Level;
-
+import appeng.menu.AEBaseMenu;
+import appeng.menu.SlotSemantics;
 import dev.emi.emi.api.recipe.EmiPlayerInventory;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.VanillaEmiRecipeCategories;
@@ -32,11 +19,20 @@ import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.Bounds;
 import dev.emi.emi.api.widget.SlotWidget;
 import dev.emi.emi.api.widget.Widget;
-
-import appeng.api.stacks.AEKey;
-import appeng.api.stacks.GenericStack;
-import appeng.menu.AEBaseMenu;
-import appeng.menu.SlotSemantics;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 import yuuki1293.ae2peat.integration.modules.jeirei.EncodingHelper;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
@@ -88,8 +84,8 @@ abstract class AbstractRecipeHandler<T extends AEBaseMenu> implements StandardRe
                     if (entry.getStoredAmount() <= 0) {
                         continue; // Skip items that are only craftable
                     }
-                    var emiStack = EmiStackHelper
-                        .toEmiStack(new GenericStack(entry.getWhat(), entry.getStoredAmount()));
+                    var emiStack =
+                            EmiStackHelper.toEmiStack(new GenericStack(entry.getWhat(), entry.getStoredAmount()));
                     if (emiStack != null) {
                         list.add(emiStack);
                     }
@@ -108,10 +104,8 @@ abstract class AbstractRecipeHandler<T extends AEBaseMenu> implements StandardRe
         return StandardRecipeHandler.super.canCraft(recipe, context);
     }
 
-    protected abstract Result transferRecipe(T menu,
-                                             @Nullable Recipe<?> holder,
-                                             EmiRecipe emiRecipe,
-                                             boolean doTransfer);
+    protected abstract Result transferRecipe(
+            T menu, @Nullable Recipe<?> holder, EmiRecipe emiRecipe, boolean doTransfer);
 
     protected final Result transferRecipe(EmiRecipe emiRecipe, EmiCraftContext<T> context, boolean doTransfer) {
         if (!containerClass.isInstance(context.getScreenHandler())) {
@@ -144,9 +138,9 @@ abstract class AbstractRecipeHandler<T extends AEBaseMenu> implements StandardRe
         var tooltip = transferRecipe(recipe, context, false).getTooltip(recipe, context);
         if (tooltip != null) {
             return tooltip.stream()
-                .map(Component::getVisualOrderText)
-                .map(ClientTooltipComponent::create)
-                .toList();
+                    .map(Component::getVisualOrderText)
+                    .map(ClientTooltipComponent::create)
+                    .toList();
         } else {
             return StandardRecipeHandler.super.getTooltip(recipe, context);
         }
@@ -171,7 +165,7 @@ abstract class AbstractRecipeHandler<T extends AEBaseMenu> implements StandardRe
 
     protected final boolean isCraftingRecipe(Recipe<?> recipe, EmiRecipe emiRecipe) {
         return EncodingHelper.isSupportedCraftingRecipe(recipe)
-            || emiRecipe.getCategory().equals(VanillaEmiRecipeCategories.CRAFTING);
+                || emiRecipe.getCategory().equals(VanillaEmiRecipeCategories.CRAFTING);
     }
 
     protected final boolean fitsIn3x3Grid(Recipe<?> recipe) {
@@ -182,7 +176,7 @@ abstract class AbstractRecipeHandler<T extends AEBaseMenu> implements StandardRe
         }
     }
 
-    protected static sealed abstract class Result {
+    protected abstract static sealed class Result {
         /**
          * @return null doesn't override the default tooltip.
          */
@@ -193,9 +187,11 @@ abstract class AbstractRecipeHandler<T extends AEBaseMenu> implements StandardRe
 
         abstract boolean canCraft();
 
-        void render(EmiRecipe recipe, EmiCraftContext<? extends AEBaseMenu> context, List<Widget> widgets,
-                    GuiGraphics draw) {
-        }
+        void render(
+                EmiRecipe recipe,
+                EmiCraftContext<? extends AEBaseMenu> context,
+                List<Widget> widgets,
+                GuiGraphics draw) {}
 
         static final class Success extends Result {
             @Override
@@ -224,8 +220,7 @@ abstract class AbstractRecipeHandler<T extends AEBaseMenu> implements StandardRe
 
             @Override
             List<Component> getTooltip(EmiRecipe emiRecipe, EmiCraftContext<?> context) {
-                var anyCraftable = emiRecipe.getInputs().stream()
-                    .anyMatch(ing -> isCraftable(craftableKeys, ing));
+                var anyCraftable = emiRecipe.getInputs().stream().anyMatch(ing -> isCraftable(craftableKeys, ing));
                 if (anyCraftable) {
                     return TransferHelper.createEncodingTooltip(true);
                 }
@@ -233,8 +228,11 @@ abstract class AbstractRecipeHandler<T extends AEBaseMenu> implements StandardRe
             }
 
             @Override
-            void render(EmiRecipe recipe, EmiCraftContext<? extends AEBaseMenu> context, List<Widget> widgets,
-                        GuiGraphics guiGraphics) {
+            void render(
+                    EmiRecipe recipe,
+                    EmiCraftContext<? extends AEBaseMenu> context,
+                    List<Widget> widgets,
+                    GuiGraphics guiGraphics) {
                 for (var widget : widgets) {
                     if (widget instanceof SlotWidget slot && isInputSlot(slot)) {
                         if (isCraftable(craftableKeys, slot.getStack())) {
@@ -242,8 +240,8 @@ abstract class AbstractRecipeHandler<T extends AEBaseMenu> implements StandardRe
                             poseStack.pushPose();
                             poseStack.translate(0, 0, 400);
                             var bounds = getInnerBounds(slot);
-                            guiGraphics.fill(bounds.x(), bounds.y(), bounds.right(), bounds.bottom(),
-                                BLUE_SLOT_HIGHLIGHT_COLOR);
+                            guiGraphics.fill(
+                                    bounds.x(), bounds.y(), bounds.right(), bounds.bottom(), BLUE_SLOT_HIGHLIGHT_COLOR);
                             poseStack.popPose();
                         }
                     }
@@ -278,11 +276,14 @@ abstract class AbstractRecipeHandler<T extends AEBaseMenu> implements StandardRe
             }
 
             @Override
-            void render(EmiRecipe recipe, EmiCraftContext<? extends AEBaseMenu> context, List<Widget> widgets,
-                        GuiGraphics guiGraphics) {
+            void render(
+                    EmiRecipe recipe,
+                    EmiCraftContext<? extends AEBaseMenu> context,
+                    List<Widget> widgets,
+                    GuiGraphics guiGraphics) {
 
-                renderMissingAndCraftableSlotOverlays(getRecipeInputSlots(recipe, widgets), guiGraphics, missingSlots,
-                    Set.of());
+                renderMissingAndCraftableSlotOverlays(
+                        getRecipeInputSlots(recipe, widgets), guiGraphics, missingSlots, Set.of());
             }
         }
 
@@ -297,12 +298,13 @@ abstract class AbstractRecipeHandler<T extends AEBaseMenu> implements StandardRe
         static Error createFailed(Component text) {
             return new Error(text, Set.of());
         }
-
     }
 
-    private static void renderMissingAndCraftableSlotOverlays(Map<Integer, SlotWidget> inputSlots,
-                                                              GuiGraphics guiGraphics,
-                                                              Set<Integer> missingSlots, Set<Integer> craftableSlots) {
+    private static void renderMissingAndCraftableSlotOverlays(
+            Map<Integer, SlotWidget> inputSlots,
+            GuiGraphics guiGraphics,
+            Set<Integer> missingSlots,
+            Set<Integer> craftableSlots) {
         for (var entry : inputSlots.entrySet()) {
             boolean missing = missingSlots.contains(entry.getKey());
             boolean craftable = craftableSlots.contains(entry.getKey());
@@ -311,8 +313,12 @@ abstract class AbstractRecipeHandler<T extends AEBaseMenu> implements StandardRe
                 poseStack.pushPose();
                 poseStack.translate(0, 0, 400);
                 var innerBounds = getInnerBounds(entry.getValue());
-                guiGraphics.fill(innerBounds.x(), innerBounds.y(), innerBounds.right(),
-                    innerBounds.bottom(), missing ? RED_SLOT_HIGHLIGHT_COLOR : BLUE_SLOT_HIGHLIGHT_COLOR);
+                guiGraphics.fill(
+                        innerBounds.x(),
+                        innerBounds.y(),
+                        innerBounds.right(),
+                        innerBounds.bottom(),
+                        missing ? RED_SLOT_HIGHLIGHT_COLOR : BLUE_SLOT_HIGHLIGHT_COLOR);
                 poseStack.popPose();
             }
         }
@@ -324,11 +330,7 @@ abstract class AbstractRecipeHandler<T extends AEBaseMenu> implements StandardRe
 
     private static Bounds getInnerBounds(SlotWidget slot) {
         var bounds = slot.getBounds();
-        return new Bounds(
-            bounds.x() + 1,
-            bounds.y() + 1,
-            bounds.width() - 2,
-            bounds.height() - 2);
+        return new Bounds(bounds.x() + 1, bounds.y() + 1, bounds.width() - 2, bounds.height() - 2);
     }
 
     private static Map<Integer, SlotWidget> getRecipeInputSlots(EmiRecipe recipe, List<Widget> widgets) {

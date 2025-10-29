@@ -10,6 +10,7 @@ import appeng.client.gui.widgets.ToggleButton;
 import appeng.core.localization.ButtonToolTips;
 import appeng.core.localization.GuiText;
 import appeng.menu.SlotSemantics;
+import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
@@ -18,8 +19,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
-
-import java.util.List;
 
 public class SmithingTableEncodingPanel extends EncodingModePanel {
     private static final Blitter BG = Blitter.texture("guis/pattern_modes.png").src(128, 70, 126, 68);
@@ -52,17 +51,12 @@ public class SmithingTableEncodingPanel extends EncodingModePanel {
     }
 
     private ToggleButton createSubstitutionButton(WidgetContainer widgets) {
-        var button = new ToggleButton(
-            Icon.SUBSTITUTION_ENABLED,
-            Icon.SUBSTITUTION_DISABLED,
-            menu::setSubstitute);
+        var button = new ToggleButton(Icon.SUBSTITUTION_ENABLED, Icon.SUBSTITUTION_DISABLED, menu::setSubstitute);
         button.setHalfSize(true);
-        button.setTooltipOn(List.of(
-            ButtonToolTips.SubstitutionsOn.text(),
-            ButtonToolTips.SubstitutionsDescEnabled.text()));
-        button.setTooltipOff(List.of(
-            ButtonToolTips.SubstitutionsOff.text(),
-            ButtonToolTips.SubstitutionsDescDisabled.text()));
+        button.setTooltipOn(
+                List.of(ButtonToolTips.SubstitutionsOn.text(), ButtonToolTips.SubstitutionsDescEnabled.text()));
+        button.setTooltipOff(
+                List.of(ButtonToolTips.SubstitutionsOff.text(), ButtonToolTips.SubstitutionsDescDisabled.text()));
         widgets.add("smithingTableSubstitutions", button);
         return button;
     }
@@ -83,8 +77,8 @@ public class SmithingTableEncodingPanel extends EncodingModePanel {
 
         var level = menu.getPlayer().level();
         var recipe = level.getRecipeManager()
-            .getRecipeFor(RecipeType.SMITHING, container, level)
-            .orElse(null);
+                .getRecipeFor(RecipeType.SMITHING, container, level)
+                .orElse(null);
         if (recipe == null) {
             resultSlot.set(ItemStack.EMPTY);
         } else {

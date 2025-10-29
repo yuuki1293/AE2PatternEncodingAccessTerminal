@@ -10,14 +10,13 @@ import appeng.client.gui.widgets.ToggleButton;
 import appeng.core.localization.ButtonToolTips;
 import appeng.core.localization.GuiText;
 import appeng.menu.SlotSemantics;
+import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-
-import java.util.List;
 
 public class CraftingEncodingPanel extends EncodingModePanel {
     private static final Blitter BG = Blitter.texture("guis/pattern_modes.png").src(0, 0, 126, 68);
@@ -49,33 +48,24 @@ public class CraftingEncodingPanel extends EncodingModePanel {
     }
 
     private ToggleButton createCraftingSubstitutionButton(WidgetContainer widgets) {
-        var button = new ToggleButton(
-            Icon.SUBSTITUTION_ENABLED,
-            Icon.SUBSTITUTION_DISABLED,
-            menu::setSubstitute);
+        var button = new ToggleButton(Icon.SUBSTITUTION_ENABLED, Icon.SUBSTITUTION_DISABLED, menu::setSubstitute);
         button.setHalfSize(true);
-        button.setTooltipOn(List.of(
-            ButtonToolTips.SubstitutionsOn.text(),
-            ButtonToolTips.SubstitutionsDescEnabled.text()));
-        button.setTooltipOff(List.of(
-            ButtonToolTips.SubstitutionsOff.text(),
-            ButtonToolTips.SubstitutionsDescDisabled.text()));
+        button.setTooltipOn(
+                List.of(ButtonToolTips.SubstitutionsOn.text(), ButtonToolTips.SubstitutionsDescEnabled.text()));
+        button.setTooltipOff(
+                List.of(ButtonToolTips.SubstitutionsOff.text(), ButtonToolTips.SubstitutionsDescDisabled.text()));
         widgets.add("craftingSubstitutions", button);
         return button;
     }
 
     private ToggleButton createCraftingFluidSubstitutionButton(WidgetContainer widgets) {
         var button = new ToggleButton(
-            Icon.FLUID_SUBSTITUTION_ENABLED,
-            Icon.FLUID_SUBSTITUTION_DISABLED,
-            menu::setSubstituteFluids);
+                Icon.FLUID_SUBSTITUTION_ENABLED, Icon.FLUID_SUBSTITUTION_DISABLED, menu::setSubstituteFluids);
         button.setHalfSize(true);
-        button.setTooltipOn(List.of(
-            ButtonToolTips.FluidSubstitutions.text(),
-            ButtonToolTips.FluidSubstitutionsDescEnabled.text()));
+        button.setTooltipOn(
+                List.of(ButtonToolTips.FluidSubstitutions.text(), ButtonToolTips.FluidSubstitutionsDescEnabled.text()));
         button.setTooltipOff(List.of(
-            ButtonToolTips.FluidSubstitutions.text(),
-            ButtonToolTips.FluidSubstitutionsDescDisabled.text()));
+                ButtonToolTips.FluidSubstitutions.text(), ButtonToolTips.FluidSubstitutionsDescDisabled.text()));
         widgets.add("craftingFluidSubstitutions", button);
         return button;
     }

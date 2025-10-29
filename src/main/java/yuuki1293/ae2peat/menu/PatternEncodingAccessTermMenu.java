@@ -55,6 +55,7 @@ import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.ints.*;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import java.util.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
@@ -71,14 +72,13 @@ import org.jetbrains.annotations.Nullable;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.parts.PatternEncodingAccessTerminalPart;
 
-import java.util.*;
-
 public class PatternEncodingAccessTermMenu extends AEBaseMenu
-    implements IMenuCraftingPacket, IConfigManagerListener, IConfigurableObject, IMEInteractionHandler {
+        implements IMenuCraftingPacket, IConfigManagerListener, IConfigurableObject, IMEInteractionHandler {
 
     // region me storage menu
     private final IConfigManager clientCM;
     private final ITerminalHost host;
+
     @GuiSync(98)
     public boolean hasPower = false;
 
@@ -112,6 +112,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
      * The last set of craftables sent to the client.
      */
     private Set<AEKey> previousCraftables = Collections.emptySet();
+
     private KeyCounter previousAvailableStacks = new KeyCounter();
     // endregion
     // region access term
@@ -128,8 +129,11 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
     // We use this serial number to uniquely identify all inventories we send to the client
     // It is used in packets sent by the client to interact with these inventories
     private static long inventorySerial = Long.MIN_VALUE;
-    private final Map<PatternContainer, PatternEncodingAccessTermMenu.ContainerTracker> diList = new IdentityHashMap<>();
-    private final Long2ObjectOpenHashMap<PatternEncodingAccessTermMenu.ContainerTracker> byId = new Long2ObjectOpenHashMap<>();
+
+    private final Map<PatternContainer, PatternEncodingAccessTermMenu.ContainerTracker> diList =
+            new IdentityHashMap<>();
+    private final Long2ObjectOpenHashMap<PatternEncodingAccessTermMenu.ContainerTracker> byId =
+            new Long2ObjectOpenHashMap<>();
     /**
      * Tracks hosts that were visible before, even if they no longer match the filter. For
      * {@link ShowPatternProviders#NOT_FULL}.
@@ -171,10 +175,13 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
     @GuiSync(97)
     public EncodingMode mode = EncodingMode.CRAFTING;
+
     @GuiSync(96)
     public boolean substitute = false;
+
     @GuiSync(95)
     public boolean substituteFluids = true;
+
     @GuiSync(94)
     @Nullable
     public ResourceLocation stonecuttingRecipeId;
@@ -193,7 +200,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
     }
 
     public <T extends IConfigurableObject & IPatternTerminalMenuHost> PatternEncodingAccessTermMenu(
-        MenuType<?> menuType, int id, Inventory ip, T host, boolean bindInventory) {
+            MenuType<?> menuType, int id, Inventory ip, T host, boolean bindInventory) {
         super(menuType, id, ip, host);
 
         this.host = host;
@@ -244,50 +251,51 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             this.addSlot(this.craftingGridSlots[i] = slot, SlotSemantics.CRAFTING_GRID);
         }
         // Create the output slot used for crafting mode patterns
-        this.addSlot(this.craftOutputSlot = new PatternTermSlot(ip.player, this.getActionSource(), this.powerSource,
-                host.getInventory(), encodedInputs, this),
-            SlotSemantics.CRAFTING_RESULT);
+        this.addSlot(
+                this.craftOutputSlot = new PatternTermSlot(
+                        ip.player, this.getActionSource(), this.powerSource, host.getInventory(), encodedInputs, this),
+                SlotSemantics.CRAFTING_RESULT);
         this.craftOutputSlot.setIcon(null);
 
         // Create as many slots as needed for processing inputs and outputs
         for (int i = 0; i < processingInputSlots.length; i++) {
-            this.addSlot(this.processingInputSlots[i] = new FakeSlot(encodedInputs, i),
-                SlotSemantics.PROCESSING_INPUTS);
+            this.addSlot(
+                    this.processingInputSlots[i] = new FakeSlot(encodedInputs, i), SlotSemantics.PROCESSING_INPUTS);
         }
         for (int i = 0; i < this.processingOutputSlots.length; i++) {
-            this.addSlot(this.processingOutputSlots[i] = new FakeSlot(encodedOutputs, i),
-                SlotSemantics.PROCESSING_OUTPUTS);
+            this.addSlot(
+                    this.processingOutputSlots[i] = new FakeSlot(encodedOutputs, i), SlotSemantics.PROCESSING_OUTPUTS);
         }
         this.processingOutputSlots[0].setIcon(Icon.BACKGROUND_PRIMARY_OUTPUT);
 
         // Input for stonecutting pattern encoding
-        this.addSlot(this.stonecuttingInputSlot = new FakeSlot(encodedInputs, 0),
-            SlotSemantics.STONECUTTING_INPUT);
+        this.addSlot(this.stonecuttingInputSlot = new FakeSlot(encodedInputs, 0), SlotSemantics.STONECUTTING_INPUT);
         this.stonecuttingInputSlot.setHideAmount(true);
 
         // Input for smithing table pattern encoding
-        this.addSlot(this.smithingTableTemplateSlot = new FakeSlot(encodedInputs, 0),
-            SlotSemantics.SMITHING_TABLE_TEMPLATE);
+        this.addSlot(
+                this.smithingTableTemplateSlot = new FakeSlot(encodedInputs, 0), SlotSemantics.SMITHING_TABLE_TEMPLATE);
         this.smithingTableTemplateSlot.setHideAmount(true);
-        this.addSlot(this.smithingTableBaseSlot = new FakeSlot(encodedInputs, 1),
-            SlotSemantics.SMITHING_TABLE_BASE);
+        this.addSlot(this.smithingTableBaseSlot = new FakeSlot(encodedInputs, 1), SlotSemantics.SMITHING_TABLE_BASE);
         this.smithingTableBaseSlot.setHideAmount(true);
-        this.addSlot(this.smithingTableAdditionSlot = new FakeSlot(encodedInputs, 2),
-            SlotSemantics.SMITHING_TABLE_ADDITION);
+        this.addSlot(
+                this.smithingTableAdditionSlot = new FakeSlot(encodedInputs, 2), SlotSemantics.SMITHING_TABLE_ADDITION);
         this.smithingTableAdditionSlot.setHideAmount(true);
 
-        this.addSlot(this.blankPatternSlot = new RestrictedInputSlot(RestrictedInputSlot.PlacableItemType.BLANK_PATTERN,
-            encodingLogic.getBlankPatternInv(), 0), SlotSemantics.BLANK_PATTERN);
         this.addSlot(
-            this.encodedPatternSlot = new RestrictedInputSlot(RestrictedInputSlot.PlacableItemType.ENCODED_PATTERN,
-                encodingLogic.getEncodedPatternInv(), 0),
-            SlotSemantics.ENCODED_PATTERN);
+                this.blankPatternSlot = new RestrictedInputSlot(
+                        RestrictedInputSlot.PlacableItemType.BLANK_PATTERN, encodingLogic.getBlankPatternInv(), 0),
+                SlotSemantics.BLANK_PATTERN);
+        this.addSlot(
+                this.encodedPatternSlot = new RestrictedInputSlot(
+                        RestrictedInputSlot.PlacableItemType.ENCODED_PATTERN, encodingLogic.getEncodedPatternInv(), 0),
+                SlotSemantics.ENCODED_PATTERN);
 
         this.encodedPatternSlot.setStackLimit(1);
 
         registerClientAction(ACTION_ENCODE, this::encode);
-        registerClientAction(ACTION_SET_STONECUTTING_RECIPE_ID, ResourceLocation.class,
-            encodingLogic::setStonecuttingRecipeId);
+        registerClientAction(
+                ACTION_SET_STONECUTTING_RECIPE_ID, ResourceLocation.class, encodingLogic::setStonecuttingRecipeId);
         registerClientAction(ACTION_CLEAR, this::clear);
         registerClientAction(ACTION_SET_MODE, EncodingMode.class, encodingLogic::setMode);
         registerClientAction(ACTION_SET_SUBSTITUTION, Boolean.class, encodingLogic::setSubstitution);
@@ -355,8 +363,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             previousAvailableStacks.keySet().forEach(updateHelper::addChange);
 
             if (updateHelper.hasChanges()) {
-                var builder = MEInventoryUpdatePacket
-                    .builder(containerId, updateHelper.isFullUpdate());
+                var builder = MEInventoryUpdatePacket.builder(containerId, updateHelper.isFullUpdate());
                 builder.setFilter(this::isKeyVisible);
                 builder.addChanges(updateHelper, availableStacks, craftables, requestables);
                 builder.buildAndSend(this::sendPacketToClient);
@@ -524,8 +531,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         };
     }
 
-    private <T extends PatternContainer> void visitPatternProviderHosts(IGrid grid, Class<T> machineClass,
-                                                                        PatternEncodingAccessTermMenu.VisitorState state) {
+    private <T extends PatternContainer> void visitPatternProviderHosts(
+            IGrid grid, Class<T> machineClass, PatternEncodingAccessTermMenu.VisitorState state) {
         for (var container : grid.getActiveMachines(machineClass)) {
             if (!isVisible(container)) {
                 continue;
@@ -556,7 +563,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
             final ItemStack is = inv.server.getStackInSlot(slot);
 
-            var patternSlot = new FilteredInternalInventory(inv.server.getSlotInv(slot), new PatternEncodingAccessTermMenu.PatternSlotFilter());
+            var patternSlot = new FilteredInternalInventory(
+                    inv.server.getSlotInv(slot), new PatternEncodingAccessTermMenu.PatternSlotFilter());
 
             var carried = getCarried();
             switch (action) {
@@ -646,9 +654,10 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
             for (var container : grid.getActiveMachines(containerClass)) {
                 if (isVisible(container)) {
-                    this.diList.put(container, new PatternEncodingAccessTermMenu.ContainerTracker(container,
-                        container.getTerminalPatternInventory(),
-                        container.getTerminalGroup()));
+                    this.diList.put(
+                            container,
+                            new PatternEncodingAccessTermMenu.ContainerTracker(
+                                    container, container.getTerminalPatternInventory(), container.getTerminalGroup()));
                 }
             }
         }
@@ -696,12 +705,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
                 }
             }
 
-            return PatternAccessTerminalPacket.fullUpdate(
-                serverId,
-                server.size(),
-                sortBy,
-                group,
-                slots);
+            return PatternAccessTerminalPacket.fullUpdate(serverId, server.size(), sortBy, group, slots);
         }
 
         @Nullable
@@ -720,9 +724,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
                 slots.put(slot, stack);
             }
 
-            return PatternAccessTerminalPacket.incrementalUpdate(
-                serverId,
-                slots);
+            return PatternAccessTerminalPacket.incrementalUpdate(serverId, slots);
         }
 
         @Nullable
@@ -795,7 +797,9 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             if (invalidIngredients) {
                 this.currentRecipe = null;
             } else {
-                this.currentRecipe = level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, ic, level).orElse(null);
+                this.currentRecipe = level.getRecipeManager()
+                        .getRecipeFor(RecipeType.CRAFTING, ic, level)
+                        .orElse(null);
             }
             this.currentMode = this.mode;
             checkFluidSubstitutionSupport();
@@ -822,8 +826,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
         var encodedPattern = encodePattern();
         if (encodedPattern != null) {
-            var decodedPattern = PatternDetailsHelper.decodePattern(encodedPattern,
-                this.getPlayerInventory().player.level());
+            var decodedPattern = PatternDetailsHelper.decodePattern(
+                    encodedPattern, this.getPlayerInventory().player.level());
             if (decodedPattern instanceof AECraftingPattern craftingPattern) {
                 for (int i = 0; i < craftingPattern.getSparseInputs().length; i++) {
                     if (craftingPattern.getValidFluid(i) != null) {
@@ -846,8 +850,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
             // first check the output slots, should either be null, or a pattern (encoded or otherwise)
             if (!encodeOutput.isEmpty()
-                && !PatternDetailsHelper.isEncodedPattern(encodeOutput)
-                && !AEItems.BLANK_PATTERN.isSameAs(encodeOutput)) {
+                    && !PatternDetailsHelper.isEncodedPattern(encodeOutput)
+                    && !AEItems.BLANK_PATTERN.isSameAs(encodeOutput)) {
                 return;
             } // if nothing is there we should snag a new pattern.
             else if (encodeOutput.isEmpty()) {
@@ -875,8 +879,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
     private void clearPattern() {
         var encodedPattern = this.encodedPatternSlot.getItem();
         if (PatternDetailsHelper.isEncodedPattern(encodedPattern)) {
-            this.encodedPatternSlot.set(
-                AEItems.BLANK_PATTERN.stack(encodedPattern.getCount()));
+            this.encodedPatternSlot.set(AEItems.BLANK_PATTERN.stack(encodedPattern.getCount()));
         }
     }
 
@@ -912,8 +915,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             return null;
         }
 
-        return PatternDetailsHelper.encodeCraftingPattern(this.currentRecipe, ingredients, result, isSubstitute(),
-            isSubstituteFluids());
+        return PatternDetailsHelper.encodeCraftingPattern(
+                this.currentRecipe, ingredients, result, isSubstitute(), isSubstituteFluids());
     }
 
     @Nullable
@@ -946,8 +949,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
     @Nullable
     private ItemStack encodeSmithingTablePattern() {
         if (!(encodedInputsInv.getKey(0) instanceof AEItemKey template)
-            || !(encodedInputsInv.getKey(1) instanceof AEItemKey base)
-            || !(encodedInputsInv.getKey(2) instanceof AEItemKey addition)) {
+                || !(encodedInputsInv.getKey(1) instanceof AEItemKey base)
+                || !(encodedInputsInv.getKey(2) instanceof AEItemKey addition)) {
             return null;
         }
 
@@ -958,16 +961,16 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
         var level = getPlayer().level();
         var recipe = level.getRecipeManager()
-            .getRecipeFor(RecipeType.SMITHING, container, level)
-            .orElse(null);
+                .getRecipeFor(RecipeType.SMITHING, container, level)
+                .orElse(null);
         if (recipe == null) {
             return null;
         }
 
         var output = AEItemKey.of(recipe.assemble(container, level.registryAccess()));
 
-        return PatternDetailsHelper.encodeSmithingTablePattern(recipe, template, base, addition, output,
-            encodingLogic.isSubstitution());
+        return PatternDetailsHelper.encodeSmithingTablePattern(
+                recipe, template, base, addition, output, encodingLogic.isSubstitution());
     }
 
     @Nullable
@@ -986,9 +989,9 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
         var level = getPlayer().level();
         var recipe = level.getRecipeManager()
-            .getRecipeFor(RecipeType.STONECUTTING, container, level, stonecuttingRecipeId)
-            .map(Pair::getSecond)
-            .orElse(null);
+                .getRecipeFor(RecipeType.STONECUTTING, container, level, stonecuttingRecipeId)
+                .map(Pair::getSecond)
+                .orElse(null);
         if (recipe == null) {
             return null;
         }
@@ -1067,13 +1070,12 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             var recipeManager = level.getRecipeManager();
             var inventory = new SimpleContainer(1);
             inventory.setItem(0, itemKey.toStack());
-            stonecuttingRecipes.addAll(
-                recipeManager.getRecipesFor(RecipeType.STONECUTTING, inventory, level));
+            stonecuttingRecipes.addAll(recipeManager.getRecipesFor(RecipeType.STONECUTTING, inventory, level));
         }
 
         // Deselect a recipe that is now unavailable
         if (stonecuttingRecipeId != null
-            && stonecuttingRecipes.stream().noneMatch(r -> r.getId().equals(stonecuttingRecipeId))) {
+                && stonecuttingRecipes.stream().noneMatch(r -> r.getId().equals(stonecuttingRecipeId))) {
             stonecuttingRecipeId = null;
         }
     }
@@ -1264,7 +1266,10 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
     // Can cycle if there is more than 1 processing output encoded
     public boolean canCycleProcessingOutputs() {
         return mode == EncodingMode.PROCESSING
-            && Arrays.stream(processingOutputSlots).filter(s -> !s.getItem().isEmpty()).count() > 1;
+                && Arrays.stream(processingOutputSlots)
+                                .filter(s -> !s.getItem().isEmpty())
+                                .count()
+                        > 1;
     }
 
     public List<StonecutterRecipe> getStonecuttingRecipes() {

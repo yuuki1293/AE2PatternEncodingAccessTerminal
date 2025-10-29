@@ -7,6 +7,7 @@ import appeng.client.gui.style.Blitter;
 import appeng.client.gui.widgets.Scrollbar;
 import appeng.core.localization.GuiText;
 import appeng.menu.SlotSemantics;
+import java.util.Objects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
@@ -19,19 +20,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.StonecutterRecipe;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 public class StonecuttingEncodingPanel extends EncodingModePanel {
     private static final Blitter BG = Blitter.texture("guis/pattern_modes.png").src(0, 141, 126, 68);
-    private static final Blitter BG_SLOT = BG
-        .copy()
-        .src(126, 141, 16, 18);
-    private static final Blitter BG_SLOT_SELECTED = BG
-        .copy()
-        .src(126, 159, 16, 18);
-    private static final Blitter BG_SLOT_HOVER = BG
-        .copy()
-        .src(126, 177, 16, 18);
+    private static final Blitter BG_SLOT = BG.copy().src(126, 141, 16, 18);
+    private static final Blitter BG_SLOT_SELECTED = BG.copy().src(126, 159, 16, 18);
+    private static final Blitter BG_SLOT_HOVER = BG.copy().src(126, 177, 16, 18);
 
     private static final int COLS = 4;
     private static final int ROWS = 3;
@@ -57,7 +50,6 @@ public class StonecuttingEncodingPanel extends EncodingModePanel {
         BG.dest(bounds.getX() + 9, bounds.getY() + bounds.getHeight() - 164).blit(guiGraphics);
 
         drawRecipes(guiGraphics, bounds, mouse);
-
     }
 
     private RegistryAccess getRegistryAccess() {
@@ -98,8 +90,9 @@ public class StonecuttingEncodingPanel extends EncodingModePanel {
         var recipe = getRecipeAt(mousePos);
         if (recipe != null) {
             menu.setStonecuttingRecipeId(recipe.getId());
-            Minecraft.getInstance().getSoundManager()
-                .play(SimpleSoundInstance.forUI(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
+            Minecraft.getInstance()
+                    .getSoundManager()
+                    .play(SimpleSoundInstance.forUI(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
             return true;
         }
         return false;

@@ -1,3 +1,4 @@
+import com.diffplug.spotless.LineEnding
 import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension
 import com.hypherionmc.modpublisher.properties.CurseEnvironment
 import com.hypherionmc.modpublisher.properties.ModLoader
@@ -18,6 +19,7 @@ plugins {
     alias(libs.plugins.moddev)
     alias(libs.plugins.modPublisher)
     alias(libs.plugins.changelog)
+    alias(libs.plugins.spotless)
 }
 
 val modId = Constants.Mod.id
@@ -350,5 +352,27 @@ publisher {
         createRelease(true)
         updateRelease(true)
         target("forge/${mcVersion}")
+    }
+}
+
+spotless {
+    java {
+        target("/src/**/java/**/*.java")
+        endWithNewline()
+        indentWithTabs(1)
+        removeUnusedImports()
+        palantirJavaFormat()
+        toggleOffOn()
+        setLineEndings(LineEnding.UNIX)
+
+        bumpThisNumberIfACustomStepChanges(1)
+    }
+
+    json {
+        target("src/**/resources/**/*.json")
+        biome()
+        indentWithSpaces(2)
+        endWithNewline()
+        setLineEndings(LineEnding.UNIX)
     }
 }

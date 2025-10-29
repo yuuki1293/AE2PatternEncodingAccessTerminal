@@ -61,7 +61,7 @@ public class AE2PEAT {
     }
 
     public void onAe2Initialized(RegisterEvent event) {
-        if(event.getRegistryKey().equals(ForgeRegistries.MENU_TYPES.getRegistryKey())){
+        if (event.getRegistryKey().equals(ForgeRegistries.MENU_TYPES.getRegistryKey())) {
             if (Addons.AE2WTLIB.isLoaded()) {
                 AE2WtLibPlugin.initMenu();
             }
@@ -79,11 +79,12 @@ public class AE2PEAT {
         @SuppressWarnings("RedundantTypeArguments")
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            InitScreens.<PatternEncodingAccessTermMenu, PatternEncodingAccessTermScreen<PatternEncodingAccessTermMenu>>register(
-                PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
-                PatternEncodingAccessTermScreen::new,
-                "/screens/terminals/pattern_encoding_access_terminal.json"
-            );
+            InitScreens
+                    .<PatternEncodingAccessTermMenu, PatternEncodingAccessTermScreen<PatternEncodingAccessTermMenu>>
+                            register(
+                                    PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
+                                    PatternEncodingAccessTermScreen::new,
+                                    "/screens/terminals/pattern_encoding_access_terminal.json");
             if (Addons.AE2WTLIB.isLoaded()) {
                 AE2WtLibPlugin.initScreen();
             }
@@ -91,7 +92,9 @@ public class AE2PEAT {
 
         @SubscribeEvent
         public static void initItemColours(RegisterColorHandlersEvent.Item event) {
-            event.register(makeOpaque(new StaticItemColor(AEColor.TRANSPARENT)), PEATItems.PATTERN_ENCODING_ACCESS_TERMINAL.asItem());
+            event.register(
+                    makeOpaque(new StaticItemColor(AEColor.TRANSPARENT)),
+                    PEATItems.PATTERN_ENCODING_ACCESS_TERMINAL.asItem());
         }
 
         private static ItemColor makeOpaque(ItemColor itemColor) {

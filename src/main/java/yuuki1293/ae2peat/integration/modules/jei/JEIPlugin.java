@@ -23,8 +23,8 @@ public class JEIPlugin implements IModPlugin {
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
         // Universal handler for processing to try and handle all IRecipe
         registration.addUniversalRecipeTransferHandler(new EncodePatternTransferHandler<>(
-            PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
-            PatternEncodingAccessTermMenu.class,
-            registration.getTransferHelper()));
+                PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
+                PatternEncodingAccessTermMenu.class,
+                registration.getTransferHelper()));
     }
 }

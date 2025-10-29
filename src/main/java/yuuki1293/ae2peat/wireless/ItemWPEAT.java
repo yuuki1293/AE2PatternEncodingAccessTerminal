@@ -17,8 +17,7 @@ public class ItemWPEAT extends ItemWT implements IUniversalWirelessTerminalItem,
     }
 
     public @NotNull IConfigManager getConfigManager(@NotNull ItemStack target) {
-        var configManager = new ConfigManager((manager, settingName) ->
-            manager.writeToNBT(target.getOrCreateTag()));
+        var configManager = new ConfigManager((manager, settingName) -> manager.writeToNBT(target.getOrCreateTag()));
 
         configManager.registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
         configManager.readFromNBT(target.getOrCreateTag().copy());

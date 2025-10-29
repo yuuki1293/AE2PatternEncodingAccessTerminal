@@ -11,7 +11,8 @@ public class PEATEmiPlugin implements EmiPlugin {
     @Override
     public void register(EmiRegistry registry) {
         // Recipe transfer
-        registry.addRecipeHandler(PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
-            new EmiEncodePatternHandler<>(PatternEncodingAccessTermMenu.class));
+        registry.addRecipeHandler(
+                PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
+                new EmiEncodePatternHandler<>(PatternEncodingAccessTermMenu.class));
     }
 }

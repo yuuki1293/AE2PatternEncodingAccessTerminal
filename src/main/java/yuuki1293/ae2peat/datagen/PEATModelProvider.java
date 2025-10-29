@@ -34,17 +34,18 @@ public class PEATModelProvider extends AE2AddonModelProvider {
         var itemBase = AppEng.makeId("item/display_base");
 
         models().withExistingParent("part/" + idOff, partOffBase)
-            .texture("lightsBright", bright)
-            .texture("lightsMedium", medium)
-            .texture("lightsDark", dark);
+                .texture("lightsBright", bright)
+                .texture("lightsMedium", medium)
+                .texture("lightsDark", dark);
         models().withExistingParent("part/" + idOn, partOnBase)
-            .texture("lightsBright", bright)
-            .texture("lightsMedium", medium)
-            .texture("lightsDark", dark);
-        itemModels().withExistingParent("item/" + id, itemBase)
-            .texture("front", front)
-            .texture("front_bright", bright)
-            .texture("front_medium", medium)
-            .texture("front_dark", dark);
+                .texture("lightsBright", bright)
+                .texture("lightsMedium", medium)
+                .texture("lightsDark", dark);
+        itemModels()
+                .withExistingParent("item/" + id, itemBase)
+                .texture("front", front)
+                .texture("front_bright", bright)
+                .texture("front_medium", medium)
+                .texture("front_dark", dark);
     }
 }

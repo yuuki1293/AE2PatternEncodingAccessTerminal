@@ -17,13 +17,13 @@ public class AE2WtLibPlugin {
 
     public static void initMenuType() {
         WUTHandler.addTerminal(
-            TERMINAL_ID,
-            PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.get()::tryOpen,
-            WPEATMenuHost::new,
-            WPEATMenu.TYPE,
-            PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.get(),
-            PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL,
-            PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.asItem().getDescriptionId());
+                TERMINAL_ID,
+                PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.get()::tryOpen,
+                WPEATMenuHost::new,
+                WPEATMenu.TYPE,
+                PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.get(),
+                PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL,
+                PEATItems.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL.asItem().getDescriptionId());
     }
 
     public static void initGridLinkables() {
@@ -32,14 +32,11 @@ public class AE2WtLibPlugin {
 
     public static void initMenu() {
         ForgeRegistries.MENU_TYPES.register(
-            AppEng.makeId(PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL), WPEATMenu.TYPE);
+                AppEng.makeId(PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL), WPEATMenu.TYPE);
     }
 
     public static void initScreen() {
         InitScreens.<WPEATMenu, WPEATScreen>register(
-            WPEATMenu.TYPE,
-            WPEATScreen::new,
-            "/screens/wtlib/wireless_pattern_encoding_access_terminal.json"
-        );
+                WPEATMenu.TYPE, WPEATScreen::new, "/screens/wtlib/wireless_pattern_encoding_access_terminal.json");
     }
 }
