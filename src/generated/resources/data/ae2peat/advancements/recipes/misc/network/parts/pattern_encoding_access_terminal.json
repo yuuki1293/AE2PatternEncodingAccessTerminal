@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "ae2:crafting_terminal"
-            ]
+            "items": ["ae2:crafting_terminal"]
           }
         ]
       },
@@ -31,16 +29,10 @@
     }
   },
   "requirements": [
-    [
-      "has_pattern_provider",
-      "has_crafting_terminal",
-      "has_the_recipe"
-    ]
+    ["has_pattern_provider", "has_crafting_terminal", "has_the_recipe"]
   ],
   "rewards": {
-    "recipes": [
-      "ae2peat:network/parts/pattern_encoding_access_terminal"
-    ]
+    "recipes": ["ae2peat:network/parts/pattern_encoding_access_terminal"]
   },
   "sends_telemetry_event": false
 }

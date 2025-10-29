@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "ae2:dense_energy_cell"
-            ]
+            "items": ["ae2:dense_energy_cell"]
           }
         ]
       },
@@ -17,9 +15,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "ae2peat:pattern_encoding_access_terminal"
-            ]
+            "items": ["ae2peat:pattern_encoding_access_terminal"]
           }
         ]
       },
@@ -35,9 +31,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "ae2:wireless_receiver"
-            ]
+            "items": ["ae2:wireless_receiver"]
           }
         ]
       },
@@ -53,9 +47,7 @@
     ]
   ],
   "rewards": {
-    "recipes": [
-      "ae2peat:network/wireless_pattern_encoding_access_terminal"
-    ]
+    "recipes": ["ae2peat:network/wireless_pattern_encoding_access_terminal"]
   },
   "sends_telemetry_event": false
 }
