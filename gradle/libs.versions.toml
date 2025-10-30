@@ -5,44 +5,44 @@ plugin_modPublisher = "2.1.+"
 plugin_changelog = "2.2.1"
 plugin_spotless = "6.25.0"
 
-minecraft = "1.20.1"
-forge = "47.1.47"
-parchmentmc = "2023.09.03"
+minecraft = "1.21.1"
+neoforge = "21.1.66"
+parchmentmc = "2024.11.17"
 mixin = "0.8.5"
 mixinExtras = "0.4.1"
 
-ae2 = "15.4.10"
-jei = "15.20.0.112"
-emi = "1.1.22+1.20.1"
-jade = "6855440"
-guideme = "20.1.14"
-ae2lib = "1.0.2-1.20.1"
-ae2wtlib = "7154316"
-ae2wtlib_range = "15.3.0"
-curios = "5.14.1+1.20.1"
-architectury = "9.2.14"
-cloth-config = "11.1.136"
+ae2 = "19.2.17"
+jei = "19.25.0.323"
+emi = "1.1.22+1.21.1"
+jade = "6853386"
+guideme = "21.1.15"
+ae2lib = "1.0.2"
+ae2wtlib = "6939030"
+ae2wtlib_range = "19.2.0"
+curios = "9.5.1+1.21.1"
+architectury = "18.0.6+neoforge"
+cloth-config = "20.0.149+neoforge"
 
 [libraries]
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
 mixinExtrasCommon = { module = "io.github.llamalad7:mixinextras-common", version.ref = "mixinExtras" }
 mixinExtrasForge = { module = "io.github.llamalad7:mixinextras-forge", version.ref = "mixinExtras" }
 
-ae2 = { module = "appeng:appliedenergistics2-forge", version.ref = "ae2" }
-jei = { module = "mezz.jei:jei-1.20.1-forge", version.ref = "jei" }
-emi = { module = "dev.emi:emi-forge", version.ref = "emi" }
+ae2 = { module = "appeng:appliedenergistics2-neoforge", version.ref = "ae2" }
+jei = { module = "mezz.jei:jei-1.21.1-neoforge", version.ref = "jei" }
+emi = { module = "dev.emi:emi-neoforge", version.ref = "emi" }
 jade = { module = "curse.maven:jade-324717", version.ref = "jade" }
 guideme = { module = "org.appliedenergistics:guideme", version.ref = "guideme" }
 ae2lib = { module = "io.github.pedroksl:ae2addonlib", version.ref = "ae2lib" }
 ae2wtlib = { module = "curse.maven:applied-energistics-2-wireless-terminals-459929", version.ref = "ae2wtlib" }
-curios = { module = "top.theillusivec4.curios:curios-forge", version.ref = "curios" }
-architectury = { module = "dev.architectury:architectury-forge", version.ref = "architectury" }
-cloth-config = { module = "me.shedaniel.cloth:cloth-config-forge", version.ref = "cloth-config" }
+curios = { module = "top.theillusivec4.curios:curios-neoforge", version.ref = "curios" }
+architectury = { module = "dev.architectury:architectury-neoforge", version.ref = "architectury" }
+cloth-config = { module = "me.shedaniel.cloth:cloth-config-neoforge", version.ref = "cloth-config" }
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "plugin_kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "plugin_kotlin" }
-moddev = { id = "net.neoforged.moddev.legacyforge", version.ref = "plugin_moddev" }
+moddev = { id = "net.neoforged.moddev", version.ref = "plugin_moddev" }
 modPublisher = { id = "com.hypherionmc.modutils.modpublisher", version.ref = "plugin_modPublisher" }
 changelog = { id = "org.jetbrains.changelog", version.ref = "plugin_changelog"}
 spotless = { id = "com.diffplug.spotless", version.ref = "plugin_spotless" }
