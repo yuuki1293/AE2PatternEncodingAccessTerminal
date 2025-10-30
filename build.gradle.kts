@@ -25,7 +25,7 @@ plugins {
 val modId = Constants.Mod.id
 val mcVersion: String = libs.versions.minecraft.get()
 val neoForgeVersion: String = libs.versions.neoforge.get()
-val neoForgeLoaderVersionRange = "[${extractVersionSegments(neoForgeVersion)},)"
+val neoForgeLoaderVersionRange = "[4,)"
 val jdkVersion = 21
 
 val exportMixin = true

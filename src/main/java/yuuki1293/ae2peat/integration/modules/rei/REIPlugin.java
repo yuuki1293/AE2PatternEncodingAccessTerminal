@@ -3,7 +3,6 @@ package yuuki1293.ae2peat.integration.modules.rei;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.transfer.TransferHandlerRegistry;
 import me.shedaniel.rei.forge.REIPluginClient;
-import mezz.jei.api.JeiPlugin;
 import yuuki1293.ae2peat.integration.modules.rei.transfer.EncodePatternTransferHandler;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 import yuuki1293.ae2peat.wireless.WPEATMenu;
