@@ -1,11 +1,12 @@
 package yuuki1293.ae2peat.datagen;
 
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 import yuuki1293.ae2peat.AE2PEAT;
 
-@Mod.EventBusSubscriber(modid = AE2PEAT.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = AE2PEAT.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class PEATDataGen {
     @SubscribeEvent
     public static void onGatherData(GatherDataEvent event) {

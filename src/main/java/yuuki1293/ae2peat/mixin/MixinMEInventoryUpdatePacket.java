@@ -1,7 +1,7 @@
 package yuuki1293.ae2peat.mixin;
 
 import appeng.core.AELog;
-import appeng.core.sync.packets.MEInventoryUpdatePacket;
+import appeng.core.network.clientbound.MEInventoryUpdatePacket;
 import appeng.menu.me.common.GridInventoryEntry;
 import java.util.List;
 import net.minecraft.world.entity.player.Player;
@@ -19,14 +19,16 @@ public abstract class MixinMEInventoryUpdatePacket {
     @Final
     private List<GridInventoryEntry> entries;
 
+    @Final
     @Shadow
     private boolean fullUpdate;
 
+    @Final
     @Shadow
     private int containerId;
 
-    @Inject(method = "clientPacketData", at = @At("TAIL"))
-    private void clientPacketData(Player player, CallbackInfo ci) {
+    @Inject(method = "handleOnClient", at = @At("TAIL"))
+    private void handleOnClient(Player player, CallbackInfo ci) {
         if (player.containerMenu.containerId == containerId
                 && player.containerMenu instanceof PatternEncodingAccessTermMenu meMenu) {
             var clientRepo = meMenu.getClientRepo();

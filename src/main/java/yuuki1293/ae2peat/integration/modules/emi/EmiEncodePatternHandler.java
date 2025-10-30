@@ -12,8 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import net.minecraft.world.item.crafting.Recipe;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import yuuki1293.ae2peat.integration.modules.jeirei.EncodingHelper;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
@@ -39,24 +38,23 @@ public class EmiEncodePatternHandler<T extends PatternEncodingAccessTermMenu> ex
     }
 
     @Override
-    protected Result transferRecipe(T menu, @Nullable Recipe<?> recipeBase, EmiRecipe emiRecipe, boolean doTransfer) {
-
-        // Recipe displays can be based on anything. Not just Recipe<?>
-        Recipe<?> recipe = null;
-        if (recipeBase instanceof Recipe<?>) {
-            recipe = recipeBase;
-        }
+    protected Result transferRecipe(T menu, RecipeHolder<?> holder, EmiRecipe emiRecipe, boolean doTransfer) {
+        var recipeId = holder != null ? holder.id() : null;
+        var recipe = holder != null ? holder.value() : null;
 
         // Crafting recipe slots are not grouped, hence they must fit into the 3x3 grid.
         boolean craftingRecipe = isCraftingRecipe(recipe, emiRecipe);
-        if (craftingRecipe && !fitsIn3x3Grid(recipe)) {
-            return Result.createFailed(ItemModText.RECIPE_TOO_LARGE.text());
+        if (craftingRecipe && !fitsIn3x3Grid(recipe, emiRecipe)) {
+            return AbstractRecipeHandler.Result.createFailed(ItemModText.RECIPE_TOO_LARGE.text());
         }
 
         if (doTransfer) {
-            if (craftingRecipe) {
+            if (craftingRecipe && recipeId != null) {
                 EncodingHelper.encodeCraftingRecipe(
-                        menu, recipe, getGuiIngredientsForCrafting(emiRecipe), stack -> true);
+                        menu,
+                        new RecipeHolder<>(recipeId, recipe),
+                        getGuiIngredientsForCrafting(emiRecipe),
+                        stack -> true);
             } else {
                 EncodingHelper.encodeProcessingRecipe(
                         menu, EmiStackHelper.ofInputs(emiRecipe), EmiStackHelper.ofOutputs(emiRecipe));
@@ -70,10 +68,10 @@ public class EmiEncodePatternHandler<T extends PatternEncodingAccessTermMenu> ex
                             .collect(Collectors.toSet())
                     : Set.of();
 
-            return new Result.EncodeWithCraftables(craftableKeys);
+            return new AbstractRecipeHandler.Result.EncodeWithCraftables(craftableKeys);
         }
 
-        return Result.createSuccessful();
+        return AbstractRecipeHandler.Result.createSuccessful();
     }
 
     /**

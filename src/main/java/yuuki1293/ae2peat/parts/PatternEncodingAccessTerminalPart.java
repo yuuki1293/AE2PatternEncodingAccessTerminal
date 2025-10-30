@@ -4,7 +4,10 @@ import appeng.api.config.Settings;
 import appeng.api.config.ShowPatternProviders;
 import appeng.api.parts.IPartItem;
 import appeng.api.parts.IPartModel;
+import appeng.api.storage.ILinkStatus;
+import appeng.api.storage.IPatternAccessTermMenuHost;
 import appeng.api.storage.MEStorage;
+import appeng.api.storage.SupplierStorage;
 import appeng.api.util.IConfigManager;
 import appeng.api.util.IConfigurableObject;
 import appeng.helpers.IPatternTerminalLogicHost;
@@ -16,23 +19,26 @@ import appeng.menu.locator.MenuLocators;
 import appeng.parts.PartModel;
 import appeng.parts.encoding.PatternEncodingLogic;
 import appeng.parts.reporting.AbstractDisplayPart;
-import appeng.util.ConfigManager;
 import java.util.List;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 
 public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
-        implements IConfigurableObject, IPatternTerminalLogicHost, IPatternTerminalMenuHost {
-    private final IConfigManager cm = new ConfigManager(this::saveChanges);
+        implements IConfigurableObject,
+                IPatternTerminalLogicHost,
+                IPatternTerminalMenuHost,
+                IPatternAccessTermMenuHost {
+    private final IConfigManager cm = IConfigManager.builder(
+                    () -> this.getHost().markForSave())
+            .registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE)
+            .build();
 
     @PartModels
     public static final ResourceLocation MODEL_OFF = AE2PEAT.makeId("part/pattern_encoding_access_terminal_off");
@@ -48,12 +54,6 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
 
     public PatternEncodingAccessTerminalPart(IPartItem<?> partItem) {
         super(partItem, true);
-        this.cm.registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
-    }
-
-    @Override
-    public IPartModel getStaticModels() {
-        return this.selectModel(MODELS_OFF, MODELS_ON, MODELS_HAS_CHANNEL);
     }
 
     @Override
@@ -61,20 +61,56 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
         return this.cm;
     }
 
-    public void saveChanges() {
-        this.getHost().markForSave();
+    @Override
+    public void readFromNBT(CompoundTag data, HolderLookup.Provider registries) {
+        super.readFromNBT(data, registries);
+        this.cm.readFromNBT(data, registries);
+        this.logic.readFromNBT(data, registries);
     }
 
-    public void writeToNBT(CompoundTag tag) {
-        super.writeToNBT(tag);
-        this.cm.writeToNBT(tag);
-        logic.writeToNBT(tag);
+    @Override
+    public void writeToNBT(CompoundTag data, HolderLookup.Provider registries) {
+        super.writeToNBT(data, registries);
+        this.cm.writeToNBT(data, registries);
+        this.logic.writeToNBT(data, registries);
     }
 
-    public void readFromNBT(CompoundTag tag) {
-        super.readFromNBT(tag);
-        this.cm.readFromNBT(tag);
-        logic.readFromNBT(tag);
+    @Override
+    public boolean onUseWithoutItem(Player player, Vec3 pos) {
+        if (!super.onUseWithoutItem(player, pos) && !player.level().isClientSide) {
+            MenuOpener.open(getMenuType(player), player, MenuLocators.forPart(this));
+        }
+        return true;
+    }
+
+    @Override
+    public void returnToMainMenu(Player player, ISubMenu subMenu) {
+        MenuOpener.open(getMenuType(player), player, subMenu.getLocator(), true);
+    }
+
+    @Override
+    public ItemStack getMainMenuIcon() {
+        return new ItemStack(getPartItem());
+    }
+
+    public MenuType<?> getMenuType(Player player) {
+        return PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get();
+    }
+
+    @Override
+    public MEStorage getInventory() {
+        return new SupplierStorage(() -> {
+            var grid = getMainNode().getGrid();
+            if (grid != null) {
+                return grid.getStorageService().getInventory();
+            }
+            return null;
+        });
+    }
+
+    @Override
+    public ILinkStatus getLinkStatus() {
+        return ILinkStatus.ofManagedNode(getMainNode());
     }
 
     @Override
@@ -86,14 +122,6 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
         for (var is : this.logic.getEncodedPatternInv()) {
             drops.add(is);
         }
-    }
-
-    @Override
-    public boolean onPartActivate(Player player, InteractionHand hand, Vec3 pos) {
-        if (!super.onPartActivate(player, hand, pos) && !isClientSide()) {
-            MenuOpener.open(PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(), player, MenuLocators.forPart(this));
-        }
-        return true;
     }
 
     @Override
@@ -114,30 +142,7 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> cap) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            return LazyOptional.of(() -> logic.getBlankPatternInv().toItemHandler())
-                    .cast();
-        }
-        return super.getCapability(cap);
-    }
-
-    @Override
-    public void returnToMainMenu(Player player, ISubMenu subMenu) {
-        MenuOpener.open(PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(), player, subMenu.getLocator(), true);
-    }
-
-    @Override
-    public ItemStack getMainMenuIcon() {
-        return new ItemStack(getPartItem());
-    }
-
-    @Override
-    public MEStorage getInventory() {
-        var grid = getMainNode().getGrid();
-        if (grid != null) {
-            return grid.getStorageService().getInventory();
-        }
-        return null;
+    public IPartModel getStaticModels() {
+        return this.selectModel(MODELS_OFF, MODELS_ON, MODELS_HAS_CHANNEL);
     }
 }

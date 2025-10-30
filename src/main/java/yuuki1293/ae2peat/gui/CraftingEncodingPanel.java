@@ -15,8 +15,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 public class CraftingEncodingPanel extends EncodingModePanel {
     private static final Blitter BG = Blitter.texture("guis/pattern_modes.png").src(0, 0, 126, 68);
@@ -29,8 +27,9 @@ public class CraftingEncodingPanel extends EncodingModePanel {
         super(screen, widgets);
 
         // Add buttons for the crafting mode
-        clearBtn = new ActionButton(ActionItems.CLOSE, act -> menu.clear());
+        clearBtn = new ActionButton(ActionItems.S_CLOSE, act -> menu.clear());
         clearBtn.setHalfSize(true);
+        clearBtn.setDisableBackground(true);
         widgets.add("craftingClearPattern", clearBtn);
 
         this.substitutionsBtn = createCraftingSubstitutionButton(widgets);
@@ -38,8 +37,8 @@ public class CraftingEncodingPanel extends EncodingModePanel {
     }
 
     @Override
-    public ItemStack getTabIconItem() {
-        return Items.CRAFTING_TABLE.getDefaultInstance();
+    public Icon getIcon() {
+        return Icon.TAB_CRAFTING;
     }
 
     @Override
@@ -48,8 +47,9 @@ public class CraftingEncodingPanel extends EncodingModePanel {
     }
 
     private ToggleButton createCraftingSubstitutionButton(WidgetContainer widgets) {
-        var button = new ToggleButton(Icon.SUBSTITUTION_ENABLED, Icon.SUBSTITUTION_DISABLED, menu::setSubstitute);
+        var button = new ToggleButton(Icon.S_SUBSTITUTION_ENABLED, Icon.S_SUBSTITUTION_DISABLED, menu::setSubstitute);
         button.setHalfSize(true);
+        button.setDisableBackground(true);
         button.setTooltipOn(
                 List.of(ButtonToolTips.SubstitutionsOn.text(), ButtonToolTips.SubstitutionsDescEnabled.text()));
         button.setTooltipOff(
@@ -60,8 +60,9 @@ public class CraftingEncodingPanel extends EncodingModePanel {
 
     private ToggleButton createCraftingFluidSubstitutionButton(WidgetContainer widgets) {
         var button = new ToggleButton(
-                Icon.FLUID_SUBSTITUTION_ENABLED, Icon.FLUID_SUBSTITUTION_DISABLED, menu::setSubstituteFluids);
+                Icon.S_FLUID_SUBSTITUTION_ENABLED, Icon.S_FLUID_SUBSTITUTION_DISABLED, menu::setSubstituteFluids);
         button.setHalfSize(true);
+        button.setDisableBackground(true);
         button.setTooltipOn(
                 List.of(ButtonToolTips.FluidSubstitutions.text(), ButtonToolTips.FluidSubstitutionsDescEnabled.text()));
         button.setTooltipOff(List.of(
@@ -86,7 +87,7 @@ public class CraftingEncodingPanel extends EncodingModePanel {
     private void drawSlotGreenBG(Rect2i bounds, GuiGraphics guiGraphics, Slot slot) {
         int x = bounds.getX() + slot.x;
         int y = bounds.getY() + slot.y;
-        guiGraphics.fill(x, y, x + 16, y + 16, 0x7f00FF00);
+        guiGraphics.fill(x, y, x + 16, y + 16, 0xff7ac25f);
     }
 
     @Override

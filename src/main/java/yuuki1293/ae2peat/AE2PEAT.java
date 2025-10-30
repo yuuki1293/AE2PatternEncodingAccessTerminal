@@ -5,17 +5,18 @@ import appeng.client.render.StaticItemColor;
 import appeng.core.AELog;
 import appeng.init.client.InitScreens;
 import net.minecraft.client.color.item.ItemColor;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import yuuki1293.ae2peat.definisions.PEATCreativeTab;
 import yuuki1293.ae2peat.definisions.PEATItems;
 import yuuki1293.ae2peat.definisions.PEATMenus;
@@ -24,27 +25,24 @@ import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 import yuuki1293.ae2peat.xmod.Addons;
 import yuuki1293.ae2peat.xmod.ae2wtlib.AE2WtLibPlugin;
 
-@Mod(AE2PEAT.MOD_ID)
+@Mod(value = AE2PEAT.MOD_ID, dist = Dist.DEDICATED_SERVER)
 public class AE2PEAT {
     public static final String MOD_ID = "ae2peat";
 
-    public AE2PEAT() {
-        var context = FMLJavaModLoadingContext.get();
-        var eventBus = context.getModEventBus();
+    public AE2PEAT(IEventBus modEventBus, ModContainer modContainer) {
+        NeoForge.EVENT_BUS.register(this);
 
-        MinecraftForge.EVENT_BUS.register(this);
+        PEATItems.INSTANCE.register(modEventBus);
+        PEATMenus.INSTANCE.register(modEventBus);
+        PEATCreativeTab.INSTANCE.register(modEventBus);
 
-        PEATItems.INSTANCE.register(eventBus);
-        PEATMenus.INSTANCE.register(eventBus);
-        PEATCreativeTab.INSTANCE.register(eventBus);
-
-        eventBus.addListener(this::commonSetup);
-        eventBus.addListener(this::onAe2Initialized);
-        eventBus.addListener(AE2PEAT::initUpgrades);
+        modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(this::onAe2Initialized);
+        modEventBus.addListener(AE2PEAT::initUpgrades);
     }
 
     public static ResourceLocation makeId(String id) {
-        return new ResourceLocation(MOD_ID, id);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, id);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -62,15 +60,9 @@ public class AE2PEAT {
     }
 
     public void onAe2Initialized(RegisterEvent event) {
-        if (event.getRegistryKey().equals(ForgeRegistries.MENU_TYPES.getRegistryKey())) {
+        if (event.getRegistryKey() == Registries.MENU) {
             if (Addons.AE2WTLIB.isLoaded()) {
                 AE2WtLibPlugin.initMenu();
-            }
-        }
-
-        if (event.getRegistryKey().equals(ForgeRegistries.ITEMS.getRegistryKey())) {
-            if (Addons.AE2WTLIB.isLoaded()) {
-                AE2WtLibPlugin.initMenuType();
             }
         }
     }
@@ -83,19 +75,19 @@ public class AE2PEAT {
         });
     }
 
-    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @Mod(value = MOD_ID, dist = Dist.CLIENT)
     public static class ClientModEvents {
-        @SuppressWarnings("RedundantTypeArguments")
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
+        public static void onClientSetup(RegisterMenuScreensEvent event) {
             InitScreens
                     .<PatternEncodingAccessTermMenu, PatternEncodingAccessTermScreen<PatternEncodingAccessTermMenu>>
                             register(
+                                    event,
                                     PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
                                     PatternEncodingAccessTermScreen::new,
                                     "/screens/terminals/pattern_encoding_access_terminal.json");
             if (Addons.AE2WTLIB.isLoaded()) {
-                AE2WtLibPlugin.initScreen();
+                AE2WtLibPlugin.initScreen(event);
             }
         }
 

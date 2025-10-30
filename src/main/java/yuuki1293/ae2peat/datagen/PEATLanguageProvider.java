@@ -1,7 +1,7 @@
 package yuuki1293.ae2peat.datagen;
 
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.LanguageProvider;
+import net.neoforged.neoforge.common.data.LanguageProvider;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.definisions.PEATItems;
 import yuuki1293.ae2peat.definisions.PEATText;

@@ -2,10 +2,10 @@ package yuuki1293.ae2peat.gui;
 
 import appeng.client.Point;
 import appeng.client.gui.ICompositeWidget;
+import appeng.client.gui.Icon;
 import appeng.client.gui.WidgetContainer;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
 public abstract class EncodingModePanel implements ICompositeWidget {
@@ -22,7 +22,7 @@ public abstract class EncodingModePanel implements ICompositeWidget {
         this.widgets = widgets;
     }
 
-    abstract ItemStack getTabIconItem();
+    abstract Icon getIcon();
 
     abstract Component getTabTooltip();
 

@@ -66,7 +66,7 @@ neoForge {
 
     parchment {
         mappingsVersion = libs.versions.parchmentmc.get()
-        minecraftVersion = mcVersion
+        minecraftVersion = "1.21"
     }
 
     runs {
@@ -158,6 +158,7 @@ repositories {
         name = "Shedaniel"
         url = uri("https://maven.shedaniel.me/")
         content {
+            includeGroup("me.shedaniel")
             includeGroup("me.shedaniel.cloth")
         }
     }
@@ -166,8 +167,9 @@ repositories {
 dependencies {
     // Mandatory
     implementation(libs.ae2)
-    runtimeOnly(libs.guideme)
+    implementation(libs.guideme)
     compileOnly(libs.jei)
+    compileOnly(libs.rei)
     compileOnly(libs.emi)
     compileOnly(libs.ae2lib)
     jarJar(libs.ae2lib)

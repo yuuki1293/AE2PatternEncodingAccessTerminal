@@ -6,13 +6,14 @@ plugin_changelog = "2.2.1"
 plugin_spotless = "6.25.0"
 
 minecraft = "1.21.1"
-neoforge = "21.1.66"
-parchmentmc = "2024.11.17"
+neoforge = "21.1.169"
+parchmentmc = "2024.07.07"
 mixin = "0.8.5"
 mixinExtras = "0.4.1"
 
 ae2 = "19.2.17"
 jei = "19.25.0.323"
+rei = "16.0.729"
 emi = "1.1.22+1.21.1"
 jade = "6853386"
 guideme = "21.1.15"
@@ -30,6 +31,7 @@ mixinExtrasForge = { module = "io.github.llamalad7:mixinextras-forge", version.r
 
 ae2 = { module = "org.appliedenergistics:appliedenergistics2", version.ref = "ae2" }
 jei = { module = "mezz.jei:jei-1.21.1-neoforge", version.ref = "jei" }
+rei = { module = "me.shedaniel:RoughlyEnoughItems-neoforge", version.ref = "rei" }
 emi = { module = "dev.emi:emi-neoforge", version.ref = "emi" }
 jade = { module = "curse.maven:jade-324717", version.ref = "jade" }
 guideme = { module = "org.appliedenergistics:guideme", version.ref = "guideme" }

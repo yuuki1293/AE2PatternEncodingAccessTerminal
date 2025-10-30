@@ -2,6 +2,7 @@ package yuuki1293.ae2peat.gui;
 
 import appeng.api.config.ActionItems;
 import appeng.client.Point;
+import appeng.client.gui.Icon;
 import appeng.client.gui.WidgetContainer;
 import appeng.client.gui.style.Blitter;
 import appeng.client.gui.widgets.ActionButton;
@@ -11,8 +12,6 @@ import appeng.menu.SlotSemantics;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 public class ProcessingEncodingPanel extends EncodingModePanel {
     private static final Blitter BG = Blitter.texture("guis/pattern_modes.png").src(0, 70, 126, 68);
@@ -27,6 +26,7 @@ public class ProcessingEncodingPanel extends EncodingModePanel {
         // Add buttons for the processing mode
         clearBtn = new ActionButton(ActionItems.CLOSE, act -> menu.clear());
         clearBtn.setHalfSize(true);
+        clearBtn.setDisableBackground(true);
         widgets.add("processingClearPattern", clearBtn);
 
         this.cycleOutputBtn =
@@ -82,8 +82,8 @@ public class ProcessingEncodingPanel extends EncodingModePanel {
     }
 
     @Override
-    public ItemStack getTabIconItem() {
-        return Items.FURNACE.getDefaultInstance();
+    Icon getIcon() {
+        return Icon.TAB_PROCESSING;
     }
 
     @Override
