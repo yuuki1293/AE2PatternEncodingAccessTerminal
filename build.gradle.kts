@@ -119,14 +119,11 @@ val mixinRefmapName = "${modId}.refmap.json"
 repositories {
     mavenCentral()
     maven {
-        name = "Sponge / Mixin"
-        url = uri("https://repo.spongepowered.org/repository/maven-public/")
-    }
-    maven {
         name = "Mod Maven"
         url = uri("https://modmaven.dev/")
         content {
             includeGroup("mezz.jei")
+            includeGroup("de.mari_023")
         }
     }
     maven {
@@ -144,13 +141,25 @@ repositories {
         }
     }
     maven {
+        name = "theillusivec4"
         url = uri("https://maven.theillusivec4.top/")
+        content {
+            includeGroup("top.theillusivec4.curios")
+        }
     }
     maven {
+        name = "Architectury"
         url = uri("https://maven.architectury.dev/")
+        content {
+            includeGroup("dev.architectury")
+        }
     }
     maven {
+        name = "Shedaniel"
         url = uri("https://maven.shedaniel.me/")
+        content {
+            includeGroup("me.shedaniel.cloth")
+        }
     }
 }
 
@@ -160,12 +169,13 @@ dependencies {
     runtimeOnly(libs.guideme)
     compileOnly(libs.jei)
     compileOnly(libs.emi)
-    implementation(libs.ae2lib)
+    compileOnly(libs.ae2lib)
     jarJar(libs.ae2lib)
-    compileOnly(libs.ae2wtlib)
+    compileOnly(libs.ae2wtlib.api) { isTransitive = false }
+    jarJar(libs.ae2wtlib.api)
 
     // Optional
-    runtimeOnly(libs.ae2wtlib)
+    runtimeOnly(libs.ae2wtlib) { isTransitive = false }
     runtimeOnly(libs.curios)         // depends on ae2wtlib
     runtimeOnly(libs.architectury)   // depends on ae2wtlib
     runtimeOnly(libs.cloth.config)   // depends on ae2wtlib

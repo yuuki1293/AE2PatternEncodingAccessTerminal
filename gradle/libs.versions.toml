@@ -17,7 +17,7 @@ emi = "1.1.22+1.21.1"
 jade = "6853386"
 guideme = "21.1.15"
 ae2lib = "1.0.2"
-ae2wtlib = "6939030"
+ae2wtlib = "19.2.6"
 ae2wtlib_range = "19.2.0"
 curios = "9.5.1+1.21.1"
 architectury = "18.0.6"
@@ -34,7 +34,8 @@ emi = { module = "dev.emi:emi-neoforge", version.ref = "emi" }
 jade = { module = "curse.maven:jade-324717", version.ref = "jade" }
 guideme = { module = "org.appliedenergistics:guideme", version.ref = "guideme" }
 ae2lib = { module = "io.github.pedroksl:ae2addonlib", version.ref = "ae2lib" }
-ae2wtlib = { module = "curse.maven:applied-energistics-2-wireless-terminals-459929", version.ref = "ae2wtlib" }
+ae2wtlib = { module = "de.mari_023:ae2wtlib", version.ref = "ae2wtlib" }
+ae2wtlib_api = { module = "de.mari_023:ae2wtlib_api", version.ref = "ae2wtlib" }
 curios = { module = "top.theillusivec4.curios:curios-neoforge", version.ref = "curios" }
 architectury = { module = "dev.architectury:architectury-neoforge", version.ref = "architectury" }
 cloth-config = { module = "me.shedaniel.cloth:cloth-config-neoforge", version.ref = "cloth-config" }
