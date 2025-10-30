@@ -24,8 +24,9 @@ plugins {
 
 val modId = Constants.Mod.id
 val mcVersion: String = libs.versions.minecraft.get()
-val forgeVersion: String = libs.versions.forge.get()
-val jdkVersion = 17
+val neoForgeVersion: String = libs.versions.neoforge.get()
+val neoForgeLoaderVersionRange = "[${extractVersionSegments(neoForgeVersion)},)"
+val jdkVersion = 21
 
 val exportMixin = true
 
@@ -53,8 +54,8 @@ base {
     group = Constants.Mod.group
 }
 
-legacyForge {
-    version = "$mcVersion-$forgeVersion"
+neoForge {
+    version = neoForgeVersion
 
     validateAccessTransformers = true
 
@@ -112,11 +113,8 @@ legacyForge {
     }
 }
 
-mixin {
-    add(sourceSets["main"], "${modId}.refmap.json")
-
-    config("${modId}.mixins.json")
-}
+val mixinConfigName = "${modId}.mixins.json"
+val mixinRefmapName = "${modId}.refmap.json"
 
 repositories {
     mavenCentral()
@@ -159,30 +157,30 @@ repositories {
 
 dependencies {
     // Mandatory
-    modImplementation(libs.ae2)
-    modRuntimeOnly(libs.guideme)
-    modCompileOnly(libs.jei)
-    modCompileOnly(libs.emi)
-    modImplementation(libs.ae2lib)
+    implementation(libs.ae2)
+    runtimeOnly(libs.guideme)
+    compileOnly(libs.jei)
+    compileOnly(libs.emi)
+    implementation(libs.ae2lib)
     jarJar(libs.ae2lib)
-    modCompileOnly(libs.ae2wtlib)
+    compileOnly(libs.ae2wtlib)
 
     // Optional
-    modRuntimeOnly(libs.ae2wtlib)
-    modRuntimeOnly(libs.curios)         // depends on ae2wtlib
-    modRuntimeOnly(libs.architectury)   // depends on ae2wtlib
-    modRuntimeOnly(libs.cloth.config)   // depends on ae2wtlib
+    runtimeOnly(libs.ae2wtlib)
+    runtimeOnly(libs.curios)         // depends on ae2wtlib
+    runtimeOnly(libs.architectury)   // depends on ae2wtlib
+    runtimeOnly(libs.cloth.config)   // depends on ae2wtlib
 
     // Utility
-    modRuntimeOnly(libs.jei)
-    modRuntimeOnly(libs.emi)
-    modRuntimeOnly(libs.jade)
+    runtimeOnly(libs.jei)
+    runtimeOnly(libs.emi)
+    runtimeOnly(libs.jade)
 
     annotationProcessor(variantOf(libs.mixin, "processor"))
 }
 
 val modDependencies = listOf(
-    ModDep("forge", extractVersionSegments(forgeVersion)),
+    ModDep("neoforge", extractVersionSegments(neoForgeVersion)),
     ModDep("minecraft", mcVersion),
     ModDep("ae2", extractVersionSegments(libs.versions.ae2), ordering = Order.AFTER),
     ModDep("ae2wtlib", libs.versions.ae2wtlib.range.get(), ordering = Order.AFTER)
@@ -194,7 +192,7 @@ val generateModMetadata by tasks.registering(ProcessResources::class) {
         "group" to project.group,
         "minecraft_version" to mcVersion,
         "mod_loader" to "javafml",
-        "mod_loader_version_range" to "[47,)",
+        "mod_loader_version_range" to neoForgeLoaderVersionRange,
         "mod_name" to Constants.Mod.name,
         "mod_author" to Constants.Mod.author,
         "mod_id" to modId,
@@ -224,6 +222,12 @@ tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
         options.release = jdkVersion
+        options.compilerArgs.addAll(
+            listOf(
+                "-Aorg.spongepowered.tools.obfuscation.MixinObfuscationProcessorArguments.refmap=$mixinRefmapName",
+                "-Aorg.spongepowered.tools.obfuscation.MixinObfuscationProcessorArguments.mixinConfigs=$mixinConfigName"
+            )
+        )
     }
 
     java {
@@ -290,7 +294,7 @@ sourceSets {
     }
 }
 
-legacyForge.ideSyncTask(generateModMetadata)
+neoForge.ideSyncTask(generateModMetadata)
 
 idea {
     module {
@@ -303,7 +307,7 @@ idea {
 
 fun ModPublisherGradleExtension.Dependencies.fromModDependencies(modDependencies: List<ModDep>) {
     modDependencies.filter {
-        it.id != "minecraft" && it.id != "forge"
+        it.id != "minecraft" && it.id != "neoforge"
     }.forEach {
         if (it.mandatory) {
             required(it.id)
@@ -321,7 +325,7 @@ publisher {
     }
 
     setReleaseType(ReleaseType.RELEASE)
-    setLoaders(ModLoader.FORGE, ModLoader.NEOFORGE)
+    setLoaders(ModLoader.NEOFORGE)
     setCurseEnvironment(CurseEnvironment.BOTH)
 
     curseID.set(Constants.Publisher.curseforgeProjectId)
@@ -331,7 +335,7 @@ publisher {
     displayName.set("[$mcVersion] v${project.version}")
     setGameVersions(mcVersion)
     setJavaVersions(jdkVersion)
-    artifact.set(tasks.named("reobfJar"))
+    artifact.set(tasks.named("jar"))
     addAdditionalFile(tasks.named("sourcesJar"))
 
     curseDepends {
@@ -347,12 +351,12 @@ publisher {
 
     github {
         repo("yuuki1293/AE2PatternEncodingAccessTerminal")
-        tag("forge/v${mcVersion}-${project.version}")
+        tag("neoforge/v${mcVersion}-${project.version}")
         displayName("[$mcVersion] v${project.version}")
         createTag(true)
         createRelease(true)
         updateRelease(true)
-        target("forge/${mcVersion}")
+        target("neoforge/${mcVersion}")
     }
 }
 
