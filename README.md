@@ -13,7 +13,7 @@ AE2 Pattern Encoding Access Terminal is an addon that unifies Applied Energistic
 ![Colors](images/colorful_terminals.png)
 
 ## For Developers
-1. Install JDK 17 and set `JAVA_HOME`.
+1. Install JDK 21 and set `JAVA_HOME`.
 2. Clone the repository with IntelliJ IDEA.
 3. In IntelliJ’s `Run / Debug Configuration`, choose `Client` and start the game.
 - When you update data generators, select the `Data` configuration and run it.

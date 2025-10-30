@@ -11,7 +11,7 @@ Applied Energistics 2のパターンアクセスターミナルとパターン�
 ![Colors](images/colorful_terminals.png)
 
 ## 開発者向け
-1. JDK 17をインストールし、`JAVA_HOME`を設定します。
+1. JDK 21をインストールし、`JAVA_HOME`を設定します。
 2. IntelliJ IDEAでリポジトリをクローンします。
 3. IntelliJ IDEAの`Run / Debug Configuration`で`Client`を選択して実行します。
 * DataGenを更新した場合`Run / Debug Configuration`で`Data`を選択して実行します。
