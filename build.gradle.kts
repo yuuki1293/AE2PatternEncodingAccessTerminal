@@ -171,7 +171,7 @@ dependencies {
     compileOnly(libs.jei)
     compileOnly(libs.rei)
     compileOnly(libs.emi)
-    compileOnly(libs.ae2lib)
+    implementation(libs.ae2lib)
     jarJar(libs.ae2lib)
     compileOnly(libs.ae2wtlib.api) { isTransitive = false }
     jarJar(libs.ae2wtlib.api)

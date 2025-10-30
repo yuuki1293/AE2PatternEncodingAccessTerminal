@@ -6,7 +6,7 @@ plugin_changelog = "2.2.1"
 plugin_spotless = "6.25.0"
 
 minecraft = "1.21.1"
-neoforge = "21.1.169"
+neoforge = "21.1.203"
 parchmentmc = "2024.07.07"
 mixin = "0.8.5"
 mixinExtras = "0.4.1"

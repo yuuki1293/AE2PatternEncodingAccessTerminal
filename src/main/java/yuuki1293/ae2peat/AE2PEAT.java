@@ -22,57 +22,23 @@ import yuuki1293.ae2peat.definisions.PEATItems;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.gui.PatternEncodingAccessTermScreen;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
+import yuuki1293.ae2peat.wireless.WPEATMenu;
+import yuuki1293.ae2peat.wireless.WPEATScreen;
 import yuuki1293.ae2peat.xmod.Addons;
 import yuuki1293.ae2peat.xmod.ae2wtlib.AE2WtLibPlugin;
 
-@Mod(value = AE2PEAT.MOD_ID, dist = Dist.DEDICATED_SERVER)
+@Mod(value = AE2PEAT.MOD_ID)
 public class AE2PEAT {
     public static final String MOD_ID = "ae2peat";
 
     public AE2PEAT(IEventBus modEventBus, ModContainer modContainer) {
-        NeoForge.EVENT_BUS.register(this);
-
         PEATItems.INSTANCE.register(modEventBus);
         PEATMenus.INSTANCE.register(modEventBus);
         PEATCreativeTab.INSTANCE.register(modEventBus);
-
-        modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(this::onAe2Initialized);
-        modEventBus.addListener(AE2PEAT::initUpgrades);
     }
 
     public static ResourceLocation makeId(String id) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, id);
-    }
-
-    private void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(this::postRegistrationInitialization).whenComplete((res, err) -> {
-            if (err != null) {
-                AELog.warn(err);
-            }
-        });
-    }
-
-    public void postRegistrationInitialization() {
-        if (Addons.AE2WTLIB.isLoaded()) {
-            AE2WtLibPlugin.initGridLinkables();
-        }
-    }
-
-    public void onAe2Initialized(RegisterEvent event) {
-        if (event.getRegistryKey() == Registries.MENU) {
-            if (Addons.AE2WTLIB.isLoaded()) {
-                AE2WtLibPlugin.initMenu();
-            }
-        }
-    }
-
-    private static void initUpgrades(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            if (Addons.AE2WTLIB.isLoaded()) {
-                AE2WtLibPlugin.initUpgrades();
-            }
-        });
     }
 
     @Mod(value = MOD_ID, dist = Dist.CLIENT)
@@ -87,7 +53,11 @@ public class AE2PEAT {
                                     PatternEncodingAccessTermScreen::new,
                                     "/screens/terminals/pattern_encoding_access_terminal.json");
             if (Addons.AE2WTLIB.isLoaded()) {
-                AE2WtLibPlugin.initScreen(event);
+                InitScreens.<WPEATMenu, WPEATScreen>register(
+                    event,
+                    WPEATMenu.TYPE,
+                    WPEATScreen::new,
+                    "/screens/wtlib/wireless_pattern_encoding_access_terminal.json");
             }
         }
 
