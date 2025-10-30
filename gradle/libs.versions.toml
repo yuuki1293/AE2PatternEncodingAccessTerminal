@@ -20,15 +20,15 @@ ae2lib = "1.0.2"
 ae2wtlib = "6939030"
 ae2wtlib_range = "19.2.0"
 curios = "9.5.1+1.21.1"
-architectury = "18.0.6+neoforge"
-cloth-config = "20.0.149+neoforge"
+architectury = "18.0.6"
+cloth-config = "20.0.149"
 
 [libraries]
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
 mixinExtrasCommon = { module = "io.github.llamalad7:mixinextras-common", version.ref = "mixinExtras" }
 mixinExtrasForge = { module = "io.github.llamalad7:mixinextras-forge", version.ref = "mixinExtras" }
 
-ae2 = { module = "appeng:appliedenergistics2-neoforge", version.ref = "ae2" }
+ae2 = { module = "org.appliedenergistics:appliedenergistics2", version.ref = "ae2" }
 jei = { module = "mezz.jei:jei-1.21.1-neoforge", version.ref = "jei" }
 emi = { module = "dev.emi:emi-neoforge", version.ref = "emi" }
 jade = { module = "curse.maven:jade-324717", version.ref = "jade" }

@@ -126,7 +126,6 @@ repositories {
         name = "Mod Maven"
         url = uri("https://modmaven.dev/")
         content {
-            includeGroup("appeng")
             includeGroup("mezz.jei")
         }
     }
