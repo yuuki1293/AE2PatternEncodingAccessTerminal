@@ -8,6 +8,8 @@ import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.integration.modules.jei.transfer.EncodePatternTransferHandler;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
+import yuuki1293.ae2peat.wireless.WPEATMenu;
+import yuuki1293.ae2peat.xmod.Addons;
 
 @SuppressWarnings("unused")
 @JeiPlugin
@@ -26,5 +28,9 @@ public class JEIPlugin implements IModPlugin {
                 PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
                 PatternEncodingAccessTermMenu.class,
                 registration.getTransferHelper()));
+        if (Addons.AE2WTLIB.isLoaded()) {
+            registration.addUniversalRecipeTransferHandler(new EncodePatternTransferHandler<>(
+                    WPEATMenu.TYPE, WPEATMenu.class, registration.getTransferHelper()));
+        }
     }
 }
