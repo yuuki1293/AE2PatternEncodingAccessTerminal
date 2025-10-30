@@ -6,7 +6,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import yuuki1293.ae2peat.AE2PEAT;
 
-@EventBusSubscriber(modid = AE2PEAT.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = AE2PEAT.MOD_ID, value = Dist.CLIENT)
 public class PEATDataGen {
     @SubscribeEvent
     public static void onGatherData(GatherDataEvent event) {
