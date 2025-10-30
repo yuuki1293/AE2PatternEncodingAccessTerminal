@@ -21,8 +21,8 @@ ae2lib = "1.0.2"
 ae2wtlib = "19.2.6"
 ae2wtlib_range = "19.2.0"
 curios = "9.5.1+1.21.1"
-architectury = "18.0.6"
-cloth-config = "20.0.149"
+architectury = "13.0.8"
+cloth-config = "15.0.140"
 
 [libraries]
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
