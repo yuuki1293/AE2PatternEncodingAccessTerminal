@@ -9,7 +9,7 @@ import yuuki1293.ae2peat.definisions.PEATCreativeTab;
 import yuuki1293.ae2peat.definisions.PEATItems;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 
-@Mod(value = AE2PEAT.MOD_ID, dist = Dist.DEDICATED_SERVER)
+@Mod(value = AE2PEAT.MOD_ID)
 public class AE2PEAT {
     public static final String MOD_ID = "ae2peat";
 
