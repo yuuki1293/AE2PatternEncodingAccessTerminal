@@ -1,13 +1,12 @@
 import com.diffplug.spotless.LineEnding
-import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension
 import com.hypherionmc.modpublisher.properties.CurseEnvironment
 import com.hypherionmc.modpublisher.properties.ModLoader
 import com.hypherionmc.modpublisher.properties.ReleaseType
 import org.apache.tools.ant.filters.ReplaceTokens
-import java.text.SimpleDateFormat
-import java.util.*
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.ChangelogPluginExtension
+import java.text.SimpleDateFormat
+import java.util.*
 
 plugins {
     id("java")
@@ -246,6 +245,7 @@ tasks {
         withSourcesJar()
         toolchain {
             languageVersion = JavaLanguageVersion.of(jdkVersion)
+            @Suppress("UnstableApiUsage")
             vendor = JvmVendorSpec.JETBRAINS
         }
         JavaVersion.toVersion(jdkVersion).let {
@@ -295,15 +295,15 @@ tasks {
 
     register("installGitHooks") {
         group = "git hooks"
-        description = "Installs Git hooks from githooks/ into .git/hooks."
+        description = "Installs Git hooks from .githooks/ into .git/hooks."
 
-        val sourceDir = file("githooks")
+        val sourceDir = file(".githooks")
         inputs.dir(sourceDir)
         outputs.upToDateWhen { false }
 
         doLast {
             if (!sourceDir.exists()) {
-                logger.warn("Skipping Git hook installation because githooks/ was not found.")
+                logger.warn("Skipping Git hook installation because .githooks/ was not found.")
                 return@doLast
             }
 
