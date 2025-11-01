@@ -1,6 +1,7 @@
 package yuuki1293.ae2peat;
 
 import appeng.api.features.GridLinkables;
+import appeng.core.AELog;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -28,6 +29,8 @@ public class AE2PEAT {
         PEATCreativeTab.INSTANCE.register(modEventBus);
 
         modEventBus.addListener(AE2PEAT::initUpgrades);
+
+        modEventBus.addListener(this::commonSetup);
     }
 
     public static AE2PEAT instance() {
@@ -36,6 +39,14 @@ public class AE2PEAT {
 
     public static ResourceLocation makeId(String id) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, id);
+    }
+
+    private void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(this::postRegistrationInitialization).whenComplete((res, err) -> {
+            if (err != null) {
+                AELog.warn(err);
+            }
+        });
     }
 
     public void postRegistrationInitialization() {
