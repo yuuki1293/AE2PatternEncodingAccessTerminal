@@ -1,11 +1,17 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ae2wtlib"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_dense_energy_cell": {
       "conditions": {
         "items": [
           {
-            "items": ["ae2:dense_energy_cell"]
+            "items": "ae2:dense_energy_cell"
           }
         ]
       },
@@ -15,7 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": ["ae2peat:pattern_encoding_access_terminal"]
+            "items": "ae2peat:pattern_encoding_access_terminal"
           }
         ]
       },
@@ -31,7 +37,7 @@
       "conditions": {
         "items": [
           {
-            "items": ["ae2:wireless_receiver"]
+            "items": "ae2:wireless_receiver"
           }
         ]
       },
@@ -40,14 +46,13 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "has_peat_terminal",
       "has_dense_energy_cell",
-      "has_wireless_receiver",
-      "has_the_recipe"
+      "has_wireless_receiver"
     ]
   ],
   "rewards": {
     "recipes": ["ae2peat:network/wireless_pattern_encoding_access_terminal"]
-  },
-  "sends_telemetry_event": false
+  }
 }

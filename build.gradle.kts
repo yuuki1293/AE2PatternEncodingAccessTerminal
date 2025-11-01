@@ -193,8 +193,9 @@ dependencies {
 val modDependencies = listOf(
     ModDep("neoforge", extractVersionSegments(neoForgeVersion)),
     ModDep("minecraft", mcVersion),
-    ModDep("ae2", extractVersionSegments(libs.versions.ae2), ordering = Order.AFTER),
-    ModDep("ae2wtlib", libs.versions.ae2wtlib.range.get(), ordering = Order.AFTER)
+    ModDep("ae2", libs.versions.ae2.range.get(), ordering = Order.AFTER),
+    ModDep("ae2wtlib_api", "*", ordering = Order.BEFORE),
+    ModDep("ae2wtlib", libs.versions.ae2wtlib.range.get(), ordering = Order.AFTER, type = Type.OPTIONAL)
 )
 
 val generateModMetadata by tasks.registering(ProcessResources::class) {
@@ -291,6 +292,41 @@ tasks {
     named { it.startsWith("publish") }.forEach {
         it.notCompatibleWithConfigurationCache("ModPublisher plugin is not compatible with configuration cache")
     }
+
+    register("installGitHooks") {
+        group = "git hooks"
+        description = "Installs Git hooks from githooks/ into .git/hooks."
+
+        val sourceDir = file("githooks")
+        inputs.dir(sourceDir)
+        outputs.upToDateWhen { false }
+
+        doLast {
+            if (!sourceDir.exists()) {
+                logger.warn("Skipping Git hook installation because githooks/ was not found.")
+                return@doLast
+            }
+
+            val hooksDir = file(".git/hooks")
+            if (!hooksDir.exists()) {
+                logger.lifecycle("Skipping Git hook installation because .git/hooks does not exist.")
+                return@doLast
+            }
+
+            sourceDir.listFiles()?.forEach { hook ->
+                if (!hook.isFile) return@forEach
+                val target = hooksDir.resolve(hook.name)
+                hook.copyTo(target, overwrite = true)
+                if (!target.setExecutable(true)) {
+                    logger.warn("Failed to mark ${target.name} as executable.")
+                }
+            }
+        }
+    }
+
+    named("build") {
+        dependsOn("installGitHooks")
+    }
 }
 
 sourceSets {
@@ -313,18 +349,6 @@ idea {
         isDownloadSources = true
 
         resourceDirs.add(file("src/main/templates"))
-    }
-}
-
-fun ModPublisherGradleExtension.Dependencies.fromModDependencies(modDependencies: List<ModDep>) {
-    modDependencies.filter {
-        it.id != "minecraft" && it.id != "neoforge"
-    }.forEach {
-        if (it.mandatory) {
-            required(it.id)
-        } else {
-            optional(it.id)
-        }
     }
 }
 

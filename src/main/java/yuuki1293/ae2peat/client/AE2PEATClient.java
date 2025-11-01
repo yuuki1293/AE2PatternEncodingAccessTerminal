@@ -28,24 +28,24 @@ public class AE2PEATClient {
 
     private static void initScreen(RegisterMenuScreensEvent event) {
         InitScreens
-            .<PatternEncodingAccessTermMenu, PatternEncodingAccessTermScreen<PatternEncodingAccessTermMenu>>
-                register(
-                event,
-                PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
-                PatternEncodingAccessTermScreen::new,
-                "/screens/terminals/pattern_encoding_access_terminal.json");
+                .<PatternEncodingAccessTermMenu, PatternEncodingAccessTermScreen<PatternEncodingAccessTermMenu>>
+                        register(
+                                event,
+                                PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
+                                PatternEncodingAccessTermScreen::new,
+                                "/screens/terminals/pattern_encoding_access_terminal.json");
         InitScreens.<WPEATMenu, WPEATScreen>register(
-            event,
-            WPEATMenu.TYPE,
-            WPEATScreen::new,
-            "/screens/wtlib/wireless_pattern_encoding_access_terminal.json");
+                event,
+                WPEATMenu.TYPE,
+                WPEATScreen::new,
+                "/screens/wtlib/wireless_pattern_encoding_access_terminal.json");
     }
 
     @SubscribeEvent
     private static void initItemColours(RegisterColorHandlersEvent.Item event) {
         event.register(
-            makeOpaque(new StaticItemColor(AEColor.TRANSPARENT)),
-            PEATItems.PATTERN_ENCODING_ACCESS_TERMINAL.asItem());
+                makeOpaque(new StaticItemColor(AEColor.TRANSPARENT)),
+                PEATItems.PATTERN_ENCODING_ACCESS_TERMINAL.asItem());
     }
 
     private static ItemColor makeOpaque(ItemColor itemColor) {

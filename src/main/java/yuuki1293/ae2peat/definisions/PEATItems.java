@@ -7,11 +7,10 @@ import appeng.items.parts.PartItem;
 import java.util.function.Function;
 import net.minecraft.world.item.Item;
 import net.pedroksl.ae2addonlib.registry.ItemRegistry;
-import net.pedroksl.ae2addonlib.util.AddonEnum;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.parts.PatternEncodingAccessTerminalPart;
 import yuuki1293.ae2peat.wireless.ItemWPEAT;
-import yuuki1293.ae2peat.xmod.Addons;
+import yuuki1293.ae2peat.xmod.ae2wtlib.AE2WtLibPlugin;
 
 public class PEATItems extends ItemRegistry {
     public static PEATItems INSTANCE = new PEATItems();
@@ -26,25 +25,10 @@ public class PEATItems extends ItemRegistry {
                     PEATIds.PATTERN_ENCODING_ACCESS_TERMINAL,
                     PatternEncodingAccessTerminalPart.class,
                     PatternEncodingAccessTerminalPart::new);
-    public static final ItemDefinition<ItemWPEAT> WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL = conditionalItem(
-            Addons.AE2WTLIB,
+    public static final ItemDefinition<ItemWPEAT> WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL = item(
             "Wireless Pattern Encoding Access Terminal",
             PEATIds.WIRELESS_PATTERN_ENCODING_ACCESS_TERMINAL,
-            "yuuki1293.ae2peat.wireless.ItemWPEAT");
-
-    @SuppressWarnings("unchecked")
-    private static <T extends Item> ItemDefinition<T> conditionalItem(
-            AddonEnum addon, String englishName, String id, String itemClass) {
-        if (addon.isLoaded()) {
-            try {
-                var instance =
-                        (T) Class.forName(itemClass).getDeclaredConstructor().newInstance();
-                return item(AE2PEAT.MOD_ID, englishName, id, p -> instance);
-            } catch (Exception ignored) {
-            }
-        }
-        return null;
-    }
+            p -> AE2WtLibPlugin.TERMINAL);
 
     protected static <T extends Item> ItemDefinition<T> item(
             String englishName, String id, Function<Item.Properties, T> factory) {

@@ -3,19 +3,19 @@ package yuuki1293.ae2peat.xmod;
 import net.pedroksl.ae2addonlib.util.AddonEnum;
 
 public enum Addons implements AddonEnum {
-    AE2WTLIB("AE2 Wireless Terminals Lib");
+    AE2WTLIB("ae2wtlib");
 
-    private final String modName;
+    private final String modId;
 
-    Addons(String modName) {
-        this.modName = modName;
+    Addons(String modId) {
+        this.modId = modId;
     }
 
     public String getModId() {
-        return name().toLowerCase();
+        return modId;
     }
 
     public String getModName() {
-        return this.modName;
+        return this.modId;
     }
 }

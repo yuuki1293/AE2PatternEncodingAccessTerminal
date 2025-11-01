@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ae2wtlib"
+    }
+  ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
@@ -14,7 +20,7 @@
   },
   "pattern": ["a", "b", "c"],
   "result": {
-    "item": "ae2peat:wireless_pattern_encoding_access_terminal"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "ae2peat:wireless_pattern_encoding_access_terminal"
+  }
 }
