@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -eu
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+echo "Running spotlessCheck..."
+if ./gradlew spotlessCheck; then
+  exit 0
+fi
+
+echo "spotlessCheck failed; aborting commit." >&2
+exit 1
