@@ -4,6 +4,9 @@ license = "${license}"
 issueTrackerURL="${issue_tracker_url}"
 logoFile="${logo_file}"
 
+[[mixins]]
+config="${mixin_config}"
+
 [[mods]]
 modId = "${mod_id}"
 version = "${version}"

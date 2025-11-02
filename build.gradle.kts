@@ -212,6 +212,7 @@ val generateModMetadata by tasks.registering(ProcessResources::class) {
         "display_url" to Constants.Mod.repositoryUrl,
         "issue_tracker_url" to Constants.Mod.issueTrackerUrl,
         "logo_file" to "logo.png",
+        "mixin_config" to mixinConfigName,
 
         "dependencies" to buildDeps(*modDependencies.toTypedArray())
     )
