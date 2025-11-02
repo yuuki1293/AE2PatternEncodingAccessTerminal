@@ -1,4 +1,4 @@
-package yuuki1293.ae2peat.gui;
+package yuuki1293.ae2peat.client.gui;
 
 import appeng.client.Point;
 import appeng.client.gui.Icon;
@@ -48,7 +48,7 @@ public class StonecuttingEncodingPanel extends EncodingModePanel {
 
     @Override
     public void drawBackgroundLayer(GuiGraphics guiGraphics, Rect2i bounds, Point mouse) {
-        BG.dest(bounds.getX() + 9, bounds.getY() + bounds.getHeight() - 164).blit(guiGraphics);
+        BG.dest(bounds.getX() + 8, bounds.getY() + bounds.getHeight() - 165).blit(guiGraphics);
         drawRecipes(guiGraphics, bounds, mouse);
     }
 

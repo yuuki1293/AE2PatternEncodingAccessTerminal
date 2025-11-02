@@ -1,4 +1,4 @@
-package yuuki1293.ae2peat.gui;
+package yuuki1293.ae2peat.client.gui;
 
 import appeng.client.Point;
 import appeng.client.gui.ICompositeWidget;

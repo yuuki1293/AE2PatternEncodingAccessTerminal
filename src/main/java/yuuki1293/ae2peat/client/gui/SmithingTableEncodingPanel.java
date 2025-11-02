@@ -1,4 +1,4 @@
-package yuuki1293.ae2peat.gui;
+package yuuki1293.ae2peat.client.gui;
 
 import appeng.api.config.ActionItems;
 import appeng.client.Point;
@@ -65,7 +65,7 @@ public class SmithingTableEncodingPanel extends EncodingModePanel {
 
     @Override
     public void drawBackgroundLayer(GuiGraphics guiGraphics, Rect2i bounds, Point mouse) {
-        BG.dest(bounds.getX() + 9, bounds.getY() + bounds.getHeight() - 164).blit(guiGraphics);
+        BG.dest(bounds.getX() + 8, bounds.getY() + bounds.getHeight() - 165).blit(guiGraphics);
     }
 
     @Override

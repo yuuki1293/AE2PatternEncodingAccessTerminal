@@ -1,4 +1,4 @@
-package yuuki1293.ae2peat.gui;
+package yuuki1293.ae2peat.client.gui;
 
 import appeng.api.stacks.GenericStack;
 import appeng.client.gui.AESubScreen;

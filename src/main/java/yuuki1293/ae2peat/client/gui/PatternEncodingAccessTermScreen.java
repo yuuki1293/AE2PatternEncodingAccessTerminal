@@ -1,4 +1,4 @@
-package yuuki1293.ae2peat.gui;
+package yuuki1293.ae2peat.client.gui;
 
 import appeng.api.behaviors.ContainerItemStrategies;
 import appeng.api.behaviors.EmptyingAction;
@@ -13,7 +13,6 @@ import appeng.client.gui.me.patternaccess.PatternContainerRecord;
 import appeng.client.gui.me.patternaccess.PatternSlot;
 import appeng.client.gui.style.PaletteColor;
 import appeng.client.gui.style.ScreenStyle;
-import appeng.client.gui.style.TerminalStyle;
 import appeng.client.gui.widgets.*;
 import appeng.core.AEConfig;
 import appeng.core.AppEng;
@@ -57,11 +56,6 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
 
     private static final Logger LOG = LoggerFactory.getLogger(PatternEncodingAccessTermScreen.class);
 
-    private static final String TEXT_ID_ENTRIES_SHOWN = "entriesShown";
-
-    private static final int MIN_ROWS = 2;
-
-    private final TerminalStyle termStyle;
     protected final Repo repo;
 
     private final Map<EncodingMode, EncodingModePanel> modePanels = new EnumMap<>(EncodingMode.class);
@@ -74,7 +68,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     private static final int GUI_PADDING_Y = 6;
 
     private static final int GUI_HEADER_HEIGHT = 17;
-    private static final int GUI_FOOTER_HEIGHT = 99;
+    private static final int GUI_FOOTER_HEIGHT = 178;
     private static final int COLUMNS = 9;
 
     /**
@@ -113,7 +107,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     private static final Rect2i ROW_INVENTORY_MIDDLE_BBOX = new Rect2i(0, 71, GUI_WIDTH, ROW_HEIGHT);
     private static final Rect2i ROW_INVENTORY_BOTTOM_BBOX = new Rect2i(0, 107, GUI_WIDTH, ROW_HEIGHT);
     // This is the lower part of the UI, anything below the scrollable area (incl. its bottom border)
-    private static final Rect2i FOOTER_BBOX = new Rect2i(0, 125, GUI_WIDTH, GUI_FOOTER_HEIGHT);
+    private static final Rect2i FOOTER_BBOX = new Rect2i(0, 73, GUI_WIDTH, GUI_FOOTER_HEIGHT);
 
     private static final Comparator<PatternContainerGroup> GROUP_COMPARATOR =
             Comparator.comparing(group -> group.name().getString().toLowerCase(Locale.ROOT));
@@ -136,7 +130,6 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     public PatternEncodingAccessTermScreen(C menu, Inventory playerInventory, Component title, ScreenStyle style) {
         super(menu, playerInventory, title, style);
 
-        this.termStyle = style.getTerminalStyle();
         if (this.style == null) {
             throw new IllegalStateException(
                     "Cannot construct screen " + getClass() + " without a terminalStyles setting");
@@ -449,14 +442,14 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     @Override
     public void drawBG(GuiGraphics guiGraphics, int offsetX, int offsetY, int mouseX, int mouseY, float partialTicks) {
         // Draw the top of the dialog
-        blit(guiGraphics, offsetX, offsetY, HEADER_BBOX);
+        blitAccess(guiGraphics, offsetX, offsetY, HEADER_BBOX);
 
         final int scrollLevel = scrollbar.getCurrentScroll();
 
         int currentY = offsetY + GUI_HEADER_HEIGHT;
 
         // Draw the footer now so slots will draw on top of it
-        blit(guiGraphics, offsetX, currentY + this.visibleRows * ROW_HEIGHT, FOOTER_BBOX);
+        blitEncoding(guiGraphics, offsetX, currentY + this.visibleRows * ROW_HEIGHT, FOOTER_BBOX);
 
         for (int i = 0; i < this.visibleRows; ++i) {
             // Draw the dialog background for this row
@@ -467,13 +460,13 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
 
             // Draw the background for the slots in an inventory row
             Rect2i bbox = selectRowBackgroundBox(false, firstLine, lastLine);
-            blit(guiGraphics, offsetX, currentY, bbox);
+            blitAccess(guiGraphics, offsetX, currentY, bbox);
             if (scrollLevel + i < this.rows.size()) {
                 var row = this.rows.get(scrollLevel + i);
                 if (row instanceof PatternEncodingAccessTermScreen.SlotsRow slotsRow) {
                     bbox = selectRowBackgroundBox(true, firstLine, lastLine);
                     bbox.setWidth(GUI_PADDING_X + SLOT_SIZE * slotsRow.slots - 1);
-                    blit(guiGraphics, offsetX, currentY, bbox);
+                    blitAccess(guiGraphics, offsetX, currentY, bbox);
                 }
             }
 
@@ -748,8 +741,19 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
      *
      * @see GuiGraphics#blit(ResourceLocation, int, int, int, int, int, int)
      */
-    private void blit(GuiGraphics guiGraphics, int offsetX, int offsetY, Rect2i srcRect) {
+    private void blitAccess(GuiGraphics guiGraphics, int offsetX, int offsetY, Rect2i srcRect) {
         var texture = AppEng.makeId("textures/guis/patternaccessterminal.png");
+        guiGraphics.blit(
+                texture, offsetX, offsetY, srcRect.getX(), srcRect.getY(), srcRect.getWidth(), srcRect.getHeight());
+    }
+
+    /**
+     * A version of blit that lets us pass a source rectangle
+     *
+     * @see GuiGraphics#blit(ResourceLocation, int, int, int, int, int, int)
+     */
+    private void blitEncoding(GuiGraphics guiGraphics, int offsetX, int offsetY, Rect2i srcRect) {
+        var texture = AppEng.makeId("textures/guis/pattern.png");
         guiGraphics.blit(
                 texture, offsetX, offsetY, srcRect.getX(), srcRect.getY(), srcRect.getWidth(), srcRect.getHeight());
     }

@@ -8,7 +8,7 @@ import de.mari_023.ae2wtlib.api.terminal.WTMenuHost;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
-import yuuki1293.ae2peat.gui.PatternEncodingAccessTermScreen;
+import yuuki1293.ae2peat.client.gui.PatternEncodingAccessTermScreen;
 
 public class WPEATScreen extends PatternEncodingAccessTermScreen<WPEATMenu> implements IUniversalTerminalCapable {
     private final ScrollingUpgradesPanel upgradesPanel;
