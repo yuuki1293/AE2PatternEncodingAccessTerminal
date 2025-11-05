@@ -15,14 +15,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 - Note bug fixes here.
 
-## [1.0.2]
+## [1.0.2] - 2025-11-05
 
 ### Fixed
 - Add JEI Integration.
 - Broken Encoding layout.
 - Can't set ingredients.
 
-## [1.0.1] - 2025-11-5
+## [1.0.1] - 2025-11-05
 
 ### Added
 - Apply `terminalMargin` configs.
