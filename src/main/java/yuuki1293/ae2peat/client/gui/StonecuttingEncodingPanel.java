@@ -137,8 +137,8 @@ public class StonecuttingEncodingPanel extends EncodingModePanel {
     private Rect2i getRecipeBounds(int index) {
         var col = index % COLS;
         var row = index / COLS;
-        int slotX = x + 44 + col * BG_SLOT.getSrcWidth();
-        int slotY = y + 8 + row * BG_SLOT.getSrcHeight();
+        int slotX = x + 26 + col * BG_SLOT.getSrcWidth();
+        int slotY = y + 12 + row * BG_SLOT.getSrcHeight();
         return new Rect2i(slotX, slotY, BG_SLOT.getSrcWidth(), BG_SLOT.getSrcHeight());
     }
 

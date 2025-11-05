@@ -21,7 +21,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmithingRecipeInput;
 
 public class SmithingTableEncodingPanel extends EncodingModePanel {
-    private static final Blitter BG = Blitter.texture("guis/pattern_modes.png").src(128, 70, 126, 68);
+    private static final Blitter BG = Blitter.texture("guis/pattern_modes.png").src(128, 70, 126, 66);
 
     private final ActionButton clearBtn;
     private final ToggleButton substitutionsBtn;
@@ -30,7 +30,7 @@ public class SmithingTableEncodingPanel extends EncodingModePanel {
     public SmithingTableEncodingPanel(PatternEncodingAccessTermScreen<?> screen, WidgetContainer widgets) {
         super(screen, widgets);
 
-        clearBtn = new ActionButton(ActionItems.CLOSE, act -> menu.clear());
+        clearBtn = new ActionButton(ActionItems.S_CLOSE, act -> menu.clear());
         clearBtn.setHalfSize(true);
         clearBtn.setDisableBackground(true);
         widgets.add("smithingTableClearPattern", clearBtn);
