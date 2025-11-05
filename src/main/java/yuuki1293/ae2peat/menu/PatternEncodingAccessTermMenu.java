@@ -1100,6 +1100,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         final PatternEncodingAccessTermMenu.ContainerTracker inv = this.byId.get(id);
         if (inv == null) {
             // Can occur if the client sent an interaction packet right before an inventory got removed
+            super.doAction(player, action, slot, id);
             return;
         }
         if (slot < 0 || slot >= inv.server.size()) {
