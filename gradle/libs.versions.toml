@@ -24,6 +24,7 @@ ae2wtlib_range = "[19.2.0,)"
 curios = "9.5.1+1.21.1"
 architectury = "13.0.8"
 cloth-config = "15.0.140"
+ae2-jei-integration = "5748513"
 
 [libraries]
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
@@ -42,6 +43,7 @@ ae2wtlib_api = { module = "de.mari_023:ae2wtlib_api", version.ref = "ae2wtlib" }
 curios = { module = "top.theillusivec4.curios:curios-neoforge", version.ref = "curios" }
 architectury = { module = "dev.architectury:architectury-neoforge", version.ref = "architectury" }
 cloth-config = { module = "me.shedaniel.cloth:cloth-config-neoforge", version.ref = "cloth-config" }
+ae2-jei-integration = { module = "curse.maven:ae2-jei-integration-1074338", version.ref = "ae2-jei-integration"}
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "plugin_kotlin" }

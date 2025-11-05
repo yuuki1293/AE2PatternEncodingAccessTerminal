@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import yuuki1293.ae2peat.integration.modules.jeirei.EncodingHelper;
+import yuuki1293.ae2peat.integration.modules.itemlists.EncodingHelper;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
 /**

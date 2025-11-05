@@ -1,4 +1,4 @@
-package yuuki1293.ae2peat.integration.modules.jeirei;
+package yuuki1293.ae2peat.integration.modules.itemlists;
 
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;

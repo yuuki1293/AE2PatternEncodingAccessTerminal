@@ -1270,6 +1270,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         }
     }
 
+    public void setSearch(String filter) {}
+
     private static class ContainerTracker {
 
         private final PatternContainer container;

@@ -174,6 +174,7 @@ dependencies {
     jarJar(libs.ae2lib)
     compileOnly(libs.ae2wtlib.api) { isTransitive = false }
     jarJar(libs.ae2wtlib.api)
+    compileOnly(libs.ae2.jei.integration)
 
     // Optional
     runtimeOnly(libs.ae2wtlib) { isTransitive = false }
@@ -183,7 +184,9 @@ dependencies {
 
     // Utility
     runtimeOnly(libs.jei)
-    runtimeOnly(libs.emi)
+    runtimeOnly(libs.ae2.jei.integration)
+//    runtimeOnly(libs.rei)
+//    runtimeOnly(libs.emi)
     runtimeOnly(libs.jade)
 
     annotationProcessor(variantOf(libs.mixin, "processor"))
