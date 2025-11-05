@@ -171,7 +171,10 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     @Override
     public void init() {
         this.visibleRows = config.getTerminalStyle()
-                .getRows((this.height - GUI_HEADER_HEIGHT - GUI_FOOTER_HEIGHT - GUI_TOP_AND_BOTTOM_PADDING)
+                .getRows((this.height
+                                - GUI_HEADER_HEIGHT
+                                - GUI_FOOTER_HEIGHT
+                                - AEConfig.instance().getTerminalMargin() * 2)
                         / ROW_HEIGHT);
 
         // Render inventory in correct place.
