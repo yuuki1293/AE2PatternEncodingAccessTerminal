@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 - Note bug fixes here.
 
+## [1.0.1] - 2025-11-5
+### Added
+- Apply `terminalMargin` configs.
+
 ## [1.0.0] - 2025-11-04
 
 ### Added
