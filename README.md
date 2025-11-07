@@ -18,5 +18,10 @@ AE2 Pattern Encoding Access Terminal is an addon that unifies Applied Energistic
 3. In IntelliJ’s `Run / Debug Configuration`, choose `Client` and start the game.
 - When you update data generators, select the `Data` configuration and run it.
 
+## Contributing
+- Translation pull requests are welcome at any time.
+- If you plan to work on an issue, please comment on it first so we can avoid duplicated effort.
+
 ## Credits
 - [Applied-Energistics-2](https://www.curseforge.com/minecraft/mc-mods/applied-energistics-2) (by thetechnici4n)
+- [AE2AddonLib](https://www.curseforge.com/minecraft/mc-mods/ae2addonlib) (by pedroksl)
