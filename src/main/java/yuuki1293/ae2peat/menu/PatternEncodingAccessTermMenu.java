@@ -72,6 +72,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.PEATSettings;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.parts.PatternEncodingAccessTerminalPart;
 
@@ -130,6 +132,13 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
     public ShowPatternProviders getShownProviders() {
         return showPatternProviders;
+    }
+
+    @GuiSync(2)
+    public AccessSearchMode accessSearchMode = AccessSearchMode.BOTH;
+
+    public AccessSearchMode getAccessSearchMode() {
+        return accessSearchMode;
     }
 
     // We use this serial number to uniquely identify all inventories we send to the client
@@ -222,6 +231,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
         this.clientCM = IConfigManager.builder(this::onSettingChanged)
                 .registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE)
+                .registerSetting(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH)
                 .build();
 
         if (isServerSide()) {
@@ -382,6 +392,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
             showPatternProviders =
                     this.termHost.getConfigManager().getSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS);
+            accessSearchMode = this.termHost.getConfigManager().getSetting(PEATSettings.ACCESS_SEARCH_MODE);
 
             super.broadcastChanges();
 
@@ -397,6 +408,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             if (grid != null) {
                 for (var machineClass : grid.getMachineClasses()) {
                     if (PatternContainer.class.isAssignableFrom(machineClass)) {
+                        //noinspection unchecked
                         visitPatternProviderHosts(grid, (Class<? extends PatternContainer>) machineClass, state);
                     }
                 }
@@ -540,6 +552,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
      * <p/>
      * This method is <strong>slow</strong>, but it is client-only and thus doesn't scale with the player count.
      */
+    @SuppressWarnings("unused")
     public boolean hasIngredient(Ingredient ingredient, Object2IntOpenHashMap<Object> reservedAmounts) {
         var clientRepo = getClientRepo();
 

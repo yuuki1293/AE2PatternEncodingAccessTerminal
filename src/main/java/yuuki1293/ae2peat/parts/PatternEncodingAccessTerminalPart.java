@@ -28,6 +28,8 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import yuuki1293.ae2peat.AE2PEAT;
+import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.PEATSettings;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 
 public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
@@ -38,6 +40,7 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
     private final IConfigManager cm = IConfigManager.builder(
                     () -> this.getHost().markForSave())
             .registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE)
+            .registerSetting(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH)
             .build();
 
     @PartModels

@@ -5,7 +5,11 @@ import yuuki1293.ae2peat.AE2PEAT;
 
 public enum PEATText implements LocalizationEnum {
     ModName("AE2 Pattern Encoding Access Terminal", Type.GUI),
-    PatternEncodingAccessTerminalShort("P. E. A. Terminal", Type.GUI);
+    PatternEncodingAccessTerminalShort("P. E. A. Terminal", Type.GUI),
+    AccessSearchModeCategory("Search Mode", Type.GUI),
+    AccessSearchModeBoth("Search Patterns & Machines", Type.GUI),
+    AccessSearchModePattern("Search Patterns only", Type.GUI),
+    AccessSearchModeMachine("Search Machines only", Type.GUI);
 
     private final String englishText;
     private final Type type;
