@@ -45,14 +45,17 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.pedroksl.ae2addonlib.client.widgets.AddonSettingToggleButton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.api.config.AccessSearchMode;
 import yuuki1293.ae2peat.api.config.PEATSettings;
 import yuuki1293.ae2peat.client.gui.widgets.PEATSettingToggleButton;
+import yuuki1293.ae2peat.itemlists.ItemListsManager;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
 public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTermMenu> extends AEBaseScreen<C>
@@ -195,6 +198,8 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         }
 
         this.menu.setGui(this::refreshList);
+
+        this.menu.setTransferAction(this::setSearchTextAsRecipe);
     }
 
     @Override
@@ -318,6 +323,23 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
                 renderContext.renderTextCenteredIn(statusDescription.getString(), ERROR_TEXT_STYLE, rect);
             }
         }
+    }
+
+    public void setSearchTextAsRecipe(Recipe<?> recipe) {
+        if (recipe == null || searchField == null) return;
+
+        var recipeType = recipe.getType().toString();
+        var resource = ResourceLocation.tryParse(recipeType);
+
+        if (resource == null) {
+            AE2PEAT.LOGGER.warn("failed to parse recipe type: {}", recipeType);
+            return;
+        }
+
+        var adapter = ItemListsManager.getAdapter();
+        var matchGroup = adapter.findFirst(groups, resource);
+
+        matchGroup.ifPresent(g -> searchField.setValue(g.name().getString()));
     }
 
     @Override

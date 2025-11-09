@@ -60,6 +60,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.shorts.ShortSet;
 import java.util.*;
+import java.util.function.Consumer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -209,6 +210,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
      */
     public IntSet slotsSupportingFluidSubstitution = new IntArraySet();
     // endregion
+
+    private Consumer<Recipe<?>> setSearchAsRecipe;
 
     public PatternEncodingAccessTermMenu(int id, Inventory ip, PatternEncodingAccessTerminalPart anchor) {
         this(PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(), id, ip, anchor, true);
@@ -544,6 +547,10 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
     public void setClientRepo(@Nullable IClientRepo clientRepo) {
         this.clientRepo = clientRepo;
+    }
+
+    public void setTransferAction(Consumer<Recipe<?>> c) {
+        this.setSearchAsRecipe = c;
     }
 
     /**
@@ -1284,7 +1291,9 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         }
     }
 
-    public void setSearch(String filter) {}
+    public void setSearch(@Nullable Recipe<?> recipe) {
+        setSearchAsRecipe.accept(recipe);
+    }
 
     private static class ContainerTracker {
 

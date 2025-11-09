@@ -89,6 +89,8 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
                         GenericEntryStackHelper.ofInputs(slotsView),
                         GenericEntryStackHelper.ofOutputs(slotsView));
             }
+
+            menu.setSearch(recipe);
         } else {
             var craftableSlots = findCraftableSlots(menu, slotsView);
             return new ErrorRenderer(craftableSlots);

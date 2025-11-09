@@ -8,6 +8,8 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.pedroksl.ae2addonlib.api.IGridLinkedItem;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import yuuki1293.ae2peat.definisions.PEATCreativeTab;
 import yuuki1293.ae2peat.definisions.PEATItems;
 import yuuki1293.ae2peat.definisions.PEATMenus;
@@ -15,6 +17,8 @@ import yuuki1293.ae2peat.definisions.PEATMenus;
 @Mod(value = AE2PEAT.MOD_ID)
 public class AE2PEAT {
     public static final String MOD_ID = "ae2peat";
+
+    public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
     static AE2PEAT INSTANCE;
 

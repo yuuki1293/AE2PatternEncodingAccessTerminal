@@ -4,11 +4,13 @@ import appeng.core.AppEng;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
+import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.integration.modules.jei.transfer.EncodePatternTransferHandler;
+import yuuki1293.ae2peat.itemlists.JEIAdapter;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 import yuuki1293.ae2peat.wireless.WPEATMenu;
 import yuuki1293.ae2peat.xmod.Addons;
@@ -19,6 +21,12 @@ public class JEIPlugin implements IModPlugin {
     public static final ResourceLocation TEXTURE = AppEng.makeId("textures/guis/jei.png");
 
     private static final ResourceLocation ID = AE2PEAT.makeId("core");
+
+    private static JEIAdapter adapter;
+
+    public static JEIAdapter getAdapter() {
+        return adapter;
+    }
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {
@@ -44,5 +52,10 @@ public class JEIPlugin implements IModPlugin {
             registration.addUniversalRecipeTransferHandler(new EncodePatternTransferHandler<>(
                     WPEATMenu.TYPE, WPEATMenu.class, transferHelper, ingredientVisibility));
         }
+    }
+
+    @Override
+    public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) {
+        adapter = new JEIAdapter(jeiRuntime);
     }
 }
