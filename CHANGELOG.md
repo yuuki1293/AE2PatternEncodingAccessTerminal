@@ -15,6 +15,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 - Note bug fixes here.
 
+## [1.1.0] - 2025-11-10
+
+### Added
+- Filter terminals by automatically corresponding machines when transferring recipes.
+
 ## [1.0.2] - 2025-11-05
 
 ### Fixed
