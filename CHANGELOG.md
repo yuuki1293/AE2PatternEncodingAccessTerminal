@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 - Filter terminals by automatically corresponding machines when transferring recipes.
+- Can quickly transfer from the pattern output slot to the PatternProvider with Shift+Click.
 
 ## [1.0.2] - 2025-11-05
 

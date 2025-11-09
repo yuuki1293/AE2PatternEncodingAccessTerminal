@@ -404,7 +404,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
             return;
         }
 
-        if (clickType == ClickType.QUICK_MOVE && menu.isPlayerSideSlot(slot)) {
+        if (clickType == ClickType.QUICK_MOVE && (menu.isPlayerSideSlot(slot) || menu.isPatternOutputSlot(slot))) {
             Set<Long> visiblePatternContainers = new LinkedHashSet<>();
             for (var row : this.rows) {
                 if (row instanceof PatternEncodingAccessTermScreen.SlotsRow slotsRow) {
@@ -412,9 +412,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
                 }
             }
 
-            int clickedSlot = slot.getContainerSlot();
-            var packet =
-                    new QuickMovePatternPacket(menu.containerId, clickedSlot, List.copyOf(visiblePatternContainers));
+            var packet = new QuickMovePatternPacket(menu.containerId, slotIdx, List.copyOf(visiblePatternContainers));
             PacketDistributor.sendToServer(packet);
             return;
         }

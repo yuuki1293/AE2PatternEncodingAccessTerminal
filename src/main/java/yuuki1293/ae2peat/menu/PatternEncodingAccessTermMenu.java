@@ -990,6 +990,15 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         return false;
     }
 
+    @Contract("null -> false")
+    public boolean isPatternOutputSlot(@Nullable Slot slot) {
+        if (slot == null) {
+            return false;
+        }
+
+        return encodedPatternSlot == slot;
+    }
+
     public FakeSlot[] getCraftingGridSlots() {
         return craftingGridSlots;
     }
@@ -1201,12 +1210,12 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         }
     }
 
-    public void quickMovePattern(ServerPlayer player, int clickedSlot, List<Long> allowedPatternContainers) {
-        if (clickedSlot < 0 || clickedSlot >= this.slots.size()) {
+    public void quickMovePattern(ServerPlayer player, int slotIdx, List<Long> allowedPatternContainers) {
+        if (slotIdx < 0 || slotIdx >= this.slots.size()) {
             return;
         }
-        Slot sourceSlot = getSlot(clickedSlot);
-        if (!isPlayerSideSlot(sourceSlot)) {
+        Slot sourceSlot = getSlot(slotIdx);
+        if (!isPlayerSideSlot(sourceSlot) && !isPatternOutputSlot(sourceSlot)) {
             return;
         }
         ItemStack sourceStack = sourceSlot.getItem();
