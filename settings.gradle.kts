@@ -6,7 +6,7 @@ pluginManagement {
         }
         maven {
             name = "ModPublisher"
-            url = uri("https://maven.firstdarkdev.xyz/releases")
+            url = uri("https://maven.firstdark.dev/releases")
         }
         gradlePluginPortal()
     }
