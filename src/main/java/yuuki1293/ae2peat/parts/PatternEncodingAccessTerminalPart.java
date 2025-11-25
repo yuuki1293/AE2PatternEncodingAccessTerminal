@@ -28,6 +28,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import yuuki1293.ae2peat.AE2PEAT;
+import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.PEATSettings;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 
 public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
@@ -49,6 +51,7 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
     public PatternEncodingAccessTerminalPart(IPartItem<?> partItem) {
         super(partItem, true);
         this.cm.registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
+        this.cm.registerSetting(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH);
     }
 
     @Override

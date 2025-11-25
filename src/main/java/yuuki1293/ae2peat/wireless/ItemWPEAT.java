@@ -9,6 +9,8 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.pedroksl.ae2addonlib.api.IGridLinkedItem;
 import org.jetbrains.annotations.NotNull;
+import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.PEATSettings;
 
 public class ItemWPEAT extends ItemWT implements IUniversalWirelessTerminalItem, IGridLinkedItem {
     @Override
@@ -20,6 +22,7 @@ public class ItemWPEAT extends ItemWT implements IUniversalWirelessTerminalItem,
         var configManager = new ConfigManager((manager, settingName) -> manager.writeToNBT(target.getOrCreateTag()));
 
         configManager.registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
+        configManager.registerSetting(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH);
         configManager.readFromNBT(target.getOrCreateTag().copy());
         return configManager;
     }

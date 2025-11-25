@@ -44,9 +44,13 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.pedroksl.ae2addonlib.client.widgets.AddonSettingToggleButton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.PEATSettings;
+import yuuki1293.ae2peat.gui.widgets.PEATSettingToggleButton;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
 public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTermMenu> extends AEBaseScreen<C>
@@ -110,13 +114,17 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     private final ArrayList<PatternContainerGroup> groups = new ArrayList<>();
     private final ArrayList<PatternEncodingAccessTermScreen.Row> rows = new ArrayList<>();
 
-    private final Map<String, Set<Object>> cachedSearches = new WeakHashMap<>();
+    private final Map<AccessSearchMode, Map<String, Set<Object>>> cachedSearches =
+        new EnumMap<>(AccessSearchMode.class);
+
     private final Scrollbar scrollbar;
     private final AETextField searchField;
+    private final Map<ItemStack, String> patternSearchText = new WeakHashMap<>();
 
     private int visibleRows = 0;
 
     private final ServerSettingToggleButton<ShowPatternProviders> showPatternProviders;
+    private final AddonSettingToggleButton<AccessSearchMode> accessSearchMode;
 
     private final Map<EncodingMode, EncodingModePanel> modePanels = new EnumMap<>(EncodingMode.class);
     private final Map<EncodingMode, TabButton> modeTabButtons = new EnumMap<>(EncodingMode.class);
@@ -138,9 +146,18 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
 
         this.addToLeftToolbar(showPatternProviders);
 
+        accessSearchMode = PEATSettingToggleButton.serverButton(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH);
+        this.addToLeftToolbar(accessSearchMode);
+
         this.searchField = widgets.addTextField("search");
         this.searchField.setResponder(str -> this.refreshList());
         this.searchField.setPlaceholder(GuiText.SearchPlaceholder.text());
+
+        for (AccessSearchMode mode : AccessSearchMode.values()) {
+            cachedSearches.put(mode, new WeakHashMap<>());
+        }
+
+        this.menu.setGui((cm, s) -> this.refreshList());
 
         for (var mode : EncodingMode.values()) {
             var panel =
@@ -428,7 +445,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     public void clear() {
         this.byId.clear();
         // invalid caches on refresh
-        this.cachedSearches.clear();
+        this.cachedSearches.forEach((k, v) -> v.clear());
         this.refreshList();
     }
 
@@ -447,7 +464,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         }
 
         // invalid caches on refresh
-        this.cachedSearches.clear();
+        this.cachedSearches.forEach((k, v) -> v.clear());
         this.refreshList();
     }
 
@@ -469,6 +486,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         super.updateBeforeRender();
 
         this.showPatternProviders.set(this.menu.getShownProviders());
+        this.accessSearchMode.set(this.menu.getAccessSearchMode());
 
         for (var mode : EncodingMode.values()) {
             var selected = menu.getMode() == mode;
@@ -543,11 +561,12 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
      * Respects a search term if present (ignores case) and adding only matching patterns.
      */
     private void refreshList() {
+        var searchMode = this.menu.getConfigManager().getSetting(PEATSettings.ACCESS_SEARCH_MODE);
         this.byGroup.clear();
 
         final String searchFilterLowerCase = this.searchField.getValue().toLowerCase();
 
-        final Set<Object> cachedSearch = this.getCacheForSearchTerm(searchFilterLowerCase);
+        final Set<Object> cachedSearch = this.getCacheForSearchTerm(searchFilterLowerCase, searchMode);
         final boolean rebuild = cachedSearch.isEmpty();
 
         for (PatternContainerRecord entry : this.byId.values()) {
@@ -560,17 +579,23 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
             boolean found = searchFilterLowerCase.isEmpty();
 
             // Search if the current inventory holds a pattern containing the search term.
-            if (!found) {
-                for (ItemStack itemStack : entry.getInventory()) {
-                    found = this.itemStackMatchesSearchTerm(itemStack, searchFilterLowerCase);
-                    if (found) {
-                        break;
+            if (searchMode == AccessSearchMode.BOTH || searchMode == AccessSearchMode.PATTERN) {
+                if (!found) {
+                    for (ItemStack itemStack : entry.getInventory()) {
+                        found = this.itemStackMatchesSearchTerm(itemStack, searchFilterLowerCase);
+                        if (found) {
+                            break;
+                        }
                     }
                 }
             }
 
+            if (searchMode == AccessSearchMode.BOTH || searchMode == AccessSearchMode.MACHINE) {
+                found = found || entry.getSearchName().contains(searchFilterLowerCase);
+            }
+
             // if found, filter skipped or machine name matching the search term, add it
-            if (found || entry.getSearchName().contains(searchFilterLowerCase)) {
+            if (found) {
                 this.byGroup.put(entry.getGroup(), entry);
                 cachedSearch.add(entry);
             } else {
@@ -620,28 +645,26 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
             return false;
         }
 
-        final CompoundTag encodedValue = itemStack.getTag();
-
-        if (encodedValue == null) {
-            return false;
-        }
-
         // Potential later use to filter by input
-        // ListNBT inTag = encodedValue.getTagList( "in", 10 );
-        final ListTag outTag = encodedValue.getList("out", 10);
+        return patternSearchText.computeIfAbsent(itemStack, this::getPatternSearchText).contains(searchTerm);
+    }
 
-        for (int i = 0; i < outTag.size(); i++) {
+    private String getPatternSearchText(ItemStack stack) {
+        var level = menu.getPlayer().level();
+        var text = new StringBuilder();
+        var pattern = PatternDetailsHelper.decodePattern(stack, level);
 
-            var parsedItemStack = ItemStack.of(outTag.getCompound(i));
-            var itemKey = AEItemKey.of(parsedItemStack);
-            if (itemKey != null) {
-                var displayName = itemKey.getDisplayName().getString().toLowerCase();
-                if (displayName.contains(searchTerm)) {
-                    return true;
-                }
+        if (pattern != null) {
+            for (var output : pattern.getOutputs()) {
+                output.what().getDisplayName().visit(content -> {
+                    text.append(content.toLowerCase());
+                    return Optional.empty();
+                });
+                text.append('\n');
             }
         }
-        return false;
+
+        return text.toString();
     }
 
     /**
@@ -653,15 +676,15 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
      * @param searchTerm the corresponding search
      * @return a Set matching a superset of the search term
      */
-    private Set<Object> getCacheForSearchTerm(String searchTerm) {
-        if (!this.cachedSearches.containsKey(searchTerm)) {
-            this.cachedSearches.put(searchTerm, new HashSet<>());
+    private Set<Object> getCacheForSearchTerm(String searchTerm, AccessSearchMode searchMode) {
+        if (!this.cachedSearches.get(searchMode).containsKey(searchTerm)) {
+            this.cachedSearches.get(searchMode).put(searchTerm, new HashSet<>());
         }
 
-        final Set<Object> cache = this.cachedSearches.get(searchTerm);
+        final Set<Object> cache = this.cachedSearches.get(searchMode).get(searchTerm);
 
         if (cache.isEmpty() && searchTerm.length() > 1) {
-            cache.addAll(this.getCacheForSearchTerm(searchTerm.substring(0, searchTerm.length() - 1)));
+            cache.addAll(this.getCacheForSearchTerm(searchTerm.substring(0, searchTerm.length() - 1), searchMode));
         }
 
         return cache;

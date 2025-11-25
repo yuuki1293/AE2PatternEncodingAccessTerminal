@@ -69,6 +69,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.StonecutterRecipe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.PEATSettings;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.parts.PatternEncodingAccessTerminalPart;
 
@@ -121,6 +123,13 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
     public ShowPatternProviders getShownProviders() {
         return showPatternProviders;
+    }
+
+    @GuiSync(2)
+    public AccessSearchMode accessSearchMode = AccessSearchMode.BOTH;
+
+    public AccessSearchMode getAccessSearchMode() {
+        return accessSearchMode;
     }
 
     /**
@@ -206,6 +215,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         this.host = host;
         this.clientCM = new ConfigManager(this);
         this.clientCM.registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
+        this.clientCM.registerSetting(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH);
 
         IEnergySource powerSource = null;
         if (isServerSide()) {
@@ -384,6 +394,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         if (showPatternProviders != ShowPatternProviders.NOT_FULL) {
             this.pinnedHosts.clear();
         }
+
+        accessSearchMode = getHost().getConfigManager().getSetting(PEATSettings.ACCESS_SEARCH_MODE);
 
         IGrid grid = getGrid();
 

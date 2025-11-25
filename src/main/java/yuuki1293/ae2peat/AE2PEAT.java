@@ -16,6 +16,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
+import yuuki1293.ae2peat.definisions.PEATConfig;
 import yuuki1293.ae2peat.definisions.PEATCreativeTab;
 import yuuki1293.ae2peat.definisions.PEATItems;
 import yuuki1293.ae2peat.definisions.PEATMenus;
@@ -34,6 +35,7 @@ public class AE2PEAT {
 
         MinecraftForge.EVENT_BUS.register(this);
 
+        PEATConfig.register(MOD_ID);
         PEATItems.INSTANCE.register(eventBus);
         PEATMenus.INSTANCE.register(eventBus);
         PEATCreativeTab.INSTANCE.register(eventBus);

@@ -15,6 +15,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 - Note bug fixes here.
 
+## [1.0.4] - 2025-11-25
+
+### Added
+- Option to filter PatternProvider by pattern/machine only.
+
 ## [1.0.3] - 2025-11-16
 
 ### Fixed
