@@ -10,15 +10,15 @@ import yuuki1293.ae2peat.definisions.PEATText;
 
 public class PEATSettingToggleButton<T extends Enum<T>> extends AddonSettingToggleButton<T> {
     public PEATSettingToggleButton(
-        Setting<T> setting, T val, AddonSettingToggleButton.IHandler<AddonSettingToggleButton<T>> onPress) {
+            Setting<T> setting, T val, AddonSettingToggleButton.IHandler<AddonSettingToggleButton<T>> onPress) {
         super(setting, val, t -> true, onPress);
     }
 
     public PEATSettingToggleButton(
-        Setting<T> setting,
-        T val,
-        Predicate<T> isValidValue,
-        AddonSettingToggleButton.IHandler<AddonSettingToggleButton<T>> onPress) {
+            Setting<T> setting,
+            T val,
+            Predicate<T> isValidValue,
+            AddonSettingToggleButton.IHandler<AddonSettingToggleButton<T>> onPress) {
         super(setting, val, isValidValue, onPress);
     }
 
@@ -29,22 +29,22 @@ public class PEATSettingToggleButton<T extends Enum<T>> extends AddonSettingTogg
     @Override
     protected void registerAppearances() {
         registerApp(
-            PEATIcon.ACCESS_SEARCH_MODE_BOTH,
-            PEATSettings.ACCESS_SEARCH_MODE,
-            AccessSearchMode.BOTH,
-            PEATText.AccessSearchModeCategory,
-            PEATText.AccessSearchModeBoth);
+                PEATIcon.ACCESS_SEARCH_MODE_BOTH,
+                PEATSettings.ACCESS_SEARCH_MODE,
+                AccessSearchMode.BOTH,
+                PEATText.AccessSearchModeCategory,
+                PEATText.AccessSearchModeBoth);
         registerApp(
-            PEATIcon.ACCESS_SEARCH_MODE_PATTERN,
-            PEATSettings.ACCESS_SEARCH_MODE,
-            AccessSearchMode.PATTERN,
-            PEATText.AccessSearchModeCategory,
-            PEATText.AccessSearchModePattern);
+                PEATIcon.ACCESS_SEARCH_MODE_PATTERN,
+                PEATSettings.ACCESS_SEARCH_MODE,
+                AccessSearchMode.PATTERN,
+                PEATText.AccessSearchModeCategory,
+                PEATText.AccessSearchModePattern);
         registerApp(
-            PEATIcon.ACCESS_SEARCH_MODE_MACHINE,
-            PEATSettings.ACCESS_SEARCH_MODE,
-            AccessSearchMode.MACHINE,
-            PEATText.AccessSearchModeCategory,
-            PEATText.AccessSearchModeMachine);
+                PEATIcon.ACCESS_SEARCH_MODE_MACHINE,
+                PEATSettings.ACCESS_SEARCH_MODE,
+                AccessSearchMode.MACHINE,
+                PEATText.AccessSearchModeCategory,
+                PEATText.AccessSearchModeMachine);
     }
 }

@@ -5,7 +5,6 @@ import appeng.api.behaviors.EmptyingAction;
 import appeng.api.config.*;
 import appeng.api.crafting.PatternDetailsHelper;
 import appeng.api.implementations.blockentities.PatternContainerGroup;
-import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.GenericStack;
 import appeng.client.gui.AEBaseScreen;
 import appeng.client.gui.me.common.Repo;
@@ -35,8 +34,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.locale.Language;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
@@ -115,7 +112,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     private final ArrayList<PatternEncodingAccessTermScreen.Row> rows = new ArrayList<>();
 
     private final Map<AccessSearchMode, Map<String, Set<Object>>> cachedSearches =
-        new EnumMap<>(AccessSearchMode.class);
+            new EnumMap<>(AccessSearchMode.class);
 
     private final Scrollbar scrollbar;
     private final AETextField searchField;
@@ -646,7 +643,9 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         }
 
         // Potential later use to filter by input
-        return patternSearchText.computeIfAbsent(itemStack, this::getPatternSearchText).contains(searchTerm);
+        return patternSearchText
+                .computeIfAbsent(itemStack, this::getPatternSearchText)
+                .contains(searchTerm);
     }
 
     private String getPatternSearchText(ItemStack stack) {
