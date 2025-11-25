@@ -16,5 +16,10 @@ Applied Energistics 2のパターンアクセスターミナルとパターン�
 3. IntelliJ IDEAの`Run / Debug Configuration`で`Client`を選択して実行します。
 * DataGenを更新した場合`Run / Debug Configuration`で`Data`を選択して実行します。
 
+## コントリビューション
+* 翻訳についてのPullRequestはいつでも受け付けています。
+* issueに取り組む際は、重複を避けるために該当のissueでコメントをお願いします。
+
 ## クレジット
 - [Applied-Energistics-2](https://www.curseforge.com/minecraft/mc-mods/applied-energistics-2) (by thetechnici4n)
+- [AE2AddonLib](https://www.curseforge.com/minecraft/mc-mods/ae2addonlib) (by pedroksl)
