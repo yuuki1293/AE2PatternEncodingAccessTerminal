@@ -345,7 +345,7 @@ publisher {
         github(System.getenv("GITHUB_TOKEN"))
     }
 
-    setReleaseType(ReleaseType.RELEASE)
+    setReleaseType(ReleaseType.BETA)
     setLoaders(ModLoader.NEOFORGE)
     setCurseEnvironment(CurseEnvironment.BOTH)
 
