@@ -53,6 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.AutoFilter;
 import yuuki1293.ae2peat.api.config.PEATSettings;
 import yuuki1293.ae2peat.client.gui.widgets.PEATSettingToggleButton;
 import yuuki1293.ae2peat.itemlists.ItemListsManager;
@@ -136,6 +137,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
 
     private final ServerSettingToggleButton<ShowPatternProviders> showPatternProviders;
     private final AddonSettingToggleButton<AccessSearchMode> accessSearchMode;
+    private final AddonSettingToggleButton<AutoFilter> autoFilter;
 
     public PatternEncodingAccessTermScreen(C menu, Inventory playerInventory, Component title, ScreenStyle style) {
         super(menu, playerInventory, title, style);
@@ -185,9 +187,11 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
 
         showPatternProviders =
                 new ServerSettingToggleButton<>(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE);
-        this.addToLeftToolbar(showPatternProviders);
         accessSearchMode = PEATSettingToggleButton.serverButton(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH);
+        autoFilter = PEATSettingToggleButton.serverButton(PEATSettings.AUTO_FILTER, AutoFilter.DISABLED);
+        this.addToLeftToolbar(showPatternProviders);
         this.addToLeftToolbar(accessSearchMode);
+        this.addToLeftToolbar(autoFilter);
 
         this.searchField = widgets.addTextField("search");
         this.searchField.setResponder(str -> this.refreshList());
@@ -240,6 +244,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
 
         this.showPatternProviders.set(this.menu.getShownProviders());
         this.accessSearchMode.set(this.menu.getAccessSearchMode());
+        this.autoFilter.set(this.menu.getAutoFilter());
     }
 
     @Override
@@ -326,6 +331,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     }
 
     public void setSearchTextAsRecipe(Recipe<?> recipe) {
+        if (autoFilter.getCurrentValue() == AutoFilter.DISABLED) return;
         if (recipe == null || searchField == null) return;
 
         var recipeType = recipe.getType().toString();

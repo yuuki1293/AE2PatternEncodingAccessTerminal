@@ -9,7 +9,10 @@ public enum PEATText implements LocalizationEnum {
     AccessSearchModeCategory("Search Mode", Type.GUI),
     AccessSearchModeBoth("Search Patterns & Machines", Type.GUI),
     AccessSearchModePattern("Search Patterns only", Type.GUI),
-    AccessSearchModeMachine("Search Machines only", Type.GUI);
+    AccessSearchModeMachine("Search Machines only", Type.GUI),
+    AutoFilterCategory("Auto Filter (Experimental)", Type.GUI),
+    Disabled("Disabled", Type.GUI),
+    Enabled("Enabled", Type.GUI);
 
     private final String englishText;
     private final Type type;

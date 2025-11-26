@@ -73,6 +73,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.AutoFilter;
 import yuuki1293.ae2peat.api.config.PEATSettings;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.parts.PatternEncodingAccessTerminalPart;
@@ -139,6 +140,13 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
     public AccessSearchMode getAccessSearchMode() {
         return accessSearchMode;
+    }
+
+    @GuiSync(3)
+    public AutoFilter autoFilter = AutoFilter.DISABLED;
+
+    public AutoFilter getAutoFilter() {
+        return autoFilter;
     }
 
     // We use this serial number to uniquely identify all inventories we send to the client
@@ -234,6 +242,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         this.clientCM = IConfigManager.builder(this::onSettingChanged)
                 .registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE)
                 .registerSetting(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH)
+                .registerSetting(PEATSettings.AUTO_FILTER, AutoFilter.DISABLED)
                 .build();
 
         if (isServerSide()) {
@@ -395,6 +404,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             showPatternProviders =
                     this.termHost.getConfigManager().getSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS);
             accessSearchMode = this.termHost.getConfigManager().getSetting(PEATSettings.ACCESS_SEARCH_MODE);
+            autoFilter = this.termHost.getConfigManager().getSetting(PEATSettings.AUTO_FILTER);
 
             super.broadcastChanges();
 

@@ -26,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.AutoFilter;
 import yuuki1293.ae2peat.api.config.PEATSettings;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.menu.IPEATMenuHost;
@@ -36,6 +37,7 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
                     () -> this.getHost().markForSave())
             .registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE)
             .registerSetting(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH)
+            .registerSetting(PEATSettings.AUTO_FILTER, AutoFilter.DISABLED)
             .build();
 
     @PartModels

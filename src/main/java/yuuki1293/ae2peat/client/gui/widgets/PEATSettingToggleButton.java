@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 import net.pedroksl.ae2addonlib.client.widgets.AddonSettingToggleButton;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.AutoFilter;
 import yuuki1293.ae2peat.api.config.PEATSettings;
 import yuuki1293.ae2peat.definisions.PEATText;
 
@@ -46,5 +47,17 @@ public class PEATSettingToggleButton<T extends Enum<T>> extends AddonSettingTogg
                 AccessSearchMode.MACHINE,
                 PEATText.AccessSearchModeCategory,
                 PEATText.AccessSearchModeMachine);
+        registerApp(
+                PEATIcon.AUTO_FILTER_DISABLED,
+                PEATSettings.AUTO_FILTER,
+                AutoFilter.DISABLED,
+                PEATText.AutoFilterCategory,
+                PEATText.Disabled);
+        registerApp(
+                PEATIcon.AUTO_FILTER_ENABLED,
+                PEATSettings.AUTO_FILTER,
+                AutoFilter.ENABLED,
+                PEATText.AutoFilterCategory,
+                PEATText.Enabled);
     }
 }
