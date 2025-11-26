@@ -184,6 +184,8 @@ dependencies {
     compileOnly(libs.ae2wtlib.api) { isTransitive = false }
     jarJar(libs.ae2wtlib.api)
     compileOnly(libs.ae2.jei.integration)
+    compileOnly(libs.polyeng)
+    compileOnly(libs.polymorph)
 
     // Optional
     runtimeOnly(libs.ae2wtlib) { isTransitive = false }
@@ -191,7 +193,7 @@ dependencies {
     runtimeOnly(libs.architectury)   // depends on ae2wtlib
     runtimeOnly(libs.cloth.config)   // depends on ae2wtlib
     runtimeOnly(libs.polyeng)
-    runtimeOnly(libs.polymorph)
+    runtimeOnly(libs.polymorph)      // depends on polyeng
 
     // Utility
     runtimeOnly(libs.jei)

@@ -1,9 +1,7 @@
 package yuuki1293.ae2peat.wireless;
 
 import appeng.api.networking.IGridNode;
-import appeng.api.storage.IPatternAccessTermMenuHost;
 import appeng.helpers.IPatternTerminalLogicHost;
-import appeng.helpers.IPatternTerminalMenuHost;
 import appeng.menu.ISubMenu;
 import appeng.menu.locator.ItemMenuHostLocator;
 import appeng.parts.encoding.PatternEncodingLogic;
@@ -15,9 +13,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
+import yuuki1293.ae2peat.menu.IPEATMenuHost;
 
-public class WPEATMenuHost extends WTMenuHost
-        implements IPatternTerminalMenuHost, IPatternTerminalLogicHost, IPatternAccessTermMenuHost {
+public class WPEATMenuHost extends WTMenuHost implements IPEATMenuHost, IPatternTerminalLogicHost {
 
     private final PatternEncodingLogic logic = new PatternEncodingLogic(this);
 

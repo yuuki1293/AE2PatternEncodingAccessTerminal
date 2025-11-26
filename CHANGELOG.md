@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 - Note bug fixes here.
 
+## [1.0.5] - 2025-11-26
+### Added
+- Add PolymorphicEnergistics integration.
+
 ## [1.0.4] - 2025-11-16
 
 ### Fixed

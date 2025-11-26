@@ -1,4 +1,4 @@
-package yuuki1293.ae2peat.mixin;
+package yuuki1293.ae2peat.mixin.common;
 
 import appeng.core.network.serverbound.QuickMovePatternPacket;
 import java.util.List;

@@ -15,6 +15,8 @@ import net.pedroksl.ae2addonlib.api.IGridLinkedItem;
 import yuuki1293.ae2peat.definisions.PEATCreativeTab;
 import yuuki1293.ae2peat.definisions.PEATItems;
 import yuuki1293.ae2peat.definisions.PEATMenus;
+import yuuki1293.ae2peat.xmod.Addons;
+import yuuki1293.ae2peat.xmod.polyeng.PolyEngPlugin;
 
 @Mod(value = AE2PEAT.MOD_ID)
 public class AE2PEAT {
@@ -35,6 +37,10 @@ public class AE2PEAT {
         modEventBus.addListener(AE2PEAT::initCapabilities);
         modEventBus.addListener(AE2PEAT::initUpgrades);
         modEventBus.addListener(this::commonSetup);
+
+        if (Addons.POLYMORPHIC_ENERGISTICS.isLoaded()) {
+            PolyEngPlugin.init();
+        }
     }
 
     public static AE2PEAT instance() {

@@ -1,4 +1,4 @@
-package yuuki1293.ae2peat.mixin;
+package yuuki1293.ae2peat.mixin.common;
 
 import appeng.core.AELog;
 import appeng.core.network.clientbound.MEInventoryUpdatePacket;

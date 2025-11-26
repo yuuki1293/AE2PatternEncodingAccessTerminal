@@ -1,4 +1,4 @@
-package yuuki1293.ae2peat.mixin;
+package yuuki1293.ae2peat.mixin.common;
 
 import appeng.api.implementations.blockentities.PatternContainerGroup;
 import appeng.core.network.clientbound.PatternAccessTerminalPacket;
