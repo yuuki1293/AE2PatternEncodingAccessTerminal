@@ -15,13 +15,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 - Note bug fixes here.
 
-## [1.1.0]
+## [1.1.0-rc.1] - 2025-11-26
 
 ### Added
 - Filter terminals by automatically corresponding machines when transferring recipes.
 - Can quickly transfer from the pattern output slot to the PatternProvider with Shift+Click.
 
 ## [1.0.5] - 2025-11-26
+
 ### Added
 - Add PolymorphicEnergistics integration.
 

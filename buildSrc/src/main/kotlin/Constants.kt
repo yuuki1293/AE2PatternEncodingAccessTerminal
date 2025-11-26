@@ -4,7 +4,7 @@ object Constants {
         const val name = "AE2 Pattern Encoding Access Terminal"
         const val description = "AE2 Pattern Encoding Access Terminal"
         const val license = "Please refer to the GitHub repository for details."
-        const val version = "1.0.5"
+        const val version = "1.1.0-rc.1"
         const val group = "yuuki1293"
         const val author = "yuuki1293"
         const val repositoryUrl = "https://github.com/yuuki1293/AE2PatternEncodingAccessTerminal"
