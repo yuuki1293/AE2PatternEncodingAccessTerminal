@@ -1,12 +1,16 @@
 package yuuki1293.ae2peat;
 
 import appeng.api.features.GridLinkables;
+import appeng.api.implementations.items.IAEItemPowerStorage;
 import appeng.core.AELog;
+import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.pedroksl.ae2addonlib.api.IGridLinkedItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,8 +36,8 @@ public class AE2PEAT {
         PEATMenus.INSTANCE.register(modEventBus);
         PEATCreativeTab.INSTANCE.register(modEventBus);
 
+        modEventBus.addListener(AE2PEAT::initCapabilities);
         modEventBus.addListener(AE2PEAT::initUpgrades);
-
         modEventBus.addListener(this::commonSetup);
     }
 
@@ -59,5 +63,16 @@ public class AE2PEAT {
 
     private static void initUpgrades(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {});
+    }
+
+    private static void initCapabilities(RegisterCapabilitiesEvent event) {
+        for (var type : PEATItems.INSTANCE.getItems()) {
+            if (type.get() instanceof IAEItemPowerStorage powerStorage) {
+                event.registerItem(
+                        Capabilities.EnergyStorage.ITEM,
+                        (object, context) -> new PoweredItemCapabilities(object, powerStorage),
+                        type);
+            }
+        }
     }
 }
