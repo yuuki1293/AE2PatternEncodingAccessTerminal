@@ -28,6 +28,12 @@ val neoForgeLoaderVersionRange = "[4,)"
 val jdkVersion = 21
 
 val exportMixin = true
+val devFlagKey = "${modId}.dev"
+val includeDevRecipes = objects.property<Boolean>().convention(
+    providers.environmentVariable(devFlagKey)
+        .map(String::toBoolean)
+        .orElse(false)
+)
 
 val changelogExtension = extensions.getByType<ChangelogPluginExtension>()
 val sourceSets = the<SourceSetContainer>()
@@ -102,6 +108,9 @@ neoForge {
             systemProperty("forge.logging.markers", "REGISTRIES")
 
             logLevel = org.slf4j.event.Level.DEBUG
+
+            // Mark run configurations as dev so downstream resource selection can pick up dev-only content.
+            environment(devFlagKey, "true")
         }
     }
 
@@ -308,6 +317,9 @@ sourceSets {
                 "src/generated/resources",
                 generateModMetadata.get().outputs.files
             )
+            if (includeDevRecipes.getOrElse(false)) {
+                srcDir("src/dev/resources")
+            }
             exclude("**/.cache")
         }
     }
