@@ -5,13 +5,10 @@ import appeng.api.config.ShowPatternProviders;
 import appeng.api.parts.IPartItem;
 import appeng.api.parts.IPartModel;
 import appeng.api.storage.ILinkStatus;
-import appeng.api.storage.IPatternAccessTermMenuHost;
 import appeng.api.storage.MEStorage;
 import appeng.api.storage.SupplierStorage;
 import appeng.api.util.IConfigManager;
-import appeng.api.util.IConfigurableObject;
 import appeng.helpers.IPatternTerminalLogicHost;
-import appeng.helpers.IPatternTerminalMenuHost;
 import appeng.items.parts.PartModels;
 import appeng.menu.ISubMenu;
 import appeng.menu.MenuOpener;
@@ -31,12 +28,10 @@ import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.api.config.AccessSearchMode;
 import yuuki1293.ae2peat.api.config.PEATSettings;
 import yuuki1293.ae2peat.definisions.PEATMenus;
+import yuuki1293.ae2peat.menu.IPEATMenuHost;
 
 public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
-        implements IConfigurableObject,
-                IPatternTerminalLogicHost,
-                IPatternTerminalMenuHost,
-                IPatternAccessTermMenuHost {
+        implements IPatternTerminalLogicHost, IPEATMenuHost {
     private final IConfigManager cm = IConfigManager.builder(
                     () -> this.getHost().markForSave())
             .registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE)

@@ -28,6 +28,12 @@ val neoForgeLoaderVersionRange = "[4,)"
 val jdkVersion = 21
 
 val exportMixin = true
+val devFlagKey = "${modId}.dev"
+val includeDevRecipes = objects.property<Boolean>().convention(
+    providers.environmentVariable(devFlagKey)
+        .map(String::toBoolean)
+        .orElse(false)
+)
 
 val changelogExtension = extensions.getByType<ChangelogPluginExtension>()
 val sourceSets = the<SourceSetContainer>()
@@ -102,6 +108,9 @@ neoForge {
             systemProperty("forge.logging.markers", "REGISTRIES")
 
             logLevel = org.slf4j.event.Level.DEBUG
+
+            // Mark run configurations as dev so downstream resource selection can pick up dev-only content.
+            environment(devFlagKey, "true")
         }
     }
 
@@ -175,12 +184,16 @@ dependencies {
     compileOnly(libs.ae2wtlib.api) { isTransitive = false }
     jarJar(libs.ae2wtlib.api)
     compileOnly(libs.ae2.jei.integration)
+    compileOnly(libs.polyeng)
+    compileOnly(libs.polymorph)
 
     // Optional
     runtimeOnly(libs.ae2wtlib) { isTransitive = false }
     runtimeOnly(libs.curios)         // depends on ae2wtlib
     runtimeOnly(libs.architectury)   // depends on ae2wtlib
     runtimeOnly(libs.cloth.config)   // depends on ae2wtlib
+    runtimeOnly(libs.polyeng)
+    runtimeOnly(libs.polymorph)      // depends on polyeng
 
     // Utility
     runtimeOnly(libs.jei)
@@ -197,7 +210,8 @@ val modDependencies = listOf(
     ModDep("minecraft", mcVersion),
     ModDep("ae2", libs.versions.ae2.range.get(), ordering = Order.AFTER),
     ModDep("ae2wtlib_api", "*", ordering = Order.BEFORE),
-    ModDep("ae2wtlib", libs.versions.ae2wtlib.range.get(), ordering = Order.AFTER, type = Type.OPTIONAL)
+    ModDep("ae2wtlib", libs.versions.ae2wtlib.range.get(), ordering = Order.AFTER, type = Type.OPTIONAL),
+    ModDep("polyeng", libs.versions.polyeng.range.get(), type = Type.OPTIONAL)
 )
 
 val generateModMetadata by tasks.registering(ProcessResources::class) {
@@ -305,6 +319,9 @@ sourceSets {
                 "src/generated/resources",
                 generateModMetadata.get().outputs.files
             )
+            if (includeDevRecipes.getOrElse(false)) {
+                srcDir("src/dev/resources")
+            }
             exclude("**/.cache")
         }
     }
@@ -345,12 +362,14 @@ publisher {
     curseDepends {
         required("applied-energistics-2")
         optional("applied-energistics-2-wireless-terminals")
+        optional("polymorphic-energistics")
         embedded("ae2addonlib")
     }
 
     modrinthDepends {
         required("ae2")
         optional("applied-energistics-2-wireless-terminals")
+        optional("polymorphic-energistics")
     }
 
     github {

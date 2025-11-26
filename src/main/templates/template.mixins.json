@@ -4,13 +4,16 @@
   "package": "yuuki1293.ae2peat.mixin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "ae2peat.refmap.json",
+  "plugin": "yuuki1293.ae2peat.mixin.PEATMixinPlugin",
   "mixins": [
-    "MixinMEInventoryUpdatePacket",
-    "MixinQuickMovePatternPacket"
+    "common.MixinMEInventoryUpdatePacket",
+    "common.MixinQuickMovePatternPacket",
+    "polyeng.PatternEncodingAccessTermMenuMixin",
+    "polyeng.PatternEncodingAccessTermScreenMixin"
   ],
   "client": [
-    "MixinClearPatternAccessTerminalPacket",
-    "MixinPatternAccessTerminalPacket"
+    "common.MixinClearPatternAccessTerminalPacket",
+    "common.MixinPatternAccessTerminalPacket"
   ],
   "injectors": {
     "defaultRequire": 1

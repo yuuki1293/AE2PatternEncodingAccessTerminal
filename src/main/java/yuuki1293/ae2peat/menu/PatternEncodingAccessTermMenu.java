@@ -32,7 +32,6 @@ import appeng.core.network.clientbound.SetLinkStatusPacket;
 import appeng.core.network.serverbound.MEInteractionPacket;
 import appeng.crafting.pattern.AECraftingPattern;
 import appeng.crafting.pattern.AEProcessingPattern;
-import appeng.helpers.IPatternTerminalMenuHost;
 import appeng.helpers.InventoryAction;
 import appeng.helpers.patternprovider.PatternContainer;
 import appeng.me.helpers.ActionHostEnergySource;
@@ -217,8 +216,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         this(PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(), id, ip, anchor, true);
     }
 
-    public <T extends IConfigurableObject & IPatternTerminalMenuHost & IPatternAccessTermMenuHost>
-            PatternEncodingAccessTermMenu(MenuType<?> menuType, int id, Inventory ip, T host, boolean bindInventory) {
+    public PatternEncodingAccessTermMenu(
+            MenuType<?> menuType, int id, Inventory ip, IPEATMenuHost host, boolean bindInventory) {
         super(menuType, id, ip, host);
 
         this.termHost = host;
