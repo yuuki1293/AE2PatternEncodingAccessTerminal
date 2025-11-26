@@ -181,6 +181,8 @@ dependencies {
     runtimeOnly(libs.curios)         // depends on ae2wtlib
     runtimeOnly(libs.architectury)   // depends on ae2wtlib
     runtimeOnly(libs.cloth.config)   // depends on ae2wtlib
+    runtimeOnly(libs.polyeng)
+    runtimeOnly(libs.polymorph)
 
     // Utility
     runtimeOnly(libs.jei)
@@ -197,7 +199,8 @@ val modDependencies = listOf(
     ModDep("minecraft", mcVersion),
     ModDep("ae2", libs.versions.ae2.range.get(), ordering = Order.AFTER),
     ModDep("ae2wtlib_api", "*", ordering = Order.BEFORE),
-    ModDep("ae2wtlib", libs.versions.ae2wtlib.range.get(), ordering = Order.AFTER, type = Type.OPTIONAL)
+    ModDep("ae2wtlib", libs.versions.ae2wtlib.range.get(), ordering = Order.AFTER, type = Type.OPTIONAL),
+    ModDep("polyeng", libs.versions.polyeng.range.get(), type = Type.OPTIONAL)
 )
 
 val generateModMetadata by tasks.registering(ProcessResources::class) {
@@ -345,12 +348,14 @@ publisher {
     curseDepends {
         required("applied-energistics-2")
         optional("applied-energistics-2-wireless-terminals")
+        optional("polymorphic-energistics")
         embedded("ae2addonlib")
     }
 
     modrinthDepends {
         required("ae2")
         optional("applied-energistics-2-wireless-terminals")
+        optional("polymorphic-energistics")
     }
 
     github {

@@ -25,6 +25,9 @@ curios = "9.5.1+1.21.1"
 architectury = "13.0.8"
 cloth-config = "15.0.140"
 ae2-jei-integration = "5748513"
+polyeng = "5545923"
+polyeng_range = "[0.4.0,)"
+polymorph = "6451024"
 
 [libraries]
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
@@ -44,6 +47,8 @@ curios = { module = "top.theillusivec4.curios:curios-neoforge", version.ref = "c
 architectury = { module = "dev.architectury:architectury-neoforge", version.ref = "architectury" }
 cloth-config = { module = "me.shedaniel.cloth:cloth-config-neoforge", version.ref = "cloth-config" }
 ae2-jei-integration = { module = "curse.maven:ae2-jei-integration-1074338", version.ref = "ae2-jei-integration"}
+polyeng = { module = "curse.maven:polymorphic-energistics-941096", version.ref = "polyeng" }
+polymorph = { module = "curse.maven:polymorph-388800", version.ref = "polymorph" }
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "plugin_kotlin" }
