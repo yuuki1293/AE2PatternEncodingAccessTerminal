@@ -41,7 +41,11 @@ public interface IItemListsAdapter {
     default Optional<PatternContainerGroup> findFirst(
             List<PatternContainerGroup> groups, List<? extends ItemLike> machines) {
         var localizedNames = machines.stream()
-                .map(m -> m.asItem().getDefaultInstance().getHoverName().getString())
+                .map(m -> m.asItem()
+                        .getDefaultInstance()
+                        .getHoverName()
+                        .getString()
+                        .toLowerCase())
                 .toList();
 
         for (var group : groups) {
