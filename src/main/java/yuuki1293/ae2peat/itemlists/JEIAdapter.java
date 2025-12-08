@@ -17,16 +17,20 @@ public class JEIAdapter implements IItemListsAdapter {
     }
 
     @Override
-    public @NotNull List<? extends ItemLike> machinesFromRecipeType(@NotNull ResourceLocation category) {
-        var recipeType = jeiRuntime.getRecipeManager().getRecipeType(category);
-        if (recipeType.isEmpty()) return List.of();
+    public @NotNull List<? extends ItemLike> machinesFromRecipeType(@NotNull Object category) {
+        if (category instanceof ResourceLocation recipeId) {
+            var recipeType = jeiRuntime.getRecipeManager().getRecipeType(recipeId);
+            if (recipeType.isEmpty()) return List.of();
 
-        var catalyst = jeiRuntime.getRecipeManager().createRecipeCatalystLookup(recipeType.get());
+            var catalyst = jeiRuntime.getRecipeManager().createRecipeCatalystLookup(recipeType.get());
 
-        return catalyst.get()
-                .map(ITypedIngredient::getItemStack)
-                .flatMap(Optional::stream)
-                .map(ItemStack::getItem)
-                .toList();
+            return catalyst.get()
+                    .map(ITypedIngredient::getItemStack)
+                    .flatMap(Optional::stream)
+                    .map(ItemStack::getItem)
+                    .toList();
+        }
+
+        return List.of();
     }
 }

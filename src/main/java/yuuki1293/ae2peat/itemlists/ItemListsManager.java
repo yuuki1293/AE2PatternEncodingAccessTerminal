@@ -12,7 +12,7 @@ public class ItemListsManager {
         } else if (Addons.REI.isLoaded()) {
             adapter = REIAdapter.getInstance();
         } else if (Addons.EMI.isLoaded()) {
-
+            adapter = EMIAdapter.getInstance();
         }
     }
 

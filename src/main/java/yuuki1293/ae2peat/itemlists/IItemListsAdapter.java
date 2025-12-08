@@ -3,7 +3,6 @@ package yuuki1293.ae2peat.itemlists;
 import appeng.api.implementations.blockentities.PatternContainerGroup;
 import java.util.List;
 import java.util.Optional;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,9 +17,9 @@ public interface IItemListsAdapter {
      * @return item list. include non block.
      */
     @NotNull
-    List<? extends ItemLike> machinesFromRecipeType(@NotNull ResourceLocation recipeType);
+    List<? extends ItemLike> machinesFromRecipeType(@NotNull Object recipeType);
 
-    default Optional<PatternContainerGroup> findFirst(List<PatternContainerGroup> groups, ResourceLocation recipeType) {
+    default Optional<PatternContainerGroup> findFirst(List<PatternContainerGroup> groups, Object recipeType) {
         var machines = machinesFromRecipeType(recipeType);
 
         if (machines.isEmpty()) return Optional.empty();

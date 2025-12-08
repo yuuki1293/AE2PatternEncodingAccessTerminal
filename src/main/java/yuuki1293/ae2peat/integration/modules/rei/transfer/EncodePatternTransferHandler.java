@@ -61,7 +61,7 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
                         menu, GenericEntryStackHelper.ofInputs(display), GenericEntryStackHelper.ofOutputs(display));
             }
 
-            menu.setSearch(display.getCategoryIdentifier().getIdentifier());
+            menu.setSearch(display.getCategoryIdentifier());
         } else {
             var repo = menu.getClientRepo();
             Set<AEKey> craftableKeys = repo != null

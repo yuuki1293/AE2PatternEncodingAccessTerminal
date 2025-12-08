@@ -59,6 +59,10 @@ public class EmiEncodePatternHandler<T extends PatternEncodingAccessTermMenu> ex
                 EncodingHelper.encodeProcessingRecipe(
                         menu, EmiStackHelper.ofInputs(emiRecipe), EmiStackHelper.ofOutputs(emiRecipe));
             }
+
+            if (emiRecipe != null) {
+                menu.setSearch(emiRecipe.getCategory());
+            }
         } else {
             var repo = menu.getClientRepo();
             Set<AEKey> craftableKeys = repo != null

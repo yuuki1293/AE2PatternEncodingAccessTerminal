@@ -218,7 +218,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
     public IntSet slotsSupportingFluidSubstitution = new IntArraySet();
     // endregion
 
-    private Consumer<ResourceLocation> setSearchAsRecipe;
+    private Consumer<Object> setSearchAsRecipe;
 
     public PatternEncodingAccessTermMenu(int id, Inventory ip, PatternEncodingAccessTerminalPart anchor) {
         this(PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(), id, ip, anchor, true);
@@ -558,7 +558,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         this.clientRepo = clientRepo;
     }
 
-    public void setTransferAction(Consumer<ResourceLocation> c) {
+    public void setTransferAction(Consumer<Object> c) {
         this.setSearchAsRecipe = c;
     }
 
@@ -1309,7 +1309,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         }
     }
 
-    public void setSearch(@Nullable ResourceLocation recipeId) {
+    public void setSearch(@Nullable Object recipeId) {
         setSearchAsRecipe.accept(recipeId);
     }
 
