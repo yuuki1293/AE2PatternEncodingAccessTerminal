@@ -201,7 +201,7 @@ dependencies {
     runtimeOnly(libs.rei)
 //    runtimeOnly(libs.emi)
     runtimeOnly(libs.jade)
-    runtimeOnly("curse.maven:lmft-656346:7084444")
+    runtimeOnly(libs.lmft)
 
     annotationProcessor(variantOf(libs.mixin, "processor"))
 }

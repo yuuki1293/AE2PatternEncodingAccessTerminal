@@ -28,6 +28,7 @@ ae2-jei-integration = "5748513"
 polyeng = "5545923"
 polyeng_range = "[0.4.0,)"
 polymorph = "6451024"
+lmft = "7084444"
 
 [libraries]
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
@@ -49,6 +50,7 @@ cloth-config = { module = "me.shedaniel.cloth:cloth-config-neoforge", version.re
 ae2-jei-integration = { module = "curse.maven:ae2-jei-integration-1074338", version.ref = "ae2-jei-integration"}
 polyeng = { module = "curse.maven:polymorphic-energistics-941096", version.ref = "polyeng" }
 polymorph = { module = "curse.maven:polymorph-388800", version.ref = "polymorph" }
+lmft = { module = "curse.maven:lmft-656346", version.ref = "lmft"}
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "plugin_kotlin" }
