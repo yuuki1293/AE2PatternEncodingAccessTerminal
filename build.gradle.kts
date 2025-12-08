@@ -35,6 +35,12 @@ val includeDevRecipes = objects.property<Boolean>().convention(
         .orElse(false)
 )
 
+val itemlistsKey = "${modId}.itemlists"
+val itemlists = objects.property<String>().convention(
+    providers.environmentVariable(itemlistsKey)
+        .orElse("")
+)
+
 val changelogExtension = extensions.getByType<ChangelogPluginExtension>()
 val sourceSets = the<SourceSetContainer>()
 val mainSourceSet = sourceSets.named("main")
@@ -75,11 +81,31 @@ neoForge {
     }
 
     runs {
-        register("client") {
+        register("client_jei") {
+            ideName = "Client (JEI)"
             client()
             gameDirectory.set(file("run"))
             systemProperty("forge.enabledGameTestNamespaces", modId)
             jvmArgument("-Dmixin.debug.export=$exportMixin")
+            environment(itemlistsKey, "jei")
+        }
+
+        register("client_rei") {
+            ideName = "Client (REI)"
+            client()
+            gameDirectory.set(file("run"))
+            systemProperty("forge.enabledGameTestNamespaces", modId)
+            jvmArgument("-Dmixin.debug.export=$exportMixin")
+            environment(itemlistsKey, "rei")
+        }
+
+        register("client_emi") {
+            ideName = "Client (EMI)"
+            client()
+            gameDirectory.set(file("run"))
+            systemProperty("forge.enabledGameTestNamespaces", modId)
+            jvmArgument("-Dmixin.debug.export=$exportMixin")
+            environment(itemlistsKey, "emi")
         }
 
         register("server") {
@@ -196,10 +222,16 @@ dependencies {
     runtimeOnly(libs.polymorph)      // depends on polyeng
 
     // Utility
-    runtimeOnly(libs.jei)
-    runtimeOnly(libs.ae2.jei.integration)
-//    runtimeOnly(libs.rei)
-//    runtimeOnly(libs.emi)
+    if (itemlists.get().equals("jei")) {
+        runtimeOnly(libs.jei)
+        runtimeOnly(libs.ae2.jei.integration)
+    }
+    if (itemlists.get().equals("rei")) {
+        runtimeOnly(libs.rei)
+    }
+    if (itemlists.get().equals("emi")) {
+        runtimeOnly(libs.emi)
+    }
     runtimeOnly(libs.jade)
     runtimeOnly(libs.lmft)
 
