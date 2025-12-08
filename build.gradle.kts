@@ -196,10 +196,10 @@ dependencies {
     runtimeOnly(libs.polymorph)      // depends on polyeng
 
     // Utility
-//    runtimeOnly(libs.jei)
-//    runtimeOnly(libs.ae2.jei.integration)
+    runtimeOnly(libs.jei)
+    runtimeOnly(libs.ae2.jei.integration)
 //    runtimeOnly(libs.rei)
-    runtimeOnly(libs.emi)
+//    runtimeOnly(libs.emi)
     runtimeOnly(libs.jade)
     runtimeOnly(libs.lmft)
 
