@@ -15,6 +15,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 - Note bug fixes here.
 
+## [1.1.0-rc.2] - 2025-12-08
+
+### Added
+- Auto filter works with REI.
+
 ## [1.1.0-rc.1] - 2025-11-26
 
 ### Added
