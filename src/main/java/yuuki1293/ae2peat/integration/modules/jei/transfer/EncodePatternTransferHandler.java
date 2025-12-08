@@ -20,6 +20,7 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import mezz.jei.api.recipe.transfer.IUniversalRecipeTransferHandler;
 import mezz.jei.api.runtime.IIngredientVisibility;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
@@ -28,6 +29,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tamaized.ae2jeiintegration.integration.modules.jei.GenericEntryStackHelper;
+import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.integration.modules.itemlists.EncodingHelper;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
@@ -90,7 +92,16 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
                         GenericEntryStackHelper.ofOutputs(slotsView));
             }
 
-            menu.setSearch(recipe);
+            if (recipe != null) {
+                var recipeType = recipe.getType().toString();
+                var resource = ResourceLocation.tryParse(recipeType);
+
+                if (resource != null) {
+                    menu.setSearch(resource);
+                } else {
+                    AE2PEAT.LOGGER.warn("failed to parse recipe type: {}", recipeType);
+                }
+            }
         } else {
             var craftableSlots = findCraftableSlots(menu, slotsView);
             return new ErrorRenderer(craftableSlots);

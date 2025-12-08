@@ -7,7 +7,7 @@ public enum Addons implements AddonEnum {
     AE2_JEI_INTEGRATION("ae2jeiintegration"),
     POLYMORPHIC_ENERGISTICS("polyeng"),
     JEI("jei"),
-    REI("rei"),
+    REI("roughlyenoughitems"),
     EMI("emi");
 
     private final String modId;

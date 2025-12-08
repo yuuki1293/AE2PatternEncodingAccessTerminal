@@ -348,6 +348,16 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         matchGroup.ifPresent(g -> searchField.setValue(g.name().getString()));
     }
 
+    public void setSearchTextAsRecipe(ResourceLocation recipeId) {
+        if (autoFilter.getCurrentValue() == AutoFilter.DISABLED) return;
+        if (searchField == null) return;
+
+        var adapter = ItemListsManager.getAdapter();
+        var matchGroup = adapter.findFirst(groups, recipeId);
+
+        matchGroup.ifPresent(g -> searchField.setValue(g.name().getString()));
+    }
+
     @Override
     public boolean mouseClicked(double xCoord, double yCoord, int btn) {
         // handler for middle mouse button crafting in survival mode

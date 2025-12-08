@@ -10,7 +10,7 @@ public class ItemListsManager {
         if (Addons.JEI.isLoaded()) {
             adapter = JEIPlugin.getAdapter();
         } else if (Addons.REI.isLoaded()) {
-
+            adapter = REIAdapter.getInstance();
         } else if (Addons.EMI.isLoaded()) {
 
         }
