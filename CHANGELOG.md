@@ -15,6 +15,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 - Note bug fixes here.
 
+## [1.1.0-rc.3] - 2025-12-09
+
+### Added
+- Auto filter works with EMI.
+
 ## [1.1.0-rc.2] - 2025-12-08
 
 ### Added
