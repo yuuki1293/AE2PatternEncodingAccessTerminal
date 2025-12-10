@@ -1,3 +1,4 @@
+![](https://cf.way2muchnoise.eu/1374596.svg)
 # AE2 Pattern Encoding Access Terminal
 
 [日本語](README.ja.md)
