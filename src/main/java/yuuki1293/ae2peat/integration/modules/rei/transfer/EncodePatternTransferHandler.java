@@ -2,14 +2,18 @@ package yuuki1293.ae2peat.integration.modules.rei.transfer;
 
 import static appeng.integration.modules.itemlists.TransferHelper.BLUE_SLOT_HIGHLIGHT_COLOR;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
+
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
 import appeng.core.localization.ItemModText;
 import appeng.integration.modules.itemlists.TransferHelper;
 import appeng.integration.modules.rei.GenericEntryStackHelper;
 import appeng.menu.me.common.GridInventoryEntry;
-import java.util.*;
-import java.util.stream.Collectors;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.widgets.Slot;
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
@@ -20,13 +24,12 @@ import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.EntryStacks;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import yuuki1293.ae2peat.integration.modules.itemlists.EncodingHelper;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
 /**
- * Handles encoding patterns in the {@link PatternEncodingAccessTermMenu} by clicking the + button on recipes shown in REI (or
+ * Handles encoding patterns in the {@link PatternEncodingAccessTermMenu} by clicking the + button on recipes shown in
+ * REI (or
  * JEI).
  */
 public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMenu> extends AbstractTransferHandler<T> {
@@ -52,34 +55,38 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
         if (doTransfer) {
             if (craftingRecipe && recipeId != null) {
                 EncodingHelper.encodeCraftingRecipe(
-                        menu,
-                        new RecipeHolder<>(recipeId, recipe),
-                        getGuiIngredientsForCrafting(display),
-                        this::isIngredientVisible);
+                    menu,
+                    new RecipeHolder<>(recipeId, recipe),
+                    getGuiIngredientsForCrafting(display),
+                    this::isIngredientVisible);
             } else {
                 EncodingHelper.encodeProcessingRecipe(
-                        menu, GenericEntryStackHelper.ofInputs(display), GenericEntryStackHelper.ofOutputs(display));
+                    menu,
+                    GenericEntryStackHelper.ofInputs(display),
+                    GenericEntryStackHelper.ofOutputs(display));
             }
 
             menu.setSearch(display.getCategoryIdentifier());
         } else {
             var repo = menu.getClientRepo();
-            Set<AEKey> craftableKeys = repo != null
-                    ? repo.getAllEntries().stream()
-                            .filter(GridInventoryEntry::isCraftable)
-                            .map(GridInventoryEntry::getWhat)
-                            .collect(Collectors.toSet())
-                    : Set.of();
+            Set<AEKey> craftableKeys = repo != null ? repo.getAllEntries()
+                .stream()
+                .filter(GridInventoryEntry::isCraftable)
+                .map(GridInventoryEntry::getWhat)
+                .collect(Collectors.toSet()) : Set.of();
 
-            var anyCraftable = display.getInputEntries().stream().anyMatch(ing -> isCraftable(craftableKeys, ing));
+            var anyCraftable = display.getInputEntries()
+                .stream()
+                .anyMatch(ing -> isCraftable(craftableKeys, ing));
             var tooltip = TransferHelper.createEncodingTooltip(anyCraftable, true);
             return Result.createSuccessful()
-                    .blocksFurtherHandling()
-                    .overrideTooltipRenderer((point, sink) -> sink.accept(Tooltip.create(tooltip)))
-                    .renderer(createErrorRenderer(craftableKeys));
+                .blocksFurtherHandling()
+                .overrideTooltipRenderer((point, sink) -> sink.accept(Tooltip.create(tooltip)))
+                .renderer(createErrorRenderer(craftableKeys));
         }
 
-        return Result.createSuccessful().blocksFurtherHandling();
+        return Result.createSuccessful()
+            .blocksFurtherHandling();
     }
 
     private boolean isIngredientVisible(ItemStack itemStack) {
@@ -94,8 +101,12 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
         for (int i = 0; i < CRAFTING_GRID_WIDTH * CRAFTING_GRID_HEIGHT; i++) {
             var stacks = new ArrayList<GenericStack>();
 
-            if (i < recipeLayout.getInputEntries().size()) {
-                for (EntryStack<?> entryStack : recipeLayout.getInputEntries().get(i)) {
+            if (
+                i < recipeLayout.getInputEntries()
+                    .size()
+            ) {
+                for (EntryStack<?> entryStack : recipeLayout.getInputEntries()
+                    .get(i)) {
                     if (entryStack.getType() == VanillaEntryTypes.ITEM) {
                         stacks.add(GenericStack.fromItemStack(entryStack.castValue()));
                     }
@@ -136,10 +147,11 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
     }
 
     private static boolean isCraftable(Set<AEKey> craftableKeys, List<EntryStack<?>> ingredient) {
-        return ingredient.stream().anyMatch(entryStack -> {
-            var stack = GenericEntryStackHelper.ingredientToStack(entryStack);
-            return stack != null && craftableKeys.contains(stack.what());
-        });
+        return ingredient.stream()
+            .anyMatch(entryStack -> {
+                var stack = GenericEntryStackHelper.ingredientToStack(entryStack);
+                return stack != null && craftableKeys.contains(stack.what());
+            });
     }
 
     private static TransferHandlerRenderer createErrorRenderer(Set<AEKey> craftableKeys) {
@@ -152,11 +164,11 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
                         poseStack.translate(0, 0, 400);
                         Rectangle innerBounds = slot.getInnerBounds();
                         guiGraphics.fill(
-                                innerBounds.x,
-                                innerBounds.y,
-                                innerBounds.getMaxX(),
-                                innerBounds.getMaxY(),
-                                BLUE_SLOT_HIGHLIGHT_COLOR);
+                            innerBounds.x,
+                            innerBounds.y,
+                            innerBounds.getMaxX(),
+                            innerBounds.getMaxY(),
+                            BLUE_SLOT_HIGHLIGHT_COLOR);
                         poseStack.popPose();
                     }
                 }

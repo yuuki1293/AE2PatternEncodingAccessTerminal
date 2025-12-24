@@ -4,4 +4,5 @@ import appeng.api.storage.IPatternAccessTermMenuHost;
 import appeng.api.util.IConfigurableObject;
 import appeng.helpers.IPatternTerminalMenuHost;
 
-public interface IPEATMenuHost extends IConfigurableObject, IPatternTerminalMenuHost, IPatternAccessTermMenuHost {}
+public interface IPEATMenuHost extends IConfigurableObject, IPatternTerminalMenuHost, IPatternAccessTermMenuHost {
+}

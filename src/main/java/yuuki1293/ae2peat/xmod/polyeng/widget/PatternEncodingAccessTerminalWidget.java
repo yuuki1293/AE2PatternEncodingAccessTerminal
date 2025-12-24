@@ -1,16 +1,21 @@
 package yuuki1293.ae2peat.xmod.polyeng.widget;
 
+import net.minecraft.client.gui.GuiGraphics;
+
 import appeng.menu.SlotSemantics;
 import appeng.parts.encoding.EncodingMode;
-import net.minecraft.client.gui.GuiGraphics;
 import yuuki1293.ae2peat.client.gui.PatternEncodingAccessTermScreen;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
 public class PatternEncodingAccessTerminalWidget<M extends PatternEncodingAccessTermMenu>
-        extends BaseTerminalWidget<M, PatternEncodingAccessTermScreen<M>> {
+    extends BaseTerminalWidget<M, PatternEncodingAccessTermScreen<M>> {
 
     public PatternEncodingAccessTerminalWidget(PatternEncodingAccessTermScreen<M> screen) {
-        super(screen, screen.getMenu().getSlots(SlotSemantics.CRAFTING_RESULT).getFirst());
+        super(
+            screen,
+            screen.getMenu()
+                .getSlots(SlotSemantics.CRAFTING_RESULT)
+                .getFirst());
     }
 
     @Override

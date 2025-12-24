@@ -1,14 +1,16 @@
 package yuuki1293.ae2peat.client.gui;
 
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.network.chat.Component;
+
 import appeng.client.Point;
 import appeng.client.gui.ICompositeWidget;
 import appeng.client.gui.Icon;
 import appeng.client.gui.WidgetContainer;
-import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.network.chat.Component;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
 public abstract class EncodingModePanel implements ICompositeWidget {
+
     protected final PatternEncodingAccessTermScreen<?> screen;
     protected final PatternEncodingAccessTermMenu menu;
     protected final WidgetContainer widgets;

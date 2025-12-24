@@ -1,15 +1,27 @@
 package yuuki1293.ae2peat.integration.modules.jei.transfer;
 
-import appeng.api.stacks.GenericStack;
-import appeng.core.localization.ItemModText;
-import appeng.integration.modules.itemlists.TransferHelper;
-import appeng.menu.me.common.GridInventoryEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import appeng.api.stacks.GenericStack;
+import appeng.core.localization.ItemModText;
+import appeng.integration.modules.itemlists.TransferHelper;
+import appeng.menu.me.common.GridInventoryEntry;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
@@ -19,25 +31,18 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import mezz.jei.api.recipe.transfer.IUniversalRecipeTransferHandler;
 import mezz.jei.api.runtime.IIngredientVisibility;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import tamaized.ae2jeiintegration.integration.modules.jei.GenericEntryStackHelper;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.integration.modules.itemlists.EncodingHelper;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
 /**
- * Handles encoding patterns in the {@link PatternEncodingAccessTermMenu} by clicking the + button on recipes shown in JEI
+ * Handles encoding patterns in the {@link PatternEncodingAccessTermMenu} by clicking the + button on recipes shown in
+ * JEI
  */
 public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMenu> extends AbstractTransferHandler
-        implements IUniversalRecipeTransferHandler<T> {
+    implements IUniversalRecipeTransferHandler<T> {
+
     private static final int CRAFTING_GRID_WIDTH = 3;
     private static final int CRAFTING_GRID_HEIGHT = 3;
 
@@ -46,11 +51,8 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
     private final IRecipeTransferHandlerHelper helper;
     private final IIngredientVisibility ingredientVisibility;
 
-    public EncodePatternTransferHandler(
-            MenuType<T> menuType,
-            Class<T> menuClass,
-            IRecipeTransferHandlerHelper helper,
-            IIngredientVisibility ingredientVisibility) {
+    public EncodePatternTransferHandler(MenuType<T> menuType, Class<T> menuClass, IRecipeTransferHandlerHelper helper,
+        IIngredientVisibility ingredientVisibility) {
         this.menuType = menuType;
         this.menuClass = menuClass;
         this.helper = helper;
@@ -59,13 +61,8 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
 
     @Nullable
     @Override
-    public IRecipeTransferError transferRecipe(
-            @NotNull T menu,
-            @NotNull Object recipeBase,
-            @NotNull IRecipeSlotsView slotsView,
-            @NotNull Player player,
-            boolean maxTransfer,
-            boolean doTransfer) {
+    public IRecipeTransferError transferRecipe(@NotNull T menu, @NotNull Object recipeBase,
+        @NotNull IRecipeSlotsView slotsView, @NotNull Player player, boolean maxTransfer, boolean doTransfer) {
 
         // Recipe displays can be based on anything. Not just Recipe<?>
         Recipe<?> recipe = null;
@@ -84,16 +81,20 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
         if (doTransfer) {
             if (craftingRecipe) {
                 EncodingHelper.encodeCraftingRecipe(
-                        menu, recipeHolder, getGuiIngredientsForCrafting(slotsView), this::isIngredientVisible);
+                    menu,
+                    recipeHolder,
+                    getGuiIngredientsForCrafting(slotsView),
+                    this::isIngredientVisible);
             } else {
                 EncodingHelper.encodeProcessingRecipe(
-                        menu,
-                        GenericEntryStackHelper.ofInputs(slotsView),
-                        GenericEntryStackHelper.ofOutputs(slotsView));
+                    menu,
+                    GenericEntryStackHelper.ofInputs(slotsView),
+                    GenericEntryStackHelper.ofOutputs(slotsView));
             }
 
             if (recipe != null) {
-                var recipeType = recipe.getType().toString();
+                var recipeType = recipe.getType()
+                    .toString();
                 var resource = ResourceLocation.tryParse(recipeType);
 
                 if (resource != null) {
@@ -124,7 +125,8 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
         for (int i = 0; i < CRAFTING_GRID_WIDTH * CRAFTING_GRID_HEIGHT; i++) {
             if (i < recipeSlots.size()) {
                 var slot = recipeSlots.get(i);
-                result.add(slot.getIngredients(VanillaTypes.ITEM_STACK)
+                result.add(
+                    slot.getIngredients(VanillaTypes.ITEM_STACK)
                         .map(GenericStack::fromItemStack)
                         .filter(Objects::nonNull)
                         .toList());
@@ -142,17 +144,21 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
             return List.of();
         }
 
-        var craftableKeys = repo.getAllEntries().stream()
-                .filter(GridInventoryEntry::isCraftable)
-                .map(GridInventoryEntry::getWhat)
-                .collect(Collectors.toSet());
+        var craftableKeys = repo.getAllEntries()
+            .stream()
+            .filter(GridInventoryEntry::isCraftable)
+            .map(GridInventoryEntry::getWhat)
+            .collect(Collectors.toSet());
 
-        return slotsView.getSlotViews(RecipeIngredientRole.INPUT).stream()
-                .filter(slotView -> slotView.getAllIngredients().anyMatch(ingredient -> {
-                    var stack = GenericEntryStackHelper.ingredientToStack(ingredient);
-                    return stack != null && craftableKeys.contains(stack.what());
-                }))
-                .toList();
+        return slotsView.getSlotViews(RecipeIngredientRole.INPUT)
+            .stream()
+            .filter(
+                slotView -> slotView.getAllIngredients()
+                    .anyMatch(ingredient -> {
+                        var stack = GenericEntryStackHelper.ingredientToStack(ingredient);
+                        return stack != null && craftableKeys.contains(stack.what());
+                    }))
+            .toList();
     }
 
     @Override
@@ -166,6 +172,7 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
     }
 
     private record ErrorRenderer(List<IRecipeSlotView> craftableSlots) implements IRecipeTransferError {
+
         @Override
         public @NotNull Type getType() {
             return Type.COSMETIC;
@@ -177,13 +184,8 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
         }
 
         @Override
-        public void showError(
-                GuiGraphics guiGraphics,
-                int mouseX,
-                int mouseY,
-                @NotNull IRecipeSlotsView recipeSlotsView,
-                int recipeX,
-                int recipeY) {
+        public void showError(GuiGraphics guiGraphics, int mouseX, int mouseY,
+            @NotNull IRecipeSlotsView recipeSlotsView, int recipeX, int recipeY) {
             var poseStack = guiGraphics.pose();
             poseStack.pushPose();
             poseStack.translate(recipeX, recipeY, 0);

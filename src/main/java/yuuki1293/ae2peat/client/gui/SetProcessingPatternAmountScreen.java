@@ -1,5 +1,9 @@
 package yuuki1293.ae2peat.client.gui;
 
+import java.util.function.Consumer;
+
+import com.google.common.primitives.Longs;
+
 import appeng.api.stacks.GenericStack;
 import appeng.client.gui.AESubScreen;
 import appeng.client.gui.NumberEntryType;
@@ -8,12 +12,10 @@ import appeng.client.gui.widgets.NumberEntryWidget;
 import appeng.client.gui.widgets.TabButton;
 import appeng.core.localization.GuiText;
 import appeng.menu.SlotSemantics;
-import com.google.common.primitives.Longs;
-import java.util.function.Consumer;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
 public class SetProcessingPatternAmountScreen<C extends PatternEncodingAccessTermMenu>
-        extends AESubScreen<C, PatternEncodingAccessTermScreen<C>> {
+    extends AESubScreen<C, PatternEncodingAccessTermScreen<C>> {
 
     private final NumberEntryWidget amount;
 
@@ -21,8 +23,8 @@ public class SetProcessingPatternAmountScreen<C extends PatternEncodingAccessTer
 
     private final Consumer<GenericStack> setter;
 
-    public SetProcessingPatternAmountScreen(
-            PatternEncodingAccessTermScreen<C> parentScreen, GenericStack currentStack, Consumer<GenericStack> setter) {
+    public SetProcessingPatternAmountScreen(PatternEncodingAccessTermScreen<C> parentScreen, GenericStack currentStack,
+        Consumer<GenericStack> setter) {
         super(parentScreen, "/screens/set_processing_pattern_amount.json");
 
         this.currentStack = currentStack;
@@ -30,7 +32,8 @@ public class SetProcessingPatternAmountScreen<C extends PatternEncodingAccessTer
 
         widgets.addButton("save", GuiText.Set.text(), this::confirm);
 
-        var icon = getMenu().getHost().getMainMenuIcon();
+        var icon = getMenu().getHost()
+            .getMainMenuIcon();
         var button = new TabButton(icon, icon.getHoverName(), btn -> returnToParent());
         widgets.add("back", button);
 
@@ -54,19 +57,21 @@ public class SetProcessingPatternAmountScreen<C extends PatternEncodingAccessTer
     }
 
     private void confirm() {
-        this.amount.getLongValue().ifPresent(newAmount -> {
-            newAmount = Longs.constrainToRange(newAmount, 0, getMaxAmount());
+        this.amount.getLongValue()
+            .ifPresent(newAmount -> {
+                newAmount = Longs.constrainToRange(newAmount, 0, getMaxAmount());
 
-            if (newAmount <= 0) {
-                setter.accept(null);
-            } else {
-                setter.accept(new GenericStack(currentStack.what(), newAmount));
-            }
-            returnToParent();
-        });
+                if (newAmount <= 0) {
+                    setter.accept(null);
+                } else {
+                    setter.accept(new GenericStack(currentStack.what(), newAmount));
+                }
+                returnToParent();
+            });
     }
 
     private long getMaxAmount() {
-        return 999999 * (long) currentStack.what().getAmountPerUnit();
+        return 999999 * (long) currentStack.what()
+            .getAmountPerUnit();
     }
 }

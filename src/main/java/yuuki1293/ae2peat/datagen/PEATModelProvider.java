@@ -1,14 +1,16 @@
 package yuuki1293.ae2peat.datagen;
 
-import appeng.core.AppEng;
-import appeng.core.definitions.ItemDefinition;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.pedroksl.ae2addonlib.datagen.AE2AddonModelProvider;
+
+import appeng.core.AppEng;
+import appeng.core.definitions.ItemDefinition;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.definisions.PEATItems;
 
 public class PEATModelProvider extends AE2AddonModelProvider {
+
     public PEATModelProvider(PackOutput packOutput, ExistingFileHelper exFileHelper) {
         super(packOutput, AE2PEAT.MOD_ID, exFileHelper);
     }
@@ -20,7 +22,8 @@ public class PEATModelProvider extends AE2AddonModelProvider {
     }
 
     private void terminalPart(ItemDefinition<?> part) {
-        var id = part.id().getPath();
+        var id = part.id()
+            .getPath();
         var idOff = id + "_off";
         var idOn = id + "_on";
 
@@ -34,18 +37,17 @@ public class PEATModelProvider extends AE2AddonModelProvider {
         var itemBase = AppEng.makeId("item/display_base");
 
         models().withExistingParent("part/" + idOff, partOffBase)
-                .texture("lightsBright", bright)
-                .texture("lightsMedium", medium)
-                .texture("lightsDark", dark);
+            .texture("lightsBright", bright)
+            .texture("lightsMedium", medium)
+            .texture("lightsDark", dark);
         models().withExistingParent("part/" + idOn, partOnBase)
-                .texture("lightsBright", bright)
-                .texture("lightsMedium", medium)
-                .texture("lightsDark", dark);
-        itemModels()
-                .withExistingParent("item/" + id, itemBase)
-                .texture("front", front)
-                .texture("front_bright", bright)
-                .texture("front_medium", medium)
-                .texture("front_dark", dark);
+            .texture("lightsBright", bright)
+            .texture("lightsMedium", medium)
+            .texture("lightsDark", dark);
+        itemModels().withExistingParent("item/" + id, itemBase)
+            .texture("front", front)
+            .texture("front_bright", bright)
+            .texture("front_medium", medium)
+            .texture("front_dark", dark);
     }
 }

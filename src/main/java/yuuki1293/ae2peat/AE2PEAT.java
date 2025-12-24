@@ -1,9 +1,5 @@
 package yuuki1293.ae2peat;
 
-import appeng.api.features.GridLinkables;
-import appeng.api.implementations.items.IAEItemPowerStorage;
-import appeng.core.AELog;
-import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -12,8 +8,14 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.pedroksl.ae2addonlib.api.IGridLinkedItem;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import appeng.api.features.GridLinkables;
+import appeng.api.implementations.items.IAEItemPowerStorage;
+import appeng.core.AELog;
+import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
 import yuuki1293.ae2peat.definisions.PEATCreativeTab;
 import yuuki1293.ae2peat.definisions.PEATItems;
 import yuuki1293.ae2peat.definisions.PEATMenus;
@@ -22,6 +24,7 @@ import yuuki1293.ae2peat.xmod.polyeng.PolyEngPlugin;
 
 @Mod(value = AE2PEAT.MOD_ID)
 public class AE2PEAT {
+
     public static final String MOD_ID = "ae2peat";
 
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
@@ -56,11 +59,12 @@ public class AE2PEAT {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(this::postRegistrationInitialization).whenComplete((res, err) -> {
-            if (err != null) {
-                AELog.warn(err);
-            }
-        });
+        event.enqueueWork(this::postRegistrationInitialization)
+            .whenComplete((res, err) -> {
+                if (err != null) {
+                    AELog.warn(err);
+                }
+            });
     }
 
     public void postRegistrationInitialization() {
@@ -75,9 +79,9 @@ public class AE2PEAT {
         for (var type : PEATItems.INSTANCE.getItems()) {
             if (type.get() instanceof IAEItemPowerStorage powerStorage) {
                 event.registerItem(
-                        Capabilities.EnergyStorage.ITEM,
-                        (object, context) -> new PoweredItemCapabilities(object, powerStorage),
-                        type);
+                    Capabilities.EnergyStorage.ITEM,
+                    (object, context) -> new PoweredItemCapabilities(object, powerStorage),
+                    type);
             }
         }
     }

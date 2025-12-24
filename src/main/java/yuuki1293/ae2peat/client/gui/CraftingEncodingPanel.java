@@ -1,5 +1,12 @@
 package yuuki1293.ae2peat.client.gui;
 
+import java.util.List;
+
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.Slot;
+
 import appeng.api.config.ActionItems;
 import appeng.client.Point;
 import appeng.client.gui.Icon;
@@ -10,14 +17,11 @@ import appeng.client.gui.widgets.ToggleButton;
 import appeng.core.localization.ButtonToolTips;
 import appeng.core.localization.GuiText;
 import appeng.menu.SlotSemantics;
-import java.util.List;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.inventory.Slot;
 
 public class CraftingEncodingPanel extends EncodingModePanel {
-    private static final Blitter BG = Blitter.texture("guis/pattern_modes.png").src(0, 0, 126, 68);
+
+    private static final Blitter BG = Blitter.texture("guis/pattern_modes.png")
+        .src(0, 0, 126, 68);
 
     private final ActionButton clearBtn;
     private final ToggleButton substitutionsBtn;
@@ -51,29 +55,32 @@ public class CraftingEncodingPanel extends EncodingModePanel {
         button.setHalfSize(true);
         button.setDisableBackground(true);
         button.setTooltipOn(
-                List.of(ButtonToolTips.SubstitutionsOn.text(), ButtonToolTips.SubstitutionsDescEnabled.text()));
+            List.of(ButtonToolTips.SubstitutionsOn.text(), ButtonToolTips.SubstitutionsDescEnabled.text()));
         button.setTooltipOff(
-                List.of(ButtonToolTips.SubstitutionsOff.text(), ButtonToolTips.SubstitutionsDescDisabled.text()));
+            List.of(ButtonToolTips.SubstitutionsOff.text(), ButtonToolTips.SubstitutionsDescDisabled.text()));
         widgets.add("craftingSubstitutions", button);
         return button;
     }
 
     private ToggleButton createCraftingFluidSubstitutionButton(WidgetContainer widgets) {
         var button = new ToggleButton(
-                Icon.S_FLUID_SUBSTITUTION_ENABLED, Icon.S_FLUID_SUBSTITUTION_DISABLED, menu::setSubstituteFluids);
+            Icon.S_FLUID_SUBSTITUTION_ENABLED,
+            Icon.S_FLUID_SUBSTITUTION_DISABLED,
+            menu::setSubstituteFluids);
         button.setHalfSize(true);
         button.setDisableBackground(true);
         button.setTooltipOn(
-                List.of(ButtonToolTips.FluidSubstitutions.text(), ButtonToolTips.FluidSubstitutionsDescEnabled.text()));
-        button.setTooltipOff(List.of(
-                ButtonToolTips.FluidSubstitutions.text(), ButtonToolTips.FluidSubstitutionsDescDisabled.text()));
+            List.of(ButtonToolTips.FluidSubstitutions.text(), ButtonToolTips.FluidSubstitutionsDescEnabled.text()));
+        button.setTooltipOff(
+            List.of(ButtonToolTips.FluidSubstitutions.text(), ButtonToolTips.FluidSubstitutionsDescDisabled.text()));
         widgets.add("craftingFluidSubstitutions", button);
         return button;
     }
 
     @Override
     public void drawBackgroundLayer(GuiGraphics guiGraphics, Rect2i bounds, Point mouse) {
-        BG.dest(bounds.getX() + 8, bounds.getY() + bounds.getHeight() - 165).blit(guiGraphics);
+        BG.dest(bounds.getX() + 8, bounds.getY() + bounds.getHeight() - 165)
+            .blit(guiGraphics);
 
         var absMouseX = bounds.getX() + mouse.getX();
         var absMouseY = bounds.getY() + mouse.getY();

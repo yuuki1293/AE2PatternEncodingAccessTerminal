@@ -10,6 +10,7 @@ import yuuki1293.ae2peat.wireless.WPEATMenu;
 @SuppressWarnings("unused")
 @REIPluginClient
 public class REIPlugin implements REIClientPlugin {
+
     @Override
     public void registerTransferHandlers(TransferHandlerRegistry registry) {
         registry.register(new EncodePatternTransferHandler<>(PatternEncodingAccessTermMenu.class));

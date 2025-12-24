@@ -1,5 +1,16 @@
 package yuuki1293.ae2peat.client.gui;
 
+import java.util.List;
+
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SmithingRecipeInput;
+
 import appeng.api.config.ActionItems;
 import appeng.client.Point;
 import appeng.client.gui.Icon;
@@ -10,18 +21,11 @@ import appeng.client.gui.widgets.ToggleButton;
 import appeng.core.localization.ButtonToolTips;
 import appeng.core.localization.GuiText;
 import appeng.menu.SlotSemantics;
-import java.util.List;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.SmithingRecipeInput;
 
 public class SmithingTableEncodingPanel extends EncodingModePanel {
-    private static final Blitter BG = Blitter.texture("guis/pattern_modes.png").src(128, 70, 126, 66);
+
+    private static final Blitter BG = Blitter.texture("guis/pattern_modes.png")
+        .src(128, 70, 126, 66);
 
     private final ActionButton clearBtn;
     private final ToggleButton substitutionsBtn;
@@ -56,16 +60,17 @@ public class SmithingTableEncodingPanel extends EncodingModePanel {
         button.setHalfSize(true);
         button.setDisableBackground(true);
         button.setTooltipOn(
-                List.of(ButtonToolTips.SubstitutionsOn.text(), ButtonToolTips.SubstitutionsDescEnabled.text()));
+            List.of(ButtonToolTips.SubstitutionsOn.text(), ButtonToolTips.SubstitutionsDescEnabled.text()));
         button.setTooltipOff(
-                List.of(ButtonToolTips.SubstitutionsOff.text(), ButtonToolTips.SubstitutionsDescDisabled.text()));
+            List.of(ButtonToolTips.SubstitutionsOff.text(), ButtonToolTips.SubstitutionsDescDisabled.text()));
         widgets.add("smithingTableSubstitutions", button);
         return button;
     }
 
     @Override
     public void drawBackgroundLayer(GuiGraphics guiGraphics, Rect2i bounds, Point mouse) {
-        BG.dest(bounds.getX() + 8, bounds.getY() + bounds.getHeight() - 165).blit(guiGraphics);
+        BG.dest(bounds.getX() + 8, bounds.getY() + bounds.getHeight() - 165)
+            .blit(guiGraphics);
     }
 
     @Override
@@ -73,18 +78,24 @@ public class SmithingTableEncodingPanel extends EncodingModePanel {
         this.substitutionsBtn.setState(this.menu.substitute);
 
         var recipeInput = new SmithingRecipeInput(
-                menu.getSmithingTableTemplateSlot().getItem(),
-                menu.getSmithingTableBaseSlot().getItem(),
-                menu.getSmithingTableAdditionSlot().getItem());
+            menu.getSmithingTableTemplateSlot()
+                .getItem(),
+            menu.getSmithingTableBaseSlot()
+                .getItem(),
+            menu.getSmithingTableAdditionSlot()
+                .getItem());
 
-        var level = menu.getPlayer().level();
+        var level = menu.getPlayer()
+            .level();
         var recipe = level.getRecipeManager()
-                .getRecipeFor(RecipeType.SMITHING, recipeInput, level)
-                .orElse(null);
+            .getRecipeFor(RecipeType.SMITHING, recipeInput, level)
+            .orElse(null);
         if (recipe == null) {
             resultSlot.set(ItemStack.EMPTY);
         } else {
-            resultSlot.set(recipe.value().assemble(recipeInput, level.registryAccess()));
+            resultSlot.set(
+                recipe.value()
+                    .assemble(recipeInput, level.registryAccess()));
         }
     }
 

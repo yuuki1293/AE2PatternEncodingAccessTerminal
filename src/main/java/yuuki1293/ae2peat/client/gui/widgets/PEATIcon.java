@@ -1,12 +1,14 @@
 package yuuki1293.ae2peat.client.gui.widgets;
 
-import appeng.client.gui.style.Blitter;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.pedroksl.ae2addonlib.client.widgets.IBlitterIcon;
+
+import appeng.client.gui.style.Blitter;
 import yuuki1293.ae2peat.AE2PEAT;
 
 public enum PEATIcon implements IBlitterIcon {
+
     ACCESS_SEARCH_MODE_BOTH(0, 0),
     ACCESS_SEARCH_MODE_PATTERN(16, 0),
     ACCESS_SEARCH_MODE_MACHINE(32, 0),
@@ -49,6 +51,7 @@ public enum PEATIcon implements IBlitterIcon {
     }
 
     public Blitter getBlitter() {
-        return Blitter.texture(TEXTURE, TEXTURE_WIDTH, TEXTURE_HEIGHT).src(x, y, width, height);
+        return Blitter.texture(TEXTURE, TEXTURE_WIDTH, TEXTURE_HEIGHT)
+            .src(x, y, width, height);
     }
 }

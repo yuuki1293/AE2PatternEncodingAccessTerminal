@@ -1,29 +1,43 @@
 package yuuki1293.ae2peat.wireless;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+
+import org.jetbrains.annotations.NotNull;
+
 import appeng.client.gui.style.ScreenStyle;
 import appeng.client.gui.widgets.ToolboxPanel;
 import de.mari_023.ae2wtlib.api.gui.ScrollingUpgradesPanel;
 import de.mari_023.ae2wtlib.api.terminal.IUniversalTerminalCapable;
 import de.mari_023.ae2wtlib.api.terminal.WTMenuHost;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Inventory;
-import org.jetbrains.annotations.NotNull;
 import yuuki1293.ae2peat.client.gui.PatternEncodingAccessTermScreen;
 
 public class WPEATScreen extends PatternEncodingAccessTermScreen<WPEATMenu> implements IUniversalTerminalCapable {
+
     private final ScrollingUpgradesPanel upgradesPanel;
 
     public WPEATScreen(WPEATMenu container, Inventory playerInventory, Component title, ScreenStyle style) {
         super(container, playerInventory, title, style);
-        if (this.getMenu().isWUT()) {
+        if (
+            this.getMenu()
+                .isWUT()
+        ) {
             this.addToLeftToolbar(this.cycleTerminalButton());
         }
 
         this.upgradesPanel = this.addUpgradePanel(this.widgets, this.getMenu());
-        if (this.getMenu().getToolbox().isPresent()) {
+        if (
+            this.getMenu()
+                .getToolbox()
+                .isPresent()
+        ) {
             this.widgets.add(
-                    "toolbox",
-                    new ToolboxPanel(style, this.getMenu().getToolbox().getName()));
+                "toolbox",
+                new ToolboxPanel(
+                    style,
+                    this.getMenu()
+                        .getToolbox()
+                        .getName()));
         }
     }
 
@@ -33,7 +47,8 @@ public class WPEATScreen extends PatternEncodingAccessTermScreen<WPEATMenu> impl
     }
 
     public @NotNull WTMenuHost getHost() {
-        return (WPEATMenuHost) this.getMenu().getHost();
+        return (WPEATMenuHost) this.getMenu()
+            .getHost();
     }
 
     public void storeState() {}

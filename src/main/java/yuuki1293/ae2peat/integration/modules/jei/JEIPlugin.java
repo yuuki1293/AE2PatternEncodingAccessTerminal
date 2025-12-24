@@ -1,12 +1,14 @@
 package yuuki1293.ae2peat.integration.modules.jei;
 
+import net.minecraft.resources.ResourceLocation;
+
+import org.jetbrains.annotations.NotNull;
+
 import appeng.core.AppEng;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
-import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.integration.modules.jei.transfer.EncodePatternTransferHandler;
@@ -18,6 +20,7 @@ import yuuki1293.ae2peat.xmod.Addons;
 @SuppressWarnings("unused")
 @JeiPlugin
 public class JEIPlugin implements IModPlugin {
+
     public static final ResourceLocation TEXTURE = AppEng.makeId("textures/guis/jei.png");
 
     private static final ResourceLocation ID = AE2PEAT.makeId("core");
@@ -42,15 +45,20 @@ public class JEIPlugin implements IModPlugin {
         var transferHelper = registration.getTransferHelper();
 
         // Universal handler for processing to try and handle all IRecipe
-        registration.addUniversalRecipeTransferHandler(new EncodePatternTransferHandler<>(
+        registration.addUniversalRecipeTransferHandler(
+            new EncodePatternTransferHandler<>(
                 PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
                 PatternEncodingAccessTermMenu.class,
                 transferHelper,
                 ingredientVisibility));
 
         if (Addons.AE2WTLIB.isLoaded()) {
-            registration.addUniversalRecipeTransferHandler(new EncodePatternTransferHandler<>(
-                    WPEATMenu.TYPE, WPEATMenu.class, transferHelper, ingredientVisibility));
+            registration.addUniversalRecipeTransferHandler(
+                new EncodePatternTransferHandler<>(
+                    WPEATMenu.TYPE,
+                    WPEATMenu.class,
+                    transferHelper,
+                    ingredientVisibility));
         }
     }
 

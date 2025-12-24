@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+
 import yuuki1293.ae2peat.xmod.Addons;
 
 /**
@@ -14,16 +16,17 @@ import yuuki1293.ae2peat.xmod.Addons;
  * When unloading and loading conflict, unloading takes priority.
  */
 public class PEATMixinPlugin implements IMixinConfigPlugin {
+
     private static final String COMMON_MIXIN_PACKAGE = "yuuki1293.ae2peat.mixin.common";
     private static final Map<Addons, Set<String>> LOAD_WHEN_MOD_PRESENT = new HashMap<>();
     private static final Map<Addons, Set<String>> EXCLUDE_WHEN_MOD_PRESENT = new HashMap<>();
 
     static {
         LOAD_WHEN_MOD_PRESENT.put(
-                Addons.POLYMORPHIC_ENERGISTICS,
-                Set.of(
-                        "yuuki1293.ae2peat.mixin.polyeng.PatternEncodingAccessTermMenuMixin",
-                        "yuuki1293.ae2peat.mixin.polyeng.PatternEncodingAccessTermScreenMixin"));
+            Addons.POLYMORPHIC_ENERGISTICS,
+            Set.of(
+                "yuuki1293.ae2peat.mixin.polyeng.PatternEncodingAccessTermMenuMixin",
+                "yuuki1293.ae2peat.mixin.polyeng.PatternEncodingAccessTermScreenMixin"));
     }
 
     @Override

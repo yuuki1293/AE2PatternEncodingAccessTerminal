@@ -4,6 +4,7 @@ import yuuki1293.ae2peat.integration.modules.jei.JEIPlugin;
 import yuuki1293.ae2peat.xmod.Addons;
 
 public class ItemListsManager {
+
     private static IItemListsAdapter adapter;
 
     static {

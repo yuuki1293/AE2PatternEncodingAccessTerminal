@@ -1,5 +1,25 @@
 package yuuki1293.ae2peat.menu;
 
+import java.util.*;
+import java.util.function.Consumer;
+
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.*;
+import net.neoforged.neoforge.network.PacketDistributor;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
 import appeng.api.config.*;
 import appeng.api.crafting.PatternDetailsHelper;
 import appeng.api.implementations.blockentities.PatternContainerGroup;
@@ -52,26 +72,10 @@ import appeng.util.ConfigInventory;
 import appeng.util.inv.AppEngInternalInventory;
 import appeng.util.inv.FilteredInternalInventory;
 import appeng.util.inv.filter.IAEItemFilter;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.ints.*;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.shorts.ShortSet;
-import java.util.*;
-import java.util.function.Consumer;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
-import net.neoforged.neoforge.network.PacketDistributor;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import yuuki1293.ae2peat.api.config.AccessSearchMode;
 import yuuki1293.ae2peat.api.config.AutoFilter;
 import yuuki1293.ae2peat.api.config.PEATSettings;
@@ -79,7 +83,7 @@ import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.parts.PatternEncodingAccessTerminalPart;
 
 public class PatternEncodingAccessTermMenu extends AEBaseMenu
-        implements IConfigManagerListener, IConfigurableObject, IMEInteractionHandler, LinkStatusAwareMenu {
+    implements IConfigManagerListener, IConfigurableObject, IMEInteractionHandler, LinkStatusAwareMenu {
 
     // region me storage menu
     private final IConfigManager clientCM;
@@ -152,10 +156,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
     // We use this serial number to uniquely identify all inventories we send to the client
     // It is used in packets sent by the client to interact with these inventories
     private static long inventorySerial = Long.MIN_VALUE;
-    private final Map<PatternContainer, PatternEncodingAccessTermMenu.ContainerTracker> diList =
-            new IdentityHashMap<>();
-    private final Long2ObjectOpenHashMap<PatternEncodingAccessTermMenu.ContainerTracker> byId =
-            new Long2ObjectOpenHashMap<>();
+    private final Map<PatternContainer, PatternEncodingAccessTermMenu.ContainerTracker> diList = new IdentityHashMap<>();
+    private final Long2ObjectOpenHashMap<PatternEncodingAccessTermMenu.ContainerTracker> byId = new Long2ObjectOpenHashMap<>();
     /**
      * Tracks hosts that were visible before, even if they no longer match the filter. For
      * {@link ShowPatternProviders#NOT_FULL}.
@@ -224,8 +226,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         this(PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(), id, ip, anchor, true);
     }
 
-    public PatternEncodingAccessTermMenu(
-            MenuType<?> menuType, int id, Inventory ip, IPEATMenuHost host, boolean bindInventory) {
+    public PatternEncodingAccessTermMenu(MenuType<?> menuType, int id, Inventory ip, IPEATMenuHost host,
+        boolean bindInventory) {
         super(menuType, id, ip, host);
 
         this.termHost = host;
@@ -240,10 +242,10 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         this.storage = Objects.requireNonNull(host.getInventory(), "host inventory is null");
 
         this.clientCM = IConfigManager.builder(this::onSettingChanged)
-                .registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE)
-                .registerSetting(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH)
-                .registerSetting(PEATSettings.AUTO_FILTER, AutoFilter.DISABLED)
-                .build();
+            .registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE)
+            .registerSetting(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH)
+            .registerSetting(PEATSettings.AUTO_FILTER, AutoFilter.DISABLED)
+            .build();
 
         if (isServerSide()) {
             this.serverCM = host.getConfigManager();
@@ -273,11 +275,13 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         // Create as many slots as needed for processing inputs and outputs
         for (int i = 0; i < processingInputSlots.length; i++) {
             this.addSlot(
-                    this.processingInputSlots[i] = new FakeSlot(encodedInputs, i), SlotSemantics.PROCESSING_INPUTS);
+                this.processingInputSlots[i] = new FakeSlot(encodedInputs, i),
+                SlotSemantics.PROCESSING_INPUTS);
         }
         for (int i = 0; i < this.processingOutputSlots.length; i++) {
             this.addSlot(
-                    this.processingOutputSlots[i] = new FakeSlot(encodedOutputs, i), SlotSemantics.PROCESSING_OUTPUTS);
+                this.processingOutputSlots[i] = new FakeSlot(encodedOutputs, i),
+                SlotSemantics.PROCESSING_OUTPUTS);
         }
         this.processingOutputSlots[0].setIcon(Icon.BACKGROUND_PRIMARY_OUTPUT);
 
@@ -287,28 +291,36 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
         // Input for smithing table pattern encoding
         this.addSlot(
-                this.smithingTableTemplateSlot = new FakeSlot(encodedInputs, 0), SlotSemantics.SMITHING_TABLE_TEMPLATE);
+            this.smithingTableTemplateSlot = new FakeSlot(encodedInputs, 0),
+            SlotSemantics.SMITHING_TABLE_TEMPLATE);
         this.smithingTableTemplateSlot.setHideAmount(true);
         this.addSlot(this.smithingTableBaseSlot = new FakeSlot(encodedInputs, 1), SlotSemantics.SMITHING_TABLE_BASE);
         this.smithingTableBaseSlot.setHideAmount(true);
         this.addSlot(
-                this.smithingTableAdditionSlot = new FakeSlot(encodedInputs, 2), SlotSemantics.SMITHING_TABLE_ADDITION);
+            this.smithingTableAdditionSlot = new FakeSlot(encodedInputs, 2),
+            SlotSemantics.SMITHING_TABLE_ADDITION);
         this.smithingTableAdditionSlot.setHideAmount(true);
 
         this.addSlot(
-                this.blankPatternSlot = new RestrictedInputSlot(
-                        RestrictedInputSlot.PlacableItemType.BLANK_PATTERN, encodingLogic.getBlankPatternInv(), 0),
-                SlotSemantics.BLANK_PATTERN);
+            this.blankPatternSlot = new RestrictedInputSlot(
+                RestrictedInputSlot.PlacableItemType.BLANK_PATTERN,
+                encodingLogic.getBlankPatternInv(),
+                0),
+            SlotSemantics.BLANK_PATTERN);
         this.addSlot(
-                this.encodedPatternSlot = new RestrictedInputSlot(
-                        RestrictedInputSlot.PlacableItemType.ENCODED_PATTERN, encodingLogic.getEncodedPatternInv(), 0),
-                SlotSemantics.ENCODED_PATTERN);
+            this.encodedPatternSlot = new RestrictedInputSlot(
+                RestrictedInputSlot.PlacableItemType.ENCODED_PATTERN,
+                encodingLogic.getEncodedPatternInv(),
+                0),
+            SlotSemantics.ENCODED_PATTERN);
 
         this.encodedPatternSlot.setStackLimit(1);
 
         registerClientAction(ACTION_ENCODE, this::encode);
         registerClientAction(
-                ACTION_SET_STONECUTTING_RECIPE_ID, ResourceLocation.class, encodingLogic::setStonecuttingRecipeId);
+            ACTION_SET_STONECUTTING_RECIPE_ID,
+            ResourceLocation.class,
+            encodingLogic::setStonecuttingRecipeId);
         registerClientAction(ACTION_CLEAR, this::clear);
         registerClientAction(ACTION_SET_MODE, EncodingMode.class, encodingLogic::setMode);
         registerClientAction(ACTION_SET_SUBSTITUTION, Boolean.class, encodingLogic::setSubstitution);
@@ -329,7 +341,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
     public boolean isKeyVisible(AEKey key) {
         // If the host is a basic item cell with a limited key space, account for this
         if (itemMenuHost != null && itemMenuHost.getItem() instanceof IBasicCellItem basicCellItem) {
-            return basicCellItem.getKeyType().contains(key);
+            return basicCellItem.getKeyType()
+                .contains(key);
         }
 
         return true;
@@ -354,7 +367,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
             if (termHost instanceof KeyTypeSelectionHost keyTypeSelectionHost) {
                 this.searchKeyTypes = new KeyTypeSelectionMenu.SyncedKeyTypes(
-                        keyTypeSelectionHost.getKeyTypeSelection().enabled());
+                    keyTypeSelectionHost.getKeyTypeSelection()
+                        .enabled());
             }
 
             var craftables = getCraftablesFromGrid();
@@ -366,20 +380,21 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             try {
                 // Craftables
                 // Newly craftable
-                Sets.difference(previousCraftables, craftables).forEach(updateHelper::addChange);
+                Sets.difference(previousCraftables, craftables)
+                    .forEach(updateHelper::addChange);
                 // No longer craftable
-                Sets.difference(craftables, previousCraftables).forEach(updateHelper::addChange);
+                Sets.difference(craftables, previousCraftables)
+                    .forEach(updateHelper::addChange);
 
                 // Available changes
                 previousAvailableStacks.removeAll(availableStacks);
                 previousAvailableStacks.removeZeros();
-                previousAvailableStacks.keySet().forEach(updateHelper::addChange);
+                previousAvailableStacks.keySet()
+                    .forEach(updateHelper::addChange);
 
                 if (updateHelper.hasChanges()) {
-                    var builder = MEInventoryUpdatePacket.builder(
-                            containerId,
-                            updateHelper.isFullUpdate(),
-                            getPlayer().registryAccess());
+                    var builder = MEInventoryUpdatePacket
+                        .builder(containerId, updateHelper.isFullUpdate(), getPlayer().registryAccess());
                     builder.setFilter(this::isKeyVisible);
                     builder.addChanges(updateHelper, availableStacks, craftables, requestables);
                     builder.buildAndSend(this::sendPacketToClient);
@@ -401,10 +416,12 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             this.substituteFluids = encodingLogic.isFluidSubstitution();
             this.stonecuttingRecipeId = encodingLogic.getStonecuttingRecipeId();
 
-            showPatternProviders =
-                    this.termHost.getConfigManager().getSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS);
-            accessSearchMode = this.termHost.getConfigManager().getSetting(PEATSettings.ACCESS_SEARCH_MODE);
-            autoFilter = this.termHost.getConfigManager().getSetting(PEATSettings.AUTO_FILTER);
+            showPatternProviders = this.termHost.getConfigManager()
+                .getSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS);
+            accessSearchMode = this.termHost.getConfigManager()
+                .getSetting(PEATSettings.ACCESS_SEARCH_MODE);
+            autoFilter = this.termHost.getConfigManager()
+                .getSetting(PEATSettings.AUTO_FILTER);
 
             super.broadcastChanges();
 
@@ -420,7 +437,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             if (grid != null) {
                 for (var machineClass : grid.getMachineClasses()) {
                     if (PatternContainer.class.isAssignableFrom(machineClass)) {
-                        //noinspection unchecked
+                        // noinspection unchecked
                         visitPatternProviderHosts(grid, (Class<? extends PatternContainer>) machineClass, state);
                     }
                 }
@@ -484,7 +501,9 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         }
 
         if (hostNode != null && hostNode.isActive()) {
-            return hostNode.getGrid().getCraftingService().getCraftables(this::isKeyVisible);
+            return hostNode.getGrid()
+                .getCraftingService()
+                .getCraftables(this::isKeyVisible);
         }
         return Collections.emptySet();
     }
@@ -503,7 +522,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         }
 
         int activeJobs = 0;
-        for (var cpus : grid.getCraftingService().getCpus()) {
+        for (var cpus : grid.getCraftingService()
+            .getCpus()) {
             if (cpus.isBusy()) {
                 activeJobs++;
             }
@@ -513,7 +533,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
     public void onSettingChanged(IConfigManager manager, Setting<?> setting) {
         if (this.getGui() != null) {
-            this.getGui().run();
+            this.getGui()
+                .run();
         }
     }
 
@@ -631,13 +652,16 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
         var input = CraftingInput.of(CRAFTING_GRID_WIDTH, CRAFTING_GRID_HEIGHT, items);
 
-        if (this.currentRecipe == null || !this.currentRecipe.value().matches(input, level)) {
+        if (
+            this.currentRecipe == null || !this.currentRecipe.value()
+                .matches(input, level)
+        ) {
             if (invalidIngredients) {
                 this.currentRecipe = null;
             } else {
                 this.currentRecipe = level.getRecipeManager()
-                        .getRecipeFor(RecipeType.CRAFTING, input, level)
-                        .orElse(null);
+                    .getRecipeFor(RecipeType.CRAFTING, input, level)
+                    .orElse(null);
             }
             this.currentMode = this.mode;
             checkFluidSubstitutionSupport();
@@ -648,7 +672,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         if (this.currentRecipe == null) {
             is = ItemStack.EMPTY;
         } else {
-            is = this.currentRecipe.value().assemble(input, level.registryAccess());
+            is = this.currentRecipe.value()
+                .assemble(input, level.registryAccess());
         }
 
         this.craftOutputSlot.setResultItem(is);
@@ -664,10 +689,11 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
         var encodedPattern = encodePattern();
         if (encodedPattern != null) {
-            var decodedPattern = PatternDetailsHelper.decodePattern(
-                    encodedPattern, this.getPlayerInventory().player.level());
+            var decodedPattern = PatternDetailsHelper
+                .decodePattern(encodedPattern, this.getPlayerInventory().player.level());
             if (decodedPattern instanceof AECraftingPattern craftingPattern) {
-                for (int i = 0; i < craftingPattern.getSparseInputs().size(); i++) {
+                for (int i = 0; i < craftingPattern.getSparseInputs()
+                    .size(); i++) {
                     if (craftingPattern.getValidFluid(i) != null) {
                         slotsSupportingFluidSubstitution.add(i);
                     }
@@ -687,9 +713,10 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             var encodeOutput = this.encodedPatternSlot.getItem();
 
             // first check the output slots, should either be null, or a pattern (encoded or otherwise)
-            if (!encodeOutput.isEmpty()
-                    && !PatternDetailsHelper.isEncodedPattern(encodeOutput)
-                    && !AEItems.BLANK_PATTERN.is(encodeOutput)) {
+            if (
+                !encodeOutput.isEmpty() && !PatternDetailsHelper.isEncodedPattern(encodeOutput)
+                    && !AEItems.BLANK_PATTERN.is(encodeOutput)
+            ) {
                 return;
             } // if nothing is there we should snag a new pattern.
             else if (encodeOutput.isEmpty()) {
@@ -753,8 +780,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             return null;
         }
 
-        return PatternDetailsHelper.encodeCraftingPattern(
-                this.currentRecipe, ingredients, result, isSubstitute(), isSubstituteFluids());
+        return PatternDetailsHelper
+            .encodeCraftingPattern(this.currentRecipe, ingredients, result, isSubstitute(), isSubstituteFluids());
     }
 
     @Nullable
@@ -786,9 +813,11 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
     @Nullable
     private ItemStack encodeSmithingTablePattern() {
-        if (!(encodedInputsInv.getKey(0) instanceof AEItemKey template)
+        if (
+            !(encodedInputsInv.getKey(0) instanceof AEItemKey template)
                 || !(encodedInputsInv.getKey(1) instanceof AEItemKey base)
-                || !(encodedInputsInv.getKey(2) instanceof AEItemKey addition)) {
+                || !(encodedInputsInv.getKey(2) instanceof AEItemKey addition)
+        ) {
             return null;
         }
 
@@ -796,16 +825,18 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
         var level = getPlayer().level();
         var recipe = level.getRecipeManager()
-                .getRecipeFor(RecipeType.SMITHING, input, level)
-                .orElse(null);
+            .getRecipeFor(RecipeType.SMITHING, input, level)
+            .orElse(null);
         if (recipe == null) {
             return null;
         }
 
-        var output = AEItemKey.of(recipe.value().assemble(input, level.registryAccess()));
+        var output = AEItemKey.of(
+            recipe.value()
+                .assemble(input, level.registryAccess()));
 
-        return PatternDetailsHelper.encodeSmithingTablePattern(
-                recipe, template, base, addition, output, encodingLogic.isSubstitution());
+        return PatternDetailsHelper
+            .encodeSmithingTablePattern(recipe, template, base, addition, output, encodingLogic.isSubstitution());
     }
 
     @Nullable
@@ -823,13 +854,15 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
         var level = getPlayer().level();
         var recipe = level.getRecipeManager()
-                .getRecipeFor(RecipeType.STONECUTTING, recipeInput, level, stonecuttingRecipeId)
-                .orElse(null);
+            .getRecipeFor(RecipeType.STONECUTTING, recipeInput, level, stonecuttingRecipeId)
+            .orElse(null);
         if (recipe == null) {
             return null;
         }
 
-        var output = AEItemKey.of(recipe.value().getResultItem(level.registryAccess()));
+        var output = AEItemKey.of(
+            recipe.value()
+                .getResultItem(level.registryAccess()));
 
         return PatternDetailsHelper.encodeStonecuttingPattern(recipe, input, output, encodingLogic.isSubstitution());
     }
@@ -879,8 +912,12 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         }
 
         // Deselect a recipe that is now unavailable
-        if (stonecuttingRecipeId != null
-                && stonecuttingRecipes.stream().noneMatch(r -> r.id().equals(stonecuttingRecipeId))) {
+        if (
+            stonecuttingRecipeId != null && stonecuttingRecipes.stream()
+                .noneMatch(
+                    r -> r.id()
+                        .equals(stonecuttingRecipeId))
+        ) {
             stonecuttingRecipeId = null;
         }
     }
@@ -1047,7 +1084,10 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             var newOutputs = new ItemStack[getProcessingOutputSlots().length];
             for (int i = 0; i < processingOutputSlots.length; i++) {
                 newOutputs[i] = ItemStack.EMPTY;
-                if (!processingOutputSlots[i].getItem().isEmpty()) {
+                if (
+                    !processingOutputSlots[i].getItem()
+                        .isEmpty()
+                ) {
                     // Search for the next, skipping empty slots
                     for (int j = 1; j < processingOutputSlots.length; j++) {
                         var nextItem = processingOutputSlots[(i + j) % processingOutputSlots.length].getItem();
@@ -1067,11 +1107,11 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
     // Can cycle if there is more than 1 processing output encoded
     public boolean canCycleProcessingOutputs() {
-        return mode == EncodingMode.PROCESSING
-                && Arrays.stream(processingOutputSlots)
-                                .filter(s -> !s.getItem().isEmpty())
-                                .count()
-                        > 1;
+        return mode == EncodingMode.PROCESSING && Arrays.stream(processingOutputSlots)
+            .filter(
+                s -> !s.getItem()
+                    .isEmpty())
+            .count() > 1;
     }
 
     public List<RecipeHolder<StonecutterRecipe>> getStonecuttingRecipes() {
@@ -1088,6 +1128,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
     }
 
     private static class VisitorState {
+
         // Total number of pattern provider hosts found
         int total;
         // Set to true if any visited machines were missing from diList, or had a different name
@@ -1095,8 +1136,13 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
     }
 
     private boolean isFull(PatternContainer logic) {
-        for (int i = 0; i < logic.getTerminalPatternInventory().size(); i++) {
-            if (logic.getTerminalPatternInventory().getStackInSlot(i).isEmpty()) {
+        for (int i = 0; i < logic.getTerminalPatternInventory()
+            .size(); i++) {
+            if (
+                logic.getTerminalPatternInventory()
+                    .getStackInSlot(i)
+                    .isEmpty()
+            ) {
                 return false;
             }
         }
@@ -1113,8 +1159,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         };
     }
 
-    private <T extends PatternContainer> void visitPatternProviderHosts(
-            IGrid grid, Class<T> machineClass, PatternEncodingAccessTermMenu.VisitorState state) {
+    private <T extends PatternContainer> void visitPatternProviderHosts(IGrid grid, Class<T> machineClass,
+        PatternEncodingAccessTermMenu.VisitorState state) {
         for (var container : grid.getActiveMachines(machineClass)) {
             if (!isVisible(container)) {
                 continue;
@@ -1150,7 +1196,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         final ItemStack is = inv.server.getStackInSlot(slot);
 
         var patternSlot = new FilteredInternalInventory(
-                inv.server.getSlotInv(slot), new PatternEncodingAccessTermMenu.PatternSlotFilter());
+            inv.server.getSlotInv(slot),
+            new PatternEncodingAccessTermMenu.PatternSlotFilter());
 
         var carried = getCarried();
         switch (action) {
@@ -1194,8 +1241,12 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
                 }
             }
             case SHIFT_CLICK -> {
-                var stack = patternSlot.getStackInSlot(0).copy();
-                if (!player.getInventory().add(stack)) {
+                var stack = patternSlot.getStackInSlot(0)
+                    .copy();
+                if (
+                    !player.getInventory()
+                        .add(stack)
+                ) {
                     patternSlot.setItemDirect(0, stack);
                 } else {
                     patternSlot.setItemDirect(0, ItemStack.EMPTY);
@@ -1204,7 +1255,10 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             case MOVE_REGION -> {
                 for (int x = 0; x < inv.server.size(); x++) {
                     var stack = inv.server.getStackInSlot(x);
-                    if (!player.getInventory().add(stack)) {
+                    if (
+                        !player.getInventory()
+                            .add(stack)
+                    ) {
                         patternSlot.setItemDirect(0, stack);
                     } else {
                         patternSlot.setItemDirect(0, ItemStack.EMPTY);
@@ -1253,15 +1307,24 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         }
 
         // For now, limit to pattern containers in the same group
-        if (targets.stream().map(t -> t.group).distinct().count() != 1) {
+        if (
+            targets.stream()
+                .map(t -> t.group)
+                .distinct()
+                .count() != 1
+        ) {
             return;
         }
 
         // Try to insert in each container until we succeed
         for (var target : targets) {
-            var targetContainer =
-                    new FilteredInternalInventory(target.server, new PatternEncodingAccessTermMenu.PatternSlotFilter());
-            if (targetContainer.addItems(sourceStack).isEmpty()) {
+            var targetContainer = new FilteredInternalInventory(
+                target.server,
+                new PatternEncodingAccessTermMenu.PatternSlotFilter());
+            if (
+                targetContainer.addItems(sourceStack)
+                    .isEmpty()
+            ) {
                 sourceSlot.set(ItemStack.EMPTY);
                 return;
             }
@@ -1287,9 +1350,11 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             for (var container : grid.getActiveMachines(containerClass)) {
                 if (isVisible(container)) {
                     this.diList.put(
+                        container,
+                        new PatternEncodingAccessTermMenu.ContainerTracker(
                             container,
-                            new PatternEncodingAccessTermMenu.ContainerTracker(
-                                    container, container.getTerminalPatternInventory(), container.getTerminalGroup()));
+                            container.getTerminalPatternInventory(),
+                            container.getTerminalGroup()));
                 }
             }
         }
@@ -1391,6 +1456,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
     }
 
     private static class PatternSlotFilter implements IAEItemFilter {
+
         @Override
         public boolean allowExtract(InternalInventory inv, int slot, int amount) {
             return true;

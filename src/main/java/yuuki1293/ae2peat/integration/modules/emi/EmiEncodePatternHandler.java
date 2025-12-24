@@ -1,5 +1,12 @@
 package yuuki1293.ae2peat.integration.modules.emi;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import net.minecraft.world.item.crafting.RecipeHolder;
+
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
@@ -8,16 +15,12 @@ import appeng.integration.modules.emi.EmiStackHelper;
 import appeng.menu.me.common.GridInventoryEntry;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.handler.EmiCraftContext;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import yuuki1293.ae2peat.integration.modules.itemlists.EncodingHelper;
 import yuuki1293.ae2peat.menu.PatternEncodingAccessTermMenu;
 
 /**
- * Handles encoding patterns in the {@link PatternEncodingAccessTermMenu} by clicking the + button on recipes shown in REI (or
+ * Handles encoding patterns in the {@link PatternEncodingAccessTermMenu} by clicking the + button on recipes shown in
+ * REI (or
  * JEI).
  */
 public class EmiEncodePatternHandler<T extends PatternEncodingAccessTermMenu> extends AbstractRecipeHandler<T> {
@@ -51,13 +54,15 @@ public class EmiEncodePatternHandler<T extends PatternEncodingAccessTermMenu> ex
         if (doTransfer) {
             if (craftingRecipe && recipeId != null) {
                 EncodingHelper.encodeCraftingRecipe(
-                        menu,
-                        new RecipeHolder<>(recipeId, recipe),
-                        getGuiIngredientsForCrafting(emiRecipe),
-                        stack -> true);
+                    menu,
+                    new RecipeHolder<>(recipeId, recipe),
+                    getGuiIngredientsForCrafting(emiRecipe),
+                    stack -> true);
             } else {
                 EncodingHelper.encodeProcessingRecipe(
-                        menu, EmiStackHelper.ofInputs(emiRecipe), EmiStackHelper.ofOutputs(emiRecipe));
+                    menu,
+                    EmiStackHelper.ofInputs(emiRecipe),
+                    EmiStackHelper.ofOutputs(emiRecipe));
             }
 
             if (emiRecipe != null) {
@@ -65,12 +70,11 @@ public class EmiEncodePatternHandler<T extends PatternEncodingAccessTermMenu> ex
             }
         } else {
             var repo = menu.getClientRepo();
-            Set<AEKey> craftableKeys = repo != null
-                    ? repo.getAllEntries().stream()
-                            .filter(GridInventoryEntry::isCraftable)
-                            .map(GridInventoryEntry::getWhat)
-                            .collect(Collectors.toSet())
-                    : Set.of();
+            Set<AEKey> craftableKeys = repo != null ? repo.getAllEntries()
+                .stream()
+                .filter(GridInventoryEntry::isCraftable)
+                .map(GridInventoryEntry::getWhat)
+                .collect(Collectors.toSet()) : Set.of();
 
             return new AbstractRecipeHandler.Result.EncodeWithCraftables(craftableKeys);
         }
@@ -86,8 +90,13 @@ public class EmiEncodePatternHandler<T extends PatternEncodingAccessTermMenu> ex
         for (int i = 0; i < CRAFTING_GRID_WIDTH * CRAFTING_GRID_HEIGHT; i++) {
             var stacks = new ArrayList<GenericStack>();
 
-            if (i < emiRecipe.getInputs().size()) {
-                for (var emiStack : emiRecipe.getInputs().get(i).getEmiStacks()) {
+            if (
+                i < emiRecipe.getInputs()
+                    .size()
+            ) {
+                for (var emiStack : emiRecipe.getInputs()
+                    .get(i)
+                    .getEmiStacks()) {
                     var genericStack = EmiStackHelper.toGenericStack(emiStack);
                     if (genericStack != null && genericStack.what() instanceof AEItemKey) {
                         stacks.add(genericStack);

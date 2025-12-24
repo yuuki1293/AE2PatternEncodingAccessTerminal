@@ -4,9 +4,11 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.pedroksl.ae2addonlib.registry.ConfigRegistry;
+
 import yuuki1293.ae2peat.AE2PEAT;
 
 public class PEATConfig extends ConfigRegistry {
+
     private final PEATConfig.ClientConfig client = new PEATConfig.ClientConfig();
     private final PEATConfig.CommonConfig common = new PEATConfig.CommonConfig();
 
@@ -23,7 +25,10 @@ public class PEATConfig extends ConfigRegistry {
     }
 
     public static void register(ModContainer modContainer) {
-        if (!modContainer.getModId().equals(AE2PEAT.MOD_ID)) {
+        if (
+            !modContainer.getModId()
+                .equals(AE2PEAT.MOD_ID)
+        ) {
             throw new IllegalArgumentException();
         }
         INSTANCE = new PEATConfig(modContainer);
@@ -34,6 +39,7 @@ public class PEATConfig extends ConfigRegistry {
     }
 
     private static class ClientConfig {
+
         private final ModConfigSpec spec;
 
         public ClientConfig() {
@@ -44,6 +50,7 @@ public class PEATConfig extends ConfigRegistry {
     }
 
     private static class CommonConfig {
+
         private final ModConfigSpec spec;
 
         public CommonConfig() {

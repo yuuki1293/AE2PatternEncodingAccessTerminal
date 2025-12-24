@@ -1,5 +1,15 @@
 package yuuki1293.ae2peat.parts;
 
+import java.util.List;
+
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
+
 import appeng.api.config.Settings;
 import appeng.api.config.ShowPatternProviders;
 import appeng.api.parts.IPartItem;
@@ -16,14 +26,6 @@ import appeng.menu.locator.MenuLocators;
 import appeng.parts.PartModel;
 import appeng.parts.encoding.PatternEncodingLogic;
 import appeng.parts.reporting.AbstractDisplayPart;
-import java.util.List;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.api.config.AccessSearchMode;
 import yuuki1293.ae2peat.api.config.AutoFilter;
@@ -32,13 +34,15 @@ import yuuki1293.ae2peat.definisions.PEATMenus;
 import yuuki1293.ae2peat.menu.IPEATMenuHost;
 
 public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
-        implements IPatternTerminalLogicHost, IPEATMenuHost {
+    implements IPatternTerminalLogicHost, IPEATMenuHost {
+
     private final IConfigManager cm = IConfigManager.builder(
-                    () -> this.getHost().markForSave())
-            .registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE)
-            .registerSetting(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH)
-            .registerSetting(PEATSettings.AUTO_FILTER, AutoFilter.DISABLED)
-            .build();
+        () -> this.getHost()
+            .markForSave())
+        .registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE)
+        .registerSetting(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH)
+        .registerSetting(PEATSettings.AUTO_FILTER, AutoFilter.DISABLED)
+        .build();
 
     @PartModels
     public static final ResourceLocation MODEL_OFF = AE2PEAT.makeId("part/pattern_encoding_access_terminal_off");
@@ -102,7 +106,8 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
         return new SupplierStorage(() -> {
             var grid = getMainNode().getGrid();
             if (grid != null) {
-                return grid.getStorageService().getInventory();
+                return grid.getStorageService()
+                    .getInventory();
             }
             return null;
         });
@@ -127,8 +132,10 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
     @Override
     public void clearContent() {
         super.clearContent();
-        this.logic.getBlankPatternInv().clear();
-        this.logic.getEncodedPatternInv().clear();
+        this.logic.getBlankPatternInv()
+            .clear();
+        this.logic.getEncodedPatternInv()
+            .clear();
     }
 
     @Override

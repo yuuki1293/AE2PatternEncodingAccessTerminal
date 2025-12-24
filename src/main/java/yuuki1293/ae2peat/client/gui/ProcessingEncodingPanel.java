@@ -1,5 +1,9 @@
 package yuuki1293.ae2peat.client.gui;
 
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.network.chat.Component;
+
 import appeng.api.config.ActionItems;
 import appeng.client.Point;
 import appeng.client.gui.Icon;
@@ -9,12 +13,11 @@ import appeng.client.gui.widgets.ActionButton;
 import appeng.client.gui.widgets.Scrollbar;
 import appeng.core.localization.GuiText;
 import appeng.menu.SlotSemantics;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.network.chat.Component;
 
 public class ProcessingEncodingPanel extends EncodingModePanel {
-    private static final Blitter BG = Blitter.texture("guis/pattern_modes.png").src(0, 70, 124, 66);
+
+    private static final Blitter BG = Blitter.texture("guis/pattern_modes.png")
+        .src(0, 70, 124, 66);
 
     private final ActionButton clearBtn;
     private final ActionButton cycleOutputBtn;
@@ -29,8 +32,9 @@ public class ProcessingEncodingPanel extends EncodingModePanel {
         clearBtn.setDisableBackground(true);
         widgets.add("processingClearPattern", clearBtn);
 
-        this.cycleOutputBtn =
-                new ActionButton(ActionItems.S_CYCLE_PROCESSING_OUTPUT, act -> menu.cycleProcessingOutput());
+        this.cycleOutputBtn = new ActionButton(
+            ActionItems.S_CYCLE_PROCESSING_OUTPUT,
+            act -> menu.cycleProcessingOutput());
         this.cycleOutputBtn.setHalfSize(true);
         this.cycleOutputBtn.setDisableBackground(true);
         widgets.add("processingCycleOutput", this.cycleOutputBtn);
@@ -67,7 +71,8 @@ public class ProcessingEncodingPanel extends EncodingModePanel {
 
     @Override
     public void drawBackgroundLayer(GuiGraphics guiGraphics, Rect2i bounds, Point mouse) {
-        BG.dest(bounds.getX() + 8, bounds.getY() + bounds.getHeight() - 165).blit(guiGraphics);
+        BG.dest(bounds.getX() + 8, bounds.getY() + bounds.getHeight() - 165)
+            .blit(guiGraphics);
     }
 
     @Override

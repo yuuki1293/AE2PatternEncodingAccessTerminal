@@ -2,11 +2,13 @@ package yuuki1293.ae2peat.datagen;
 
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
+
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.definisions.PEATItems;
 import yuuki1293.ae2peat.definisions.PEATText;
 
 public class PEATLanguageProvider extends LanguageProvider {
+
     public PEATLanguageProvider(PackOutput output) {
         super(output, AE2PEAT.MOD_ID, "en_us");
     }

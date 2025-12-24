@@ -10,12 +10,13 @@ import yuuki1293.ae2peat.xmod.Addons;
 
 @EmiEntrypoint
 public class PEATEmiPlugin implements EmiPlugin {
+
     @Override
     public void register(EmiRegistry registry) {
         // Recipe transfer
         registry.addRecipeHandler(
-                PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
-                new EmiEncodePatternHandler<>(PatternEncodingAccessTermMenu.class));
+            PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(),
+            new EmiEncodePatternHandler<>(PatternEncodingAccessTermMenu.class));
 
         if (Addons.AE2WTLIB.isLoaded()) {
             registry.addRecipeHandler(WPEATMenu.TYPE, new EmiEncodePatternHandler<>(WPEATMenu.class));
