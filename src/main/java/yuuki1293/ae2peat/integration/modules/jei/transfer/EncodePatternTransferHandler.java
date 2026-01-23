@@ -103,8 +103,7 @@ public class EncodePatternTransferHandler<T extends PatternEncodingAccessTermMen
                     AE2PEAT.LOGGER.warn("failed to parse recipe type: {}", recipeType);
                 }
 
-                menu.encode();
-                menu.storePattern();
+                // menu.storePattern();
             }
         } else {
             var craftableSlots = findCraftableSlots(menu, slotsView);

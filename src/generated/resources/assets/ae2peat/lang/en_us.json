@@ -3,6 +3,7 @@
   "gui.ae2peat.AccessSearchModeCategory": "Search Mode",
   "gui.ae2peat.AccessSearchModeMachine": "Search Machines only",
   "gui.ae2peat.AccessSearchModePattern": "Search Patterns only",
+  "gui.ae2peat.AutoEncodeCategory": "Auto Encode (Experimental)",
   "gui.ae2peat.AutoFilterCategory": "Auto Filter (Experimental)",
   "gui.ae2peat.Disabled": "Disabled",
   "gui.ae2peat.Enabled": "Enabled",

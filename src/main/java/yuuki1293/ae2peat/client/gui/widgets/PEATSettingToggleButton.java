@@ -7,6 +7,7 @@ import net.pedroksl.ae2addonlib.client.widgets.AddonSettingToggleButton;
 import appeng.api.config.Setting;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.AutoEncode;
 import yuuki1293.ae2peat.api.config.AutoFilter;
 import yuuki1293.ae2peat.api.config.PEATSettings;
 import yuuki1293.ae2peat.definisions.PEATText;
@@ -29,6 +30,7 @@ public class PEATSettingToggleButton<T extends Enum<T>> extends AddonSettingTogg
 
     @Override
     protected void registerAppearances() {
+        // Access Search Mode
         registerApp(
             PEATIcon.ACCESS_SEARCH_MODE_BOTH,
             PEATSettings.ACCESS_SEARCH_MODE,
@@ -47,6 +49,8 @@ public class PEATSettingToggleButton<T extends Enum<T>> extends AddonSettingTogg
             AccessSearchMode.MACHINE,
             PEATText.AccessSearchModeCategory,
             PEATText.AccessSearchModeMachine);
+
+        // Auto Filter
         registerApp(
             PEATIcon.AUTO_FILTER_DISABLED,
             PEATSettings.AUTO_FILTER,
@@ -58,6 +62,20 @@ public class PEATSettingToggleButton<T extends Enum<T>> extends AddonSettingTogg
             PEATSettings.AUTO_FILTER,
             AutoFilter.ENABLED,
             PEATText.AutoFilterCategory,
+            PEATText.Enabled);
+
+        // Auto Encode
+        registerApp(
+            PEATIcon.AUTO_ENCODE_DISABLED,
+            PEATSettings.AUTO_ENCODE,
+            AutoEncode.DISABLED,
+            PEATText.AutoEncodeCategory,
+            PEATText.Disabled);
+        registerApp(
+            PEATIcon.AUTO_ENCODE_ENABLED,
+            PEATSettings.AUTO_ENCODE,
+            AutoEncode.ENABLED,
+            PEATText.AutoEncodeCategory,
             PEATText.Enabled);
     }
 }

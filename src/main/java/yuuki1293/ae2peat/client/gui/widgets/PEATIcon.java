@@ -13,7 +13,9 @@ public enum PEATIcon implements IBlitterIcon {
     ACCESS_SEARCH_MODE_PATTERN(16, 0),
     ACCESS_SEARCH_MODE_MACHINE(32, 0),
     AUTO_FILTER_DISABLED(48, 0),
-    AUTO_FILTER_ENABLED(64, 0);
+    AUTO_FILTER_ENABLED(64, 0),
+    AUTO_ENCODE_DISABLED(48, 0),
+    AUTO_ENCODE_ENABLED(64, 0);
 
     public final int x;
     public final int y;

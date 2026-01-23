@@ -15,6 +15,7 @@ import appeng.menu.locator.ItemMenuHostLocator;
 import de.mari_023.ae2wtlib.api.terminal.AE2wtlibConfigManager;
 import de.mari_023.ae2wtlib.api.terminal.ItemWT;
 import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.AutoEncode;
 import yuuki1293.ae2peat.api.config.AutoFilter;
 import yuuki1293.ae2peat.api.config.PEATSettings;
 
@@ -30,6 +31,7 @@ public class ItemWPEAT extends ItemWT implements IGridLinkedItem {
             .registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE)
             .registerSetting(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH)
             .registerSetting(PEATSettings.AUTO_FILTER, AutoFilter.DISABLED)
+            .registerSetting(PEATSettings.AUTO_ENCODE, AutoEncode.DISABLED)
             .build();
     }
 }

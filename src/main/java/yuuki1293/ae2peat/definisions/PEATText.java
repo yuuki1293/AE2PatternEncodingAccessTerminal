@@ -12,6 +12,7 @@ public enum PEATText implements LocalizationEnum {
     AccessSearchModePattern("Search Patterns only", Type.GUI),
     AccessSearchModeMachine("Search Machines only", Type.GUI),
     AutoFilterCategory("Auto Filter (Experimental)", Type.GUI),
+    AutoEncodeCategory("Auto Encode (Experimental)", Type.GUI),
     Disabled("Disabled", Type.GUI),
     Enabled("Enabled", Type.GUI);
 

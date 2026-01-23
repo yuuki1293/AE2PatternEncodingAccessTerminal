@@ -55,6 +55,7 @@ import guideme.document.LytRect;
 import guideme.render.SimpleRenderContext;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.AutoEncode;
 import yuuki1293.ae2peat.api.config.AutoFilter;
 import yuuki1293.ae2peat.api.config.PEATSettings;
 import yuuki1293.ae2peat.client.gui.widgets.PEATSettingToggleButton;
@@ -142,6 +143,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     private final ServerSettingToggleButton<ShowPatternProviders> showPatternProviders;
     private final AddonSettingToggleButton<AccessSearchMode> accessSearchMode;
     private final AddonSettingToggleButton<AutoFilter> autoFilter;
+    private final AddonSettingToggleButton<AutoEncode> autoEncode;
 
     public PatternEncodingAccessTermScreen(C menu, Inventory playerInventory, Component title, ScreenStyle style) {
         super(menu, playerInventory, title, style);
@@ -193,9 +195,11 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
             ShowPatternProviders.VISIBLE);
         accessSearchMode = PEATSettingToggleButton.serverButton(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH);
         autoFilter = PEATSettingToggleButton.serverButton(PEATSettings.AUTO_FILTER, AutoFilter.DISABLED);
+        autoEncode = PEATSettingToggleButton.serverButton(PEATSettings.AUTO_ENCODE, AutoEncode.DISABLED);
         this.addToLeftToolbar(showPatternProviders);
         this.addToLeftToolbar(accessSearchMode);
         this.addToLeftToolbar(autoFilter);
+        this.addToLeftToolbar(autoEncode);
 
         this.searchField = widgets.addTextField("search");
         this.searchField.setResponder(str -> this.refreshList());
@@ -250,6 +254,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         this.showPatternProviders.set(this.menu.getShownProviders());
         this.accessSearchMode.set(this.menu.getAccessSearchMode());
         this.autoFilter.set(this.menu.getAutoFilter());
+        this.autoEncode.set(this.menu.getAutoEncode());
     }
 
     @Override

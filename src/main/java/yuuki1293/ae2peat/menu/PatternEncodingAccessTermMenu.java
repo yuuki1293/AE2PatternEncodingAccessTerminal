@@ -77,6 +77,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.shorts.ShortSet;
 import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.AutoEncode;
 import yuuki1293.ae2peat.api.config.AutoFilter;
 import yuuki1293.ae2peat.api.config.PEATSettings;
 import yuuki1293.ae2peat.definisions.PEATMenus;
@@ -151,6 +152,13 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
     public AutoFilter getAutoFilter() {
         return autoFilter;
+    }
+
+    @GuiSync(4)
+    public AutoEncode autoEncode = AutoEncode.DISABLED;
+
+    public AutoEncode getAutoEncode() {
+        return autoEncode;
     }
 
     // We use this serial number to uniquely identify all inventories we send to the client
@@ -247,6 +255,7 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
             .registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE)
             .registerSetting(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH)
             .registerSetting(PEATSettings.AUTO_FILTER, AutoFilter.DISABLED)
+            .registerSetting(PEATSettings.AUTO_ENCODE, AutoEncode.DISABLED)
             .build();
 
         if (isServerSide()) {
@@ -424,6 +433,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
                 .getSetting(PEATSettings.ACCESS_SEARCH_MODE);
             autoFilter = this.termHost.getConfigManager()
                 .getSetting(PEATSettings.AUTO_FILTER);
+            autoEncode = this.termHost.getConfigManager()
+                .getSetting(PEATSettings.AUTO_ENCODE);
 
             super.broadcastChanges();
 
@@ -745,6 +756,14 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
     }
 
     /**
+     * encode if AutoEncode is enabled.
+     */
+    public void tryAutoEncode() {
+        if (autoEncode == AutoEncode.DISABLED) return;
+        encode();
+    }
+
+    /**
      * Clears the pattern in the encoded pattern slot.
      */
     private void clearPattern() {
@@ -906,6 +925,37 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         if (s == this.stonecuttingInputSlot) {
             updateStonecuttingRecipes();
         }
+
+        if (isRecipeSlot(s)) {
+            tryAutoEncode();
+        }
+    }
+
+    private boolean isRecipeSlot(Slot s) {
+        if (
+            s == this.stonecuttingInputSlot || s == this.smithingTableTemplateSlot
+                || s == this.smithingTableBaseSlot
+                || s == this.smithingTableAdditionSlot
+        ) {
+            return true;
+        }
+
+        for (var slot : craftingGridSlots) {
+            if (s == slot) {
+                return true;
+            }
+        }
+        for (var slot : processingInputSlots) {
+            if (s == slot) {
+                return true;
+            }
+        }
+        for (var slot : processingOutputSlots) {
+            if (s == slot) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void updateStonecuttingRecipes() {

@@ -28,6 +28,7 @@ import appeng.parts.encoding.PatternEncodingLogic;
 import appeng.parts.reporting.AbstractDisplayPart;
 import yuuki1293.ae2peat.AE2PEAT;
 import yuuki1293.ae2peat.api.config.AccessSearchMode;
+import yuuki1293.ae2peat.api.config.AutoEncode;
 import yuuki1293.ae2peat.api.config.AutoFilter;
 import yuuki1293.ae2peat.api.config.PEATSettings;
 import yuuki1293.ae2peat.definisions.PEATMenus;
@@ -42,6 +43,7 @@ public class PatternEncodingAccessTerminalPart extends AbstractDisplayPart
         .registerSetting(Settings.TERMINAL_SHOW_PATTERN_PROVIDERS, ShowPatternProviders.VISIBLE)
         .registerSetting(PEATSettings.ACCESS_SEARCH_MODE, AccessSearchMode.BOTH)
         .registerSetting(PEATSettings.AUTO_FILTER, AutoFilter.DISABLED)
+        .registerSetting(PEATSettings.AUTO_ENCODE, AutoEncode.DISABLED)
         .build();
 
     @PartModels

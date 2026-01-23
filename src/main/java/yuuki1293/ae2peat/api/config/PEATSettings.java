@@ -13,4 +13,6 @@ public class PEATSettings extends SettingsRegistry {
         AccessSearchMode.class);
 
     public static final Setting<AutoFilter> AUTO_FILTER = register(AE2PEAT.MOD_ID, "auto_filter", AutoFilter.class);
+
+    public static final Setting<AutoEncode> AUTO_ENCODE = register(AE2PEAT.MOD_ID, "auto_encode", AutoEncode.class);
 }
