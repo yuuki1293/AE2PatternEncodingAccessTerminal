@@ -208,6 +208,7 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         this.menu.setGui(this::refreshList);
 
         this.menu.setTransferAction(this::setSearchTextAsRecipe);
+        this.menu.setStorePatternAction(this::storePattern);
     }
 
     @Override
@@ -229,9 +230,6 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
         this.imageHeight = GUI_HEADER_HEIGHT + GUI_FOOTER_HEIGHT + this.visibleRows * ROW_HEIGHT;
 
         super.init();
-
-        // Autofocus search field
-        // this.setInitialFocus(this.searchField);
 
         // numLines may have changed, recalculate scroll bar.
         this.resetScrollbar();
@@ -874,6 +872,24 @@ public class PatternEncodingAccessTermScreen<C extends PatternEncodingAccessTerm
     @Override
     public Set<AEKeyType> getSortKeyTypes() {
         return Sets.newHashSet(AEKeyTypes.getAll());
+    }
+
+    /**
+     * Same behavior as shift-clicking the pattern output slot.
+     */
+    public void storePattern() {
+        Set<Long> visiblePatternContainers = new LinkedHashSet<>();
+        for (var row : this.rows) {
+            if (row instanceof PatternEncodingAccessTermScreen.SlotsRow slotsRow) {
+                visiblePatternContainers.add(slotsRow.container.getServerId());
+            }
+        }
+
+        var packet = new QuickMovePatternPacket(
+            menu.containerId,
+            menu.getPatternOutputSlotIdx(),
+            List.copyOf(visiblePatternContainers));
+        PacketDistributor.sendToServer(packet);
     }
 
     sealed interface Row {

@@ -222,6 +222,8 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
     private Consumer<Object> setSearchAsRecipe;
 
+    private Runnable storePattern;
+
     public PatternEncodingAccessTermMenu(int id, Inventory ip, PatternEncodingAccessTerminalPart anchor) {
         this(PEATMenus.PATTERN_ENCODING_ACCESS_TERMINAL.get(), id, ip, anchor, true);
     }
@@ -581,6 +583,10 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
     public void setTransferAction(Consumer<Object> c) {
         this.setSearchAsRecipe = c;
+    }
+
+    public void setStorePatternAction(Runnable c) {
+        this.storePattern = c;
     }
 
     /**
@@ -1045,6 +1051,10 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
         return encodedPatternSlot == slot;
     }
 
+    public int getPatternOutputSlotIdx() {
+        return encodedPatternSlot.index;
+    }
+
     public FakeSlot[] getCraftingGridSlots() {
         return craftingGridSlots;
     }
@@ -1376,6 +1386,10 @@ public class PatternEncodingAccessTermMenu extends AEBaseMenu
 
     public void setSearch(@Nullable Object recipeId) {
         setSearchAsRecipe.accept(recipeId);
+    }
+
+    public void storePattern() {
+        storePattern.run();
     }
 
     private static class ContainerTracker {
